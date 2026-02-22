@@ -1,24 +1,17 @@
-"use client"; // required because we use useState/useEffect
+"use client";
 
-import React, { useState, useEffect } from "react";
-import { placeholderPrograms } from "../../lib/placeholders"; // import the placeholder
+import React from "react";
+import { placeholderPrograms } from "../lib/placeholders";
 
 export default function ProgramsPage() {
-  const [programs, setPrograms] = useState([]);
-
-  useEffect(() => {
-    setPrograms(placeholderPrograms); // load placeholder data on mount
-  }, []);
-
   return (
-    <div>
-      <h1>Programs</h1>
-      <ul>
-        {programs.map((program) => (
-          <li key={program.id}>
-            <strong>{program.name}</strong>: {program.description}{" "}
-            <a href={program.link} target="_blank" rel="noopener noreferrer">
-              Learn More
+    <div className="p-6">
+      <h1 className="text-2xl font-bold mb-4">Programs</h1>
+      <ul className="space-y-2">
+        {placeholderPrograms.map((program) => (
+          <li key={program.id} className="border p-4 rounded shadow hover:bg-gray-50">
+            <a href={program.link} className="text-blue-600 hover:underline">
+              {program.name} ({program.type})
             </a>
           </li>
         ))}
