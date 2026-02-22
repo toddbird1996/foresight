@@ -1,25 +1,29 @@
-'use client';
-import React from 'react';
+"use client";
 
-// Preloaded pricing data
-const pricingPlans = [
-  { id: 1, type: "Bronze", price: "Free" },
-  { id: 2, type: "Silver", price: "$9.99 USD" },
-  { id: 3, type: "Gold", price: "$19.99 USD" },
-];
+import React, { useState, useEffect } from "react";
+import { placeholderPricing } from "../../lib/placeholders";
 
 export default function PricingPage() {
+  const [plans, setPlans] = useState([]);
+
+  useEffect(() => {
+    setPlans(placeholderPricing);
+  }, []);
+
   return (
     <div>
       <h1>Pricing Plans</h1>
-      <ul>
-        {pricingPlans.map(plan => (
-          <li key={plan.id}>
-            <strong>{plan.type}:</strong> {plan.price}
-          </li>
-        ))}
-      </ul>
-      <p>Choose the plan that fits your needs. All plans include full access to preloaded features.</p>
+      {plans.map((plan) => (
+        <div key={plan.id} style={{ border: "1px solid #ccc", margin: "1rem", padding: "1rem" }}>
+          <h2>{plan.plan}</h2>
+          <p>Price: {plan.price}</p>
+          <ul>
+            {plan.features.map((f, i) => (
+              <li key={i}>{f}</li>
+            ))}
+          </ul>
+        </div>
+      ))}
     </div>
   );
 }
