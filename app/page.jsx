@@ -1,11 +1,7 @@
 // app/page.jsx
 import React from "react";
-import LandingPage from './components/LandingPage'; // fixed path
+import LandingPage from "./components/LandingPage/page";
 
 export default function Home() {
-  return (
-    <div>
-      <LandingPage />
-    </div>
-  );
+  return <LandingPage />;
 }
