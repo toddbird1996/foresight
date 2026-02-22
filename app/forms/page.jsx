@@ -1,12 +1,7 @@
-// app/forms/page.jsx
 "use client";
-import React, { useState, useEffect } from "react";
 
-const placeholderForms = [
-  { id: 1, form_name: "Form A", jurisdiction: "Federal", form_url: "#" },
-  { id: 2, form_name: "Form B", jurisdiction: "State", form_url: "#" },
-  { id: 3, form_name: "Form C", jurisdiction: "Local", form_url: "#" },
-];
+import React, { useState, useEffect } from "react";
+import { placeholderForms } from "../../lib/placeholders";
 
 export default function FormsPage() {
   const [forms, setForms] = useState([]);
