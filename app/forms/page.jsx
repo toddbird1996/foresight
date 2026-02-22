@@ -1,18 +1,24 @@
-// app/forms/page.jsx
 "use client";
-
-import React from "react";
-import { placeholderForms } from "../lib/placeholders";
+import React, { useState, useEffect } from "react";
+import { placeholderForms } from "../../lib/placeholders"; // make sure the path is correct
 
 export default function FormsPage() {
+  const [forms, setForms] = useState([]);
+
+  useEffect(() => {
+    // load placeholder data
+    setForms(placeholderForms);
+  }, []);
+
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold mb-4">Forms</h1>
-      <ul className="space-y-2">
-        {placeholderForms.map((form) => (
-          <li key={form.id} className="border p-4 rounded shadow hover:bg-gray-50">
-            <a href={form.form_url} className="text-blue-600 hover:underline">
-              {form.form_name} ({form.jurisdiction})
+    <div>
+      <h1>Available Court Forms</h1>
+      <ul>
+        {forms.map((form) => (
+          <li key={form.id}>
+            {form.form_name} - {form.jurisdiction}{" "}
+            <a href={form.form_url} target="_blank" rel="noopener noreferrer">
+              Download
             </a>
           </li>
         ))}
