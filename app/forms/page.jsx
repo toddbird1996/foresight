@@ -1,6 +1,8 @@
+'use client';
+
 // app/forms/page.jsx
 import React, { useState, useEffect } from "react";
-import { getForms } from '../../lib/forms'; // fixed path
+import { getForms } from "../lib/forms";
 
 export default function FormsPage() {
   const [forms, setForms] = useState([]);
@@ -19,8 +21,10 @@ export default function FormsPage() {
       <ul>
         {forms.map((form) => (
           <li key={form.id}>
-            {form.form_name} - {form.jurisdiction}
-            <a href={form.form_url} target="_blank" rel="noopener noreferrer">Download</a>
+            {form.form_name} - {form.jurisdiction}{" "}
+            <a href={form.form_url} target="_blank" rel="noopener noreferrer">
+              Download
+            </a>
           </li>
         ))}
       </ul>
