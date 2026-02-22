@@ -1,0 +1,5 @@
+[
+  { "name": "Full Stack Bootcamp", "link": "/programs/fullstack" },
+  { "name": "AI & ML Workshop", "link": "/programs/ai-ml" },
+  { "name": "Web3 Fundamentals", "link": "/programs/web3" }
+]
