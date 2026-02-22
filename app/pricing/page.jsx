@@ -1,29 +1,27 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { placeholderPricing } from "../../lib/placeholders";
+import React from "react";
+import { placeholderPrograms } from "../../lib/placeholders";
 
-export default function PricingPage() {
-  const [plans, setPlans] = useState([]);
-
-  useEffect(() => {
-    setPlans(placeholderPricing);
-  }, []);
-
+export default function ProgramsPage() {
   return (
-    <div>
-      <h1>Pricing Plans</h1>
-      {plans.map((plan) => (
-        <div key={plan.id} style={{ border: "1px solid #ccc", margin: "1rem", padding: "1rem" }}>
-          <h2>{plan.plan}</h2>
-          <p>Price: {plan.price}</p>
-          <ul>
-            {plan.features.map((f, i) => (
-              <li key={i}>{f}</li>
-            ))}
-          </ul>
-        </div>
-      ))}
+    <div className="p-6">
+      <h1 className="text-2xl font-bold mb-4">Programs</h1>
+      <ul className="space-y-2">
+        {placeholderPrograms.map((program) => (
+          <li
+            key={program.id}
+            className="border p-4 rounded shadow hover:bg-gray-50"
+          >
+            <a
+              href={program.link}
+              className="text-blue-600 hover:underline"
+            >
+              {program.name} ({program.type})
+            </a>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
