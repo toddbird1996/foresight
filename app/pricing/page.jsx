@@ -1,5 +1,5 @@
 'use client';
-import { PricingPage } from '@/lib/stripe';
+import Auth from '../../components/Auth';
 
 export default function Pricing() {
   return <PricingPage />;
