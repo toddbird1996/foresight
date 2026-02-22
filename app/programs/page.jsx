@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { placeholderPrograms } from "../lib/placeholders";
+import programs from '../../data/programs.json';
 
 export default function ProgramsPage() {
   return (
