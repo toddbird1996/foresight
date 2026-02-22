@@ -3,20 +3,20 @@
 export const placeholderPrograms = [
   {
     id: 1,
-    name: "Youth Legal Assistance",
-    description: "Provides legal guidance for minors and young adults.",
+    name: "Program A",
+    description: "This is a placeholder description for Program A.",
     link: "#",
   },
   {
     id: 2,
-    name: "Small Business Support",
-    description: "Helps local entrepreneurs with contracts and compliance.",
+    name: "Program B",
+    description: "This is a placeholder description for Program B.",
     link: "#",
   },
   {
     id: 3,
-    name: "Community Mediation",
-    description: "Offers mediation services to resolve neighborhood disputes.",
+    name: "Program C",
+    description: "This is a placeholder description for Program C.",
     link: "#",
   },
 ];
