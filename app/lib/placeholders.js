@@ -1,19 +1,25 @@
 // lib/placeholders.js
 
 export const placeholderForms = [
-  { id: 1, form_name: "Form A", jurisdiction: "State", form_url: "#" },
-  { id: 2, form_name: "Form B", jurisdiction: "State", form_url: "#" },
-  { id: 3, form_name: "Form C", jurisdiction: "Federal", form_url: "#" },
+  { id: 1, name: "Form A", link: "#" },
+  { id: 2, name: "Form B", link: "#" },
+  { id: 3, name: "Form C", link: "#" },
 ];
 
 export const placeholderPrograms = [
-  { id: 1, program_name: "Program A", description: "Description A", link: "#" },
-  { id: 2, program_name: "Program B", description: "Description B", link: "#" },
-  { id: 3, program_name: "Program C", description: "Description C", link: "#" },
+  { id: 1, name: "Program A", link: "#" },
+  { id: 2, name: "Program B", link: "#" },
+  { id: 3, name: "Program C", link: "#" },
 ];
 
-export const placeholderPricing = [
-  { tier: "Bronze", price: "Free", features: ["Basic access"] },
-  { tier: "Silver", price: "$9.99", features: ["Standard access", "Extra perks"] },
-  { tier: "Gold", price: "$19.99", features: ["Full access", "Premium perks"] },
+export const placeholderMentors = [
+  { id: 1, name: "Mentor A", role: "Advisor", link: "#" },
+  { id: 2, name: "Mentor B", role: "Coach", link: "#" },
+  { id: 3, name: "Mentor C", role: "Consultant", link: "#" },
+];
+
+export const placeholderDocuments = [
+  { id: 1, title: "Document A", link: "#" },
+  { id: 2, title: "Document B", link: "#" },
+  { id: 3, title: "Document C", link: "#" },
 ];
