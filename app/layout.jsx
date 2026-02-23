@@ -1,5 +1,6 @@
 import './globals.css';
 import { Inter } from 'next/font/google';
+import Header from './components/Header'; // ✅ Import Header
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -39,6 +40,7 @@ export default function RootLayout({ children }) {
         <link rel="apple-touch-icon" href="/icons/icon-180x180.png" />
       </head>
       <body className={`${inter.className} bg-slate-950 text-white antialiased`}>
+        <Header />  {/* ✅ Add Header here */}
         {children}
       </body>
     </html>
