@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import React, { useState } from "react";
 import { supabase } from "../../lib/supabaseClient";
+import { useRouter } from "next/navigation";
 
 export default function Login() {
   const router = useRouter();
@@ -16,32 +16,33 @@ export default function Login() {
     setLoading(true);
     setError(null);
 
-    const { error: signInError } = await supabase.auth.signInWithPassword({
+    const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
 
     setLoading(false);
 
-    if (signInError) {
-      setError(signInError.message);
+    if (error) {
+      setError(error.message);
     } else {
-      router.push("/dashboard"); // redirect after successful login
+      router.push("/dashboard"); // redirect after login
     }
   };
 
   return (
-    <div className="max-w-md mx-auto p-6 border rounded shadow mt-10">
+    <div className="max-w-md mx-auto p-6 mt-10 border rounded shadow">
       <h1 className="text-2xl font-bold mb-4">Login</h1>
       <form onSubmit={handleLogin} className="space-y-4">
+        {error && <p className="text-red-500">{error}</p>}
         <div>
           <label className="block mb-1 font-medium">Email</label>
           <input
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full border px-3 py-2 rounded"
             required
+            className="w-full border p-2 rounded"
           />
         </div>
         <div>
@@ -50,15 +51,14 @@ export default function Login() {
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full border px-3 py-2 rounded"
             required
+            className="w-full border p-2 rounded"
           />
         </div>
-        {error && <p className="text-red-600">{error}</p>}
         <button
           type="submit"
-          className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
           disabled={loading}
+          className="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700"
         >
           {loading ? "Logging in..." : "Login"}
         </button>
