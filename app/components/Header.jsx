@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { supabase } from "../../lib/supabaseClient";
 import { useRouter } from "next/navigation";
@@ -8,6 +8,23 @@ import { useRouter } from "next/navigation";
 export default function Header() {
   const router = useRouter();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [user, setUser] = useState(null);
+
+  // Fetch the logged-in user on mount
+  useEffect(() => {
+    const currentUser = supabase.auth.getUser().then(({ data: { user } }) => {
+      setUser(user);
+    });
+
+    // Listen for auth changes
+    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user || null);
+    });
+
+    return () => {
+      listener.subscription.unsubscribe();
+    };
+  }, []);
 
   const handleLogout = async () => {
     const { error } = await supabase.auth.signOut();
@@ -20,11 +37,14 @@ export default function Header() {
   };
 
   return (
-    <header className="bg-slate-900 text-white p-4 flex justify-between items-center">
-      {/* Logo */}
-      <Link href="/">
-        <span className="font-bold text-xl cursor-pointer">Foresight</span>
-      </Link>
+    <header className="bg-slate-900 text-white p-4 flex justify-between items-center relative">
+      {/* Logo + welcome */}
+      <div className="flex items-center space-x-4">
+        <Link href="/">
+          <span className="font-bold text-xl cursor-pointer">Foresight</span>
+        </Link>
+        {user && <span className="text-sm text-gray-300">Welcome, {user.email}</span>}
+      </div>
 
       {/* Desktop navigation */}
       <nav className="hidden md:flex items-center space-x-6">
