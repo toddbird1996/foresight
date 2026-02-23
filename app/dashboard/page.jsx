@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../../lib/supabaseClient";
 import { useRouter } from "next/navigation";
+import Link from "next/link"; // <-- added for clickable links
 
 export default function Dashboard() {
   const router = useRouter();
@@ -169,7 +170,14 @@ export default function Dashboard() {
                 </div>
               ) : (
                 <div className="flex flex-col md:flex-row md:items-center md:space-x-4 w-full justify-between">
-                  <span className="font-semibold">{form.title}</span>
+                  {/* Updated: clickable link to form detail page */}
+                  <Link
+                    href={`/forms/${form.id}`}
+                    className="font-semibold text-blue-500 hover:underline"
+                  >
+                    {form.title}
+                  </Link>
+
                   <div className="space-x-2 mt-2 md:mt-0">
                     <button
                       onClick={() => startEditForm(form)}
@@ -192,4 +200,4 @@ export default function Dashboard() {
       )}
     </div>
   );
-}
+    }
