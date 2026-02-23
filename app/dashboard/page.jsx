@@ -10,11 +10,14 @@ export default function Dashboard() {
   const [userForms, setUserForms] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  const [newFormTitle, setNewFormTitle] = useState("");
+  const [creatingForm, setCreatingForm] = useState(false);
+
   // Fetch logged-in user
   useEffect(() => {
     supabase.auth.getUser().then(({ data: { user } }) => {
       if (!user) {
-        router.push("/auth/login"); // redirect if not logged in
+        router.push("/auth/login");
       } else {
         setUser(user);
         fetchUserForms(user.id);
@@ -22,13 +25,13 @@ export default function Dashboard() {
     });
   }, []);
 
-  // Fetch forms for this user
   const fetchUserForms = async (userId) => {
     setLoading(true);
     const { data, error } = await supabase
-      .from("forms") // <-- table name in Supabase
+      .from("forms")
       .select("*")
-      .eq("user_id", userId);
+      .eq("user_id", userId)
+      .order("created_at", { ascending: false });
 
     if (error) {
       console.error("Error fetching user forms:", error.message);
@@ -47,7 +50,27 @@ export default function Dashboard() {
     }
   };
 
-  if (!user) return null; // prevent flashing content
+  const handleCreateForm = async () => {
+    if (!newFormTitle.trim()) return alert("Form title cannot be empty");
+
+    setCreatingForm(true);
+    const { data, error } = await supabase.from("forms").insert([
+      {
+        title: newFormTitle,
+        user_id: user.id,
+      },
+    ]);
+
+    if (error) {
+      alert("Error creating form: " + error.message);
+    } else {
+      setNewFormTitle("");
+      fetchUserForms(user.id); // refresh list
+    }
+    setCreatingForm(false);
+  };
+
+  if (!user) return null;
 
   return (
     <div className="p-6">
@@ -60,6 +83,24 @@ export default function Dashboard() {
       >
         Logout
       </button>
+
+      {/* New Form Creation */}
+      <div className="mb-6 flex flex-col md:flex-row md:items-center md:space-x-4">
+        <input
+          type="text"
+          placeholder="New form title"
+          value={newFormTitle}
+          onChange={(e) => setNewFormTitle(e.target.value)}
+          className="border p-2 rounded w-full md:w-auto"
+        />
+        <button
+          onClick={handleCreateForm}
+          disabled={creatingForm}
+          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 mt-2 md:mt-0"
+        >
+          {creatingForm ? "Creating..." : "Create Form"}
+        </button>
+      </div>
 
       <h2 className="text-xl font-semibold mb-2">Your Forms</h2>
 
