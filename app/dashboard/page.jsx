@@ -11,6 +11,8 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true);
 
   const [newFormTitle, setNewFormTitle] = useState("");
+  const [editingFormId, setEditingFormId] = useState(null);
+  const [editingFormTitle, setEditingFormTitle] = useState("");
   const [creatingForm, setCreatingForm] = useState(false);
 
   // Fetch logged-in user
@@ -25,6 +27,7 @@ export default function Dashboard() {
     });
   }, []);
 
+  // Fetch user's forms
   const fetchUserForms = async (userId) => {
     setLoading(true);
     const { data, error } = await supabase
@@ -33,41 +36,69 @@ export default function Dashboard() {
       .eq("user_id", userId)
       .order("created_at", { ascending: false });
 
-    if (error) {
-      console.error("Error fetching user forms:", error.message);
-    } else {
-      setUserForms(data);
-    }
+    if (error) console.error("Error fetching forms:", error.message);
+    else setUserForms(data);
+
     setLoading(false);
   };
 
+  // Logout
   const handleLogout = async () => {
     const { error } = await supabase.auth.signOut();
-    if (error) {
-      alert("Logout error: " + error.message);
-    } else {
-      router.push("/auth/login");
-    }
+    if (error) alert("Logout error: " + error.message);
+    else router.push("/auth/login");
   };
 
+  // Create a new form
   const handleCreateForm = async () => {
     if (!newFormTitle.trim()) return alert("Form title cannot be empty");
-
     setCreatingForm(true);
-    const { data, error } = await supabase.from("forms").insert([
-      {
-        title: newFormTitle,
-        user_id: user.id,
-      },
+
+    const { error } = await supabase.from("forms").insert([
+      { title: newFormTitle, user_id: user.id },
     ]);
 
-    if (error) {
-      alert("Error creating form: " + error.message);
-    } else {
-      setNewFormTitle("");
-      fetchUserForms(user.id); // refresh list
-    }
+    if (error) alert("Error creating form: " + error.message);
+    else setNewFormTitle("");
+
+    fetchUserForms(user.id);
     setCreatingForm(false);
+  };
+
+  // Start editing a form
+  const startEditForm = (form) => {
+    setEditingFormId(form.id);
+    setEditingFormTitle(form.title);
+  };
+
+  // Save edited form
+  const saveEditForm = async () => {
+    if (!editingFormTitle.trim()) return alert("Form title cannot be empty");
+
+    const { error } = await supabase
+      .from("forms")
+      .update({ title: editingFormTitle })
+      .eq("id", editingFormId);
+
+    if (error) alert("Error updating form: " + error.message);
+    setEditingFormId(null);
+    setEditingFormTitle("");
+    fetchUserForms(user.id);
+  };
+
+  // Cancel editing
+  const cancelEdit = () => {
+    setEditingFormId(null);
+    setEditingFormTitle("");
+  };
+
+  // Delete a form
+  const deleteForm = async (id) => {
+    if (!confirm("Are you sure you want to delete this form?")) return;
+
+    const { error } = await supabase.from("forms").delete().eq("id", id);
+    if (error) alert("Error deleting form: " + error.message);
+    else fetchUserForms(user.id);
   };
 
   if (!user) return null;
@@ -111,9 +142,50 @@ export default function Dashboard() {
       ) : (
         <ul className="space-y-2">
           {userForms.map((form) => (
-            <li key={form.id} className="border p-4 rounded shadow hover:bg-gray-50">
-              <p className="font-semibold">{form.title}</p>
-              <p className="text-sm text-gray-400">{form.created_at}</p>
+            <li
+              key={form.id}
+              className="border p-4 rounded shadow flex flex-col md:flex-row md:justify-between items-start md:items-center"
+            >
+              {editingFormId === form.id ? (
+                <div className="flex flex-col md:flex-row md:items-center md:space-x-2 w-full">
+                  <input
+                    type="text"
+                    value={editingFormTitle}
+                    onChange={(e) => setEditingFormTitle(e.target.value)}
+                    className="border p-2 rounded flex-1"
+                  />
+                  <button
+                    onClick={saveEditForm}
+                    className="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 mt-2 md:mt-0"
+                  >
+                    Save
+                  </button>
+                  <button
+                    onClick={cancelEdit}
+                    className="bg-gray-500 text-white px-3 py-1 rounded hover:bg-gray-600 mt-2 md:mt-0"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              ) : (
+                <div className="flex flex-col md:flex-row md:items-center md:space-x-4 w-full justify-between">
+                  <span className="font-semibold">{form.title}</span>
+                  <div className="space-x-2 mt-2 md:mt-0">
+                    <button
+                      onClick={() => startEditForm(form)}
+                      className="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => deleteForm(form.id)}
+                      className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700"
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </div>
+              )}
             </li>
           ))}
         </ul>
