@@ -1,38 +1,39 @@
 "use client";
 
-import React, { useState } from "react";
-import { supabase } from "../../lib/supabaseClient";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { supabase } from "../../lib/supabaseClient";
 
 export default function Login() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const handleLogin = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setError(null);
+    setError("");
 
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
 
-    setLoading(false);
-
     if (error) {
       setError(error.message);
     } else {
-      router.push("/dashboard"); // redirect after login
+      // Successful login, redirect to dashboard
+      router.push("/dashboard");
     }
+
+    setLoading(false);
   };
 
   return (
-    <div className="max-w-md mx-auto p-6 mt-10 border rounded shadow">
-      <h1 className="text-2xl font-bold mb-4">Login</h1>
+    <div className="max-w-md mx-auto mt-10 p-6 border rounded shadow">
+      <h1 className="text-2xl font-bold mb-6">Login</h1>
       <form onSubmit={handleLogin} className="space-y-4">
         {error && <p className="text-red-500">{error}</p>}
         <div>
@@ -63,6 +64,13 @@ export default function Login() {
           {loading ? "Logging in..." : "Login"}
         </button>
       </form>
+
+      <p className="mt-4 text-sm">
+        Don't have an account?{" "}
+        <a href="/signup" className="text-blue-600 hover:underline">
+          Sign Up
+        </a>
+      </p>
     </div>
   );
 }
