@@ -1,103 +1,118 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import { supabase } from "../../../lib/supabaseClient";
-import { useParams } from "next/navigation";
+import { useRouter } from "next/navigation";
+import { use } from "react";
 
-export default function FormDetailPage() {
+export default function FormDetail({ params }) {
   const router = useRouter();
-  const { formId } = useParams(); // get the dynamic form ID
-  const [user, setUser] = useState(null);
+  const { formId } = use(params);
+  
   const [form, setForm] = useState(null);
+  const [content, setContent] = useState("");
   const [loading, setLoading] = useState(true);
-  const [formTitle, setFormTitle] = useState("");
+  const [saving, setSaving] = useState(false);
+  const [lastSaved, setLastSaved] = useState(null);
 
-  // Fetch user and form data
+  // Fetch the form
   useEffect(() => {
-    supabase.auth.getUser().then(({ data: { user } }) => {
-      if (!user) router.push("/auth/login");
-      else {
-        setUser(user);
-        fetchForm(user.id, formId);
+    const fetchForm = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (!user) {
+        router.push("/auth/login");
+        return;
       }
-    });
-  }, [formId]);
 
-  const fetchForm = async (userId, id) => {
-    setLoading(true);
-    const { data, error } = await supabase
-      .from("forms")
-      .select("*")
-      .eq("id", id)
-      .eq("user_id", userId)
-      .single(); // get a single record
+      const { data, error } = await supabase
+        .from("user_forms")
+        .select("*")
+        .eq("id", formId)
+        .eq("user_id", user.id)
+        .single();
 
-    if (error) {
-      alert("Error fetching form: " + error.message);
-      router.push("/dashboard"); // redirect if form not found
-    } else {
+      if (error || !data) {
+        alert("Form not found");
+        router.push("/dashboard");
+        return;
+      }
+
       setForm(data);
-      setFormTitle(data.title);
-    }
-    setLoading(false);
-  };
+      setContent(data.content || "");
+      setLoading(false);
+    };
 
-  const handleUpdateForm = async () => {
-    if (!formTitle.trim()) return alert("Form title cannot be empty");
+    fetchForm();
+  }, [formId, router]);
+
+  // Save content
+  const handleSave = async () => {
+    setSaving(true);
 
     const { error } = await supabase
-      .from("forms")
-      .update({ title: formTitle })
+      .from("user_forms")
+      .update({ 
+        content: content,
+        updated_at: new Date().toISOString()
+      })
       .eq("id", formId);
 
-    if (error) alert("Error updating form: " + error.message);
-    else alert("Form updated successfully!");
+    if (error) {
+      alert("Error saving: " + error.message);
+    } else {
+      setLastSaved(new Date().toLocaleTimeString());
+    }
+
+    setSaving(false);
   };
 
-  const handleDeleteForm = async () => {
-    if (!confirm("Are you sure you want to delete this form?")) return;
-
-    const { error } = await supabase.from("forms").delete().eq("id", formId);
-
-    if (error) alert("Error deleting form: " + error.message);
-    else router.push("/dashboard");
-  };
-
-  if (!user || loading) return <p className="p-6">Loading form...</p>;
+  if (loading) {
+    return <div className="p-6">Loading...</div>;
+  }
 
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold mb-4">Form Details</h1>
-
-      <label className="block mb-2 font-semibold">Title:</label>
-      <input
-        type="text"
-        value={formTitle}
-        onChange={(e) => setFormTitle(e.target.value)}
-        className="border p-2 rounded w-full mb-4"
-      />
-
-      <div className="flex space-x-2">
-        <button
-          onClick={handleUpdateForm}
-          className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
-        >
-          Save
-        </button>
-        <button
-          onClick={handleDeleteForm}
-          className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
-        >
-          Delete
-        </button>
+    <div className="p-6 max-w-4xl mx-auto">
+      {/* Header */}
+      <div className="flex items-center justify-between mb-6">
         <button
           onClick={() => router.push("/dashboard")}
-          className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
+          className="text-blue-500 hover:underline"
         >
-          Back
+          ← Back to Dashboard
         </button>
+        
+        <div className="flex items-center space-x-4">
+          {lastSaved && (
+            <span className="text-sm text-gray-500">
+              Saved at {lastSaved}
+            </span>
+          )}
+          <button
+            onClick={handleSave}
+            disabled={saving}
+            className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 disabled:bg-gray-400"
+          >
+            {saving ? "Saving..." : "Save"}
+          </button>
+        </div>
       </div>
+
+      {/* Form Title */}
+      <h1 className="text-2xl font-bold mb-4">{form.title}</h1>
+
+      {/* Content Editor */}
+      <textarea
+        value={content}
+        onChange={(e) => setContent(e.target.value)}
+        placeholder="Start typing your notes, evidence, or form details here..."
+        className="w-full h-96 p-4 border rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
+      />
+
+      {/* Help Text */}
+      <p className="text-sm text-gray-500 mt-2">
+        Use this space to draft your documents, take notes, or prepare your case materials.
+      </p>
     </div>
   );
-        }
+}
