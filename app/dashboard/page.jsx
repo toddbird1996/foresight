@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../../lib/supabaseClient";
 import { useRouter } from "next/navigation";
-import Link from "next/link"; // <-- added for clickable links
+import Link from "next/link";
 
 export default function Dashboard() {
   const router = useRouter();
@@ -32,7 +32,7 @@ export default function Dashboard() {
   const fetchUserForms = async (userId) => {
     setLoading(true);
     const { data, error } = await supabase
-      .from("forms")
+      .from("user_forms")  // ← CHANGED
       .select("*")
       .eq("user_id", userId)
       .order("created_at", { ascending: false });
@@ -55,7 +55,7 @@ export default function Dashboard() {
     if (!newFormTitle.trim()) return alert("Form title cannot be empty");
     setCreatingForm(true);
 
-    const { error } = await supabase.from("forms").insert([
+    const { error } = await supabase.from("user_forms").insert([  // ← CHANGED
       { title: newFormTitle, user_id: user.id },
     ]);
 
@@ -77,7 +77,7 @@ export default function Dashboard() {
     if (!editingFormTitle.trim()) return alert("Form title cannot be empty");
 
     const { error } = await supabase
-      .from("forms")
+      .from("user_forms")  // ← CHANGED
       .update({ title: editingFormTitle })
       .eq("id", editingFormId);
 
@@ -97,7 +97,7 @@ export default function Dashboard() {
   const deleteForm = async (id) => {
     if (!confirm("Are you sure you want to delete this form?")) return;
 
-    const { error } = await supabase.from("forms").delete().eq("id", id);
+    const { error } = await supabase.from("user_forms").delete().eq("id", id);  // ← CHANGED
     if (error) alert("Error deleting form: " + error.message);
     else fetchUserForms(user.id);
   };
@@ -170,7 +170,6 @@ export default function Dashboard() {
                 </div>
               ) : (
                 <div className="flex flex-col md:flex-row md:items-center md:space-x-4 w-full justify-between">
-                  {/* Updated: clickable link to form detail page */}
                   <Link
                     href={`/forms/${form.id}`}
                     className="font-semibold text-blue-500 hover:underline"
@@ -200,4 +199,4 @@ export default function Dashboard() {
       )}
     </div>
   );
-    }
+}
