@@ -1,17 +1,19 @@
 'use client';
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { supabase } from '../../lib/supabaseClient';
 import { useRouter } from 'next/navigation';
 
-export default function AIPage() {
+export default function CommunityPage() {
   const router = useRouter();
   const [user, setUser] = useState(null);
-  const [userTier, setUserTier] = useState('bronze');
   const [loading, setLoading] = useState(true);
+  const [channels, setChannels] = useState([]);
+  const [activeChannel, setActiveChannel] = useState(null);
   const [messages, setMessages] = useState([]);
-  const [input, setInput] = useState('');
+  const [newMessage, setNewMessage] = useState('');
   const [sending, setSending] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const messagesEndRef = useRef(null);
 
   useEffect(() => {
@@ -24,219 +26,234 @@ export default function AIPage() {
       }
 
       setUser(user);
-
-      const { data: profile } = await supabase
-        .from("users")
-        .select("tier")
-        .eq("id", user.id)
-        .single();
-
-      if (profile?.tier) {
-        setUserTier(profile.tier);
-      }
-
+      await fetchChannels();
       setLoading(false);
     };
 
     init();
   }, []);
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  };
+  useEffect(() => {
+    if (activeChannel) {
+      fetchMessages(activeChannel.id);
+
+      const subscription = supabase
+        .channel(`messages:${activeChannel.id}`)
+        .on('postgres_changes', {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'messages',
+          filter: `channel_id=eq.${activeChannel.id}`
+        }, (payload) => {
+          setMessages(prev => [...prev, payload.new]);
+        })
+        .subscribe();
+
+      return () => {
+        subscription.unsubscribe();
+      };
+    }
+  }, [activeChannel]);
 
   useEffect(() => {
-    scrollToBottom();
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  const isPaidUser = userTier !== 'bronze';
+  const fetchChannels = async () => {
+    const { data, error } = await supabase
+      .from("channels")
+      .select("*")
+      .order("display_order", { ascending: true });
 
-  const sendMessage = async () => {
-    if (!input.trim() || sending) return;
+    if (error) {
+      console.error("Error fetching channels:", error);
+      return;
+    }
 
-    const userMessage = { role: 'user', content: input };
-    setMessages(prev => [...prev, userMessage]);
-    setInput('');
+    setChannels(data || []);
+    if (data && data.length > 0) {
+      setActiveChannel(data[0]);
+    }
+  };
+
+  const fetchMessages = async (channelId) => {
+    const { data, error } = await supabase
+      .from("messages")
+      .select(`
+        *,
+        user:users(id, full_name, email)
+      `)
+      .eq("channel_id", channelId)
+      .order("created_at", { ascending: true })
+      .limit(50);
+
+    if (error) {
+      console.error("Error fetching messages:", error);
+      return;
+    }
+
+    setMessages(data || []);
+  };
+
+  const handleSendMessage = async () => {
+    if (!newMessage.trim() || sending || !activeChannel) return;
+
     setSending(true);
 
-    try {
-      const res = await fetch('/api/ai/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          message: input,
-          userId: user.id,
-          jurisdiction: 'saskatchewan'
-        })
-      });
+    const { error } = await supabase.from("messages").insert({
+      channel_id: activeChannel.id,
+      user_id: user.id,
+      content: newMessage.trim()
+    });
 
-      const data = await res.json();
-
-      if (data.upgradeRequired) {
-        setMessages(prev => [...prev, {
-          role: 'assistant',
-          content: data.content,
-          isUpgradePrompt: true
-        }]);
-      } else if (data.content) {
-        setMessages(prev => [...prev, { role: 'assistant', content: data.content }]);
-      }
-    } catch (err) {
-      setMessages(prev => [...prev, { role: 'assistant', content: 'Sorry, something went wrong. Please try again.' }]);
-    } finally {
-      setSending(false);
+    if (error) {
+      alert("Error sending message: " + error.message);
+    } else {
+      setNewMessage("");
+      await fetchMessages(activeChannel.id);
     }
+
+    setSending(false);
+  };
+
+  const getInitial = (msg) => {
+    if (msg.user?.full_name) return msg.user.full_name[0].toUpperCase();
+    if (msg.user?.email) return msg.user.email[0].toUpperCase();
+    return "?";
+  };
+
+  const getUserName = (msg) => {
+    if (msg.user?.full_name) return msg.user.full_name;
+    if (msg.user?.email) return msg.user.email.split("@")[0];
+    return "Anonymous";
+  };
+
+  const formatTime = (timestamp) => {
+    const date = new Date(timestamp);
+    const now = new Date();
+    const diff = (now - date) / 1000 / 60;
+
+    if (diff < 1) return "Just now";
+    if (diff < 60) return `${Math.floor(diff)} min ago`;
+    if (diff < 1440) return `${Math.floor(diff / 60)} hours ago`;
+    return date.toLocaleDateString();
   };
 
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <p className="text-gray-600">Loading...</p>
+        <p className="text-gray-600">Loading community...</p>
       </div>
     );
   }
 
-  // Show upgrade gate for free users
-  if (!isPaidUser) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex flex-col">
-        <header className="h-14 bg-white border-b border-gray-200 flex items-center px-4 gap-3">
-          <Link href="/dashboard" className="text-gray-400 hover:text-red-600">←</Link>
-          <h1 className="font-bold text-gray-900">AI Assistant</h1>
-        </header>
-
-        <div className="flex-1 flex items-center justify-center p-6">
-          <div className="max-w-md text-center">
-            <div className="w-20 h-20 mx-auto mb-6 rounded-2xl bg-red-100 border border-red-200 flex items-center justify-center text-4xl">
-              🤖
-            </div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-3">AI Assistant is a Premium Feature</h2>
-            <p className="text-gray-600 mb-6">
-              Get instant answers to your custody questions, document analysis, and personalized guidance with our AI assistant.
-            </p>
-            
-            <div className="bg-white border border-gray-200 rounded-xl p-4 mb-6 text-left">
-              <h3 className="font-semibold text-gray-900 mb-3">What you get with AI:</h3>
-              <ul className="space-y-2 text-sm">
-                <li className="flex items-center gap-2 text-gray-700">
-                  <span className="text-green-600">✓</span>
-                  24/7 instant answers to custody questions
-                </li>
-                <li className="flex items-center gap-2 text-gray-700">
-                  <span className="text-green-600">✓</span>
-                  Province-specific legal information
-                </li>
-                <li className="flex items-center gap-2 text-gray-700">
-                  <span className="text-green-600">✓</span>
-                  Document review and suggestions
-                </li>
-                <li className="flex items-center gap-2 text-gray-700">
-                  <span className="text-green-600">✓</span>
-                  Step-by-step filing guidance
-                </li>
-              </ul>
-            </div>
-
-            <Link
-              href="/pricing"
-              className="block w-full py-3 bg-red-600 hover:bg-red-700 text-white rounded-xl font-semibold text-center mb-3"
-            >
-              Upgrade to Silver - $9.99/month
-            </Link>
-            <Link href="/dashboard" className="text-gray-500 text-sm hover:text-red-600">
-              Back to Dashboard
-            </Link>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  // Paid user - show chat interface
   return (
     <div className="h-screen bg-gray-50 flex flex-col">
+      {/* Header */}
       <header className="h-14 bg-white border-b border-gray-200 flex items-center px-4 gap-3">
         <Link href="/dashboard" className="text-gray-400 hover:text-red-600">←</Link>
-        <h1 className="font-bold text-gray-900">AI Assistant</h1>
-        <span className="ml-auto text-xs text-gray-500">
-          {userTier === 'gold' ? 'Unlimited' : '25 queries/day'}
-        </span>
+        <h1 className="font-bold text-gray-900">Community</h1>
+        <button
+          onClick={() => setSidebarOpen(!sidebarOpen)}
+          className="ml-auto md:hidden text-gray-600"
+        >
+          ☰
+        </button>
       </header>
 
-      {/* Messages */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4">
-        {messages.length === 0 && (
-          <div className="text-center py-12">
-            <div className="text-4xl mb-4">🤖</div>
-            <h2 className="text-xl font-semibold text-gray-900 mb-2">How can I help you today?</h2>
-            <p className="text-gray-600 mb-6">Ask me anything about custody procedures in Canada or the US.</p>
-            <div className="flex flex-wrap justify-center gap-2">
-              {['How do I file for custody?', 'What is a JCC?', 'How long does the process take?'].map((q, i) => (
+      <div className="flex-1 flex overflow-hidden">
+        {/* Sidebar */}
+        <aside className={`${sidebarOpen ? 'block' : 'hidden'} md:block w-64 bg-white border-r border-gray-200 overflow-y-auto`}>
+          <div className="p-4">
+            <h2 className="text-xs font-semibold text-gray-500 uppercase mb-3">Channels</h2>
+            {channels.length === 0 ? (
+              <p className="text-sm text-gray-500">No channels yet</p>
+            ) : (
+              channels.map(channel => (
                 <button
-                  key={i}
-                  onClick={() => setInput(q)}
-                  className="px-3 py-2 bg-white border border-gray-200 rounded-lg text-sm hover:border-red-500 text-gray-700"
+                  key={channel.id}
+                  onClick={() => {
+                    setActiveChannel(channel);
+                    setSidebarOpen(false);
+                  }}
+                  className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg mb-1 ${
+                    activeChannel?.id === channel.id 
+                      ? 'bg-red-50 text-red-600 border border-red-200' 
+                      : 'hover:bg-gray-100 text-gray-700'
+                  }`}
                 >
-                  {q}
+                  <span>{channel.icon || '💬'}</span>
+                  <span className="flex-1 text-left text-sm">{channel.name}</span>
+                  {channel.member_count > 0 && (
+                    <span className="text-xs text-gray-400">
+                      {channel.member_count}
+                    </span>
+                  )}
                 </button>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {messages.map((msg, i) => (
-          <div key={i} className={`flex gap-3 ${msg.role === 'user' ? 'justify-end' : ''}`}>
-            {msg.role === 'assistant' && (
-              <div className="w-8 h-8 rounded-lg bg-red-600 flex items-center justify-center flex-shrink-0">
-                <span className="text-white text-sm">🤖</span>
-              </div>
+              ))
             )}
-            <div className={`max-w-[80%] p-3 rounded-xl ${
-              msg.role === 'user'
-                ? 'bg-red-600 text-white'
-                : 'bg-white border border-gray-200 text-gray-900'
-            }`}>
-              {msg.content}
-            </div>
           </div>
-        ))}
+        </aside>
 
-        {sending && (
-          <div className="flex gap-3">
-            <div className="w-8 h-8 rounded-lg bg-red-600 flex items-center justify-center">
-              <span className="text-white text-sm">🤖</span>
+        {/* Main Chat Area */}
+        <main className="flex-1 flex flex-col bg-gray-50">
+          {/* Channel Header */}
+          {activeChannel && (
+            <div className="h-12 bg-white border-b border-gray-200 flex items-center px-4">
+              <span className="text-lg mr-2">{activeChannel.icon || '💬'}</span>
+              <span className="font-semibold text-gray-900">{activeChannel.name}</span>
+              {activeChannel.description && (
+                <span className="ml-2 text-sm text-gray-500">• {activeChannel.description}</span>
+              )}
             </div>
-            <div className="bg-white border border-gray-200 p-3 rounded-xl">
-              <div className="flex gap-1">
-                <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" />
-                <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }} />
-                <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }} />
+          )}
+
+          {/* Messages */}
+          <div className="flex-1 overflow-y-auto p-4 space-y-4">
+            {messages.length === 0 ? (
+              <div className="text-center py-12 text-gray-500">
+                <p>No messages yet. Start the conversation!</p>
               </div>
+            ) : (
+              messages.map(msg => (
+                <div key={msg.id} className="flex gap-3">
+                  <div className="w-10 h-10 rounded-full bg-red-600 flex items-center justify-center font-bold text-white flex-shrink-0">
+                    {getInitial(msg)}
+                  </div>
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="font-semibold text-gray-900">{getUserName(msg)}</span>
+                      <span className="text-xs text-gray-500">{formatTime(msg.created_at)}</span>
+                    </div>
+                    <p className="text-gray-700">{msg.content}</p>
+                  </div>
+                </div>
+              ))
+            )}
+            <div ref={messagesEndRef} />
+          </div>
+
+          {/* Message Input */}
+          <div className="p-4 bg-white border-t border-gray-200">
+            <div className="flex gap-3">
+              <input
+                type="text"
+                value={newMessage}
+                onChange={(e) => setNewMessage(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
+                placeholder="Type a message..."
+                className="flex-1 px-4 py-3 bg-gray-50 border border-gray-300 rounded-xl text-gray-900 placeholder-gray-500 focus:outline-none focus:border-red-500"
+              />
+              <button 
+                onClick={handleSendMessage}
+                disabled={sending || !newMessage.trim()}
+                className="px-6 py-3 bg-red-600 hover:bg-red-700 text-white rounded-xl font-medium disabled:opacity-50"
+              >
+                {sending ? "..." : "Send"}
+              </button>
             </div>
           </div>
-        )}
-        <div ref={messagesEndRef} />
-      </div>
-
-      {/* Input */}
-      <div className="p-4 bg-white border-t border-gray-200">
-        <div className="flex gap-3">
-          <input
-            type="text"
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && sendMessage()}
-            placeholder="Ask about custody procedures..."
-            className="flex-1 px-4 py-3 bg-gray-50 border border-gray-300 rounded-xl text-gray-900 placeholder-gray-500 focus:outline-none focus:border-red-500"
-          />
-          <button
-            onClick={sendMessage}
-            disabled={sending || !input.trim()}
-            className="px-6 py-3 bg-red-600 hover:bg-red-700 text-white rounded-xl font-medium disabled:opacity-50"
-          >
-            Send
-          </button>
-        </div>
+        </main>
       </div>
     </div>
   );
