@@ -50,7 +50,6 @@ export default function CourtFormsPage() {
 
     setJurisdictions(data || []);
     
-    // Default to Saskatchewan
     const sk = data?.find(j => j.id === 'saskatchewan');
     if (sk) {
       setSelectedJurisdiction(sk);
@@ -85,34 +84,34 @@ export default function CourtFormsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-950 text-white flex items-center justify-center">
-        <p>Loading court forms...</p>
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <p className="text-gray-600">Loading court forms...</p>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 text-white">
+    <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <header className="sticky top-0 bg-slate-900/95 backdrop-blur border-b border-slate-800 z-40">
+      <header className="bg-white border-b border-gray-200 sticky top-0 z-40">
         <div className="max-w-4xl mx-auto px-4 py-4">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-3">
-              <Link href="/dashboard" className="text-slate-400 hover:text-white">←</Link>
-              <h1 className="text-xl font-bold">Court Forms Library</h1>
+              <Link href="/dashboard" className="text-gray-400 hover:text-red-600">←</Link>
+              <h1 className="text-xl font-bold text-gray-900">Court Forms Library</h1>
             </div>
           </div>
 
           {/* Jurisdiction Selector */}
           <div className="mb-4">
-            <label className="block text-sm text-slate-400 mb-2">Select Jurisdiction</label>
+            <label className="block text-sm text-gray-600 mb-2">Select Jurisdiction</label>
             <select
               value={selectedJurisdiction?.id || ''}
               onChange={(e) => {
                 const j = jurisdictions.find(j => j.id === e.target.value);
                 setSelectedJurisdiction(j);
               }}
-              className="w-full p-3 bg-slate-800 border border-slate-700 rounded-lg focus:outline-none focus:border-orange-500"
+              className="w-full p-3 bg-white border border-gray-300 rounded-lg focus:outline-none focus:border-red-500"
             >
               <optgroup label="🇨🇦 Canada">
                 {canadianJurisdictions.map(j => (
@@ -136,8 +135,8 @@ export default function CourtFormsPage() {
                   onClick={() => setSelectedCategory(cat)}
                   className={`px-3 py-1 rounded-full text-sm whitespace-nowrap ${
                     selectedCategory === cat
-                      ? "bg-orange-500 text-white"
-                      : "bg-slate-800 text-slate-300 hover:bg-slate-700"
+                      ? "bg-red-600 text-white"
+                      : "bg-gray-200 text-gray-700 hover:bg-gray-300"
                   }`}
                 >
                   {cat === "all" ? "All Forms" : cat}
@@ -150,12 +149,12 @@ export default function CourtFormsPage() {
 
       <main className="max-w-4xl mx-auto px-4 py-6">
         {forms.length === 0 ? (
-          <div className="bg-slate-900 border border-slate-800 rounded-xl p-6 text-center">
-            <p className="text-slate-400 mb-4">
+          <div className="bg-white border border-gray-200 rounded-xl p-6 text-center">
+            <p className="text-gray-600 mb-4">
               No forms available for {selectedJurisdiction?.name} yet.
             </p>
-            <p className="text-sm text-slate-500">
-              Forms for this jurisdiction will be added soon. Currently Saskatchewan has the most complete library.
+            <p className="text-sm text-gray-500">
+              Forms for this jurisdiction will be added soon. Currently Saskatchewan, Ontario, Alberta, Texas, and California have forms available.
             </p>
           </div>
         ) : (
@@ -163,20 +162,20 @@ export default function CourtFormsPage() {
             {filteredForms.map((form) => (
               <div
                 key={form.id}
-                className="bg-slate-900 border border-slate-800 rounded-xl p-4"
+                className="bg-white border border-gray-200 rounded-xl p-4"
               >
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-1">
-                      <span className="text-orange-400 font-mono text-sm">{form.form_number}</span>
+                      <span className="text-red-600 font-mono text-sm font-medium">{form.form_number}</span>
                       {form.category && (
-                        <span className="bg-slate-800 text-slate-400 text-xs px-2 py-0.5 rounded">
+                        <span className="bg-gray-100 text-gray-600 text-xs px-2 py-0.5 rounded">
                           {form.category}
                         </span>
                       )}
                     </div>
-                    <h3 className="font-semibold text-lg mb-2">{form.name}</h3>
-                    <p className="text-slate-400 text-sm">{form.description}</p>
+                    <h3 className="font-semibold text-gray-900 text-lg mb-2">{form.name}</h3>
+                    <p className="text-gray-600 text-sm">{form.description}</p>
                   </div>
 
                   {form.download_url && (
@@ -184,7 +183,7 @@ export default function CourtFormsPage() {
                       href={form.download_url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium flex-shrink-0"
+                      className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg text-sm font-medium flex-shrink-0"
                     >
                       📄 Download
                     </a>
@@ -196,14 +195,14 @@ export default function CourtFormsPage() {
         )}
 
         {/* Help Card */}
-        <div className="mt-6 bg-blue-500/10 border border-blue-500/30 rounded-xl p-4">
-          <h3 className="font-semibold text-blue-400 mb-2">💡 Need Help With a Form?</h3>
-          <p className="text-sm text-slate-400 mb-3">
+        <div className="mt-6 bg-red-50 border border-red-200 rounded-xl p-4">
+          <h3 className="font-semibold text-red-800 mb-2">💡 Need Help With a Form?</h3>
+          <p className="text-sm text-red-700 mb-3">
             Our AI assistant can explain what each form is for and how to fill it out.
           </p>
           <Link 
             href="/ai"
-            className="inline-block px-4 py-2 bg-blue-500 rounded-lg text-sm font-medium"
+            className="inline-block px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg text-sm font-medium"
           >
             Ask AI Assistant →
           </Link>
