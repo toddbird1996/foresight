@@ -134,6 +134,12 @@ export default function Dashboard() {
         >
           🤖 AI Assistant
         </Link>
+        <Link
+          href="/community"
+          className="bg-pink-600 text-white px-4 py-2 rounded hover:bg-pink-700"
+        >
+          💬 Community
+        </Link>
         <button
           onClick={handleLogout}
           className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
@@ -225,4 +231,4 @@ export default function Dashboard() {
       )}
     </div>
   );
-                    }
+        }
