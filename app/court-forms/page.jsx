@@ -8,6 +8,8 @@ import Link from "next/link";
 export default function CourtFormsPage() {
   const router = useRouter();
   const [user, setUser] = useState(null);
+  const [jurisdictions, setJurisdictions] = useState([]);
+  const [selectedJurisdiction, setSelectedJurisdiction] = useState(null);
   const [forms, setForms] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState("all");
@@ -22,25 +24,54 @@ export default function CourtFormsPage() {
       }
 
       setUser(user);
-      await fetchForms();
+      await fetchJurisdictions();
       setLoading(false);
     };
 
     init();
   }, []);
 
-  const fetchForms = async () => {
+  useEffect(() => {
+    if (selectedJurisdiction) {
+      fetchForms(selectedJurisdiction.id);
+    }
+  }, [selectedJurisdiction]);
+
+  const fetchJurisdictions = async () => {
+    const { data, error } = await supabase
+      .from("jurisdictions")
+      .select("*")
+      .order("display_order");
+
+    if (error) {
+      console.error("Error fetching jurisdictions:", error);
+      return;
+    }
+
+    setJurisdictions(data || []);
+    
+    // Default to Saskatchewan
+    const sk = data?.find(j => j.id === 'saskatchewan');
+    if (sk) {
+      setSelectedJurisdiction(sk);
+    } else if (data && data.length > 0) {
+      setSelectedJurisdiction(data[0]);
+    }
+  };
+
+  const fetchForms = async (jurisdictionId) => {
     const { data, error } = await supabase
       .from("forms")
       .select("*")
-      .eq("jurisdiction_id", "saskatchewan")
+      .eq("jurisdiction_id", jurisdictionId)
       .order("display_order", { ascending: true });
 
     if (error) {
       console.error("Error fetching forms:", error);
     } else {
-      setForms(data);
+      setForms(data || []);
     }
+    setSelectedCategory("all");
   };
 
   const categories = ["all", ...new Set(forms.map(f => f.category).filter(Boolean))];
@@ -48,6 +79,9 @@ export default function CourtFormsPage() {
   const filteredForms = selectedCategory === "all" 
     ? forms 
     : forms.filter(f => f.category === selectedCategory);
+
+  const canadianJurisdictions = jurisdictions.filter(j => j.country === 'Canada');
+  const usJurisdictions = jurisdictions.filter(j => j.country === 'USA');
 
   if (loading) {
     return (
@@ -67,32 +101,62 @@ export default function CourtFormsPage() {
               <Link href="/dashboard" className="text-slate-400 hover:text-white">←</Link>
               <h1 className="text-xl font-bold">Court Forms Library</h1>
             </div>
-            <span className="text-sm text-slate-400">Saskatchewan</span>
+          </div>
+
+          {/* Jurisdiction Selector */}
+          <div className="mb-4">
+            <label className="block text-sm text-slate-400 mb-2">Select Jurisdiction</label>
+            <select
+              value={selectedJurisdiction?.id || ''}
+              onChange={(e) => {
+                const j = jurisdictions.find(j => j.id === e.target.value);
+                setSelectedJurisdiction(j);
+              }}
+              className="w-full p-3 bg-slate-800 border border-slate-700 rounded-lg focus:outline-none focus:border-orange-500"
+            >
+              <optgroup label="🇨🇦 Canada">
+                {canadianJurisdictions.map(j => (
+                  <option key={j.id} value={j.id}>{j.name}</option>
+                ))}
+              </optgroup>
+              <optgroup label="🇺🇸 United States">
+                {usJurisdictions.map(j => (
+                  <option key={j.id} value={j.id}>{j.name}</option>
+                ))}
+              </optgroup>
+            </select>
           </div>
 
           {/* Category Filter */}
-          <div className="flex gap-2 overflow-x-auto pb-2">
-            {categories.map((cat) => (
-              <button
-                key={cat}
-                onClick={() => setSelectedCategory(cat)}
-                className={`px-3 py-1 rounded-full text-sm whitespace-nowrap ${
-                  selectedCategory === cat
-                    ? "bg-orange-500 text-white"
-                    : "bg-slate-800 text-slate-300 hover:bg-slate-700"
-                }`}
-              >
-                {cat === "all" ? "All Forms" : cat}
-              </button>
-            ))}
-          </div>
+          {forms.length > 0 && (
+            <div className="flex gap-2 overflow-x-auto pb-2">
+              {categories.map((cat) => (
+                <button
+                  key={cat}
+                  onClick={() => setSelectedCategory(cat)}
+                  className={`px-3 py-1 rounded-full text-sm whitespace-nowrap ${
+                    selectedCategory === cat
+                      ? "bg-orange-500 text-white"
+                      : "bg-slate-800 text-slate-300 hover:bg-slate-700"
+                  }`}
+                >
+                  {cat === "all" ? "All Forms" : cat}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
       </header>
 
       <main className="max-w-4xl mx-auto px-4 py-6">
-        {filteredForms.length === 0 ? (
-          <div className="bg-slate-900 border border-slate-800 rounded-xl p-6 text-center text-slate-400">
-            No forms found.
+        {forms.length === 0 ? (
+          <div className="bg-slate-900 border border-slate-800 rounded-xl p-6 text-center">
+            <p className="text-slate-400 mb-4">
+              No forms available for {selectedJurisdiction?.name} yet.
+            </p>
+            <p className="text-sm text-slate-500">
+              Forms for this jurisdiction will be added soon. Currently Saskatchewan has the most complete library.
+            </p>
           </div>
         ) : (
           <div className="space-y-4">
@@ -147,4 +211,4 @@ export default function CourtFormsPage() {
       </main>
     </div>
   );
-            }
+}
