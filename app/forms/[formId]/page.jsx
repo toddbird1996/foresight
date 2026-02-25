@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../../../lib/supabaseClient";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { use } from "react";
 
 export default function FormDetail({ params }) {
@@ -15,7 +16,6 @@ export default function FormDetail({ params }) {
   const [saving, setSaving] = useState(false);
   const [lastSaved, setLastSaved] = useState(null);
 
-  // Fetch the form
   useEffect(() => {
     const fetchForm = async () => {
       const { data: { user } } = await supabase.auth.getUser();
@@ -46,7 +46,6 @@ export default function FormDetail({ params }) {
     fetchForm();
   }, [formId, router]);
 
-  // Save content
   const handleSave = async () => {
     setSaving(true);
 
@@ -68,51 +67,67 @@ export default function FormDetail({ params }) {
   };
 
   if (loading) {
-    return <div className="p-6">Loading...</div>;
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <p className="text-gray-600">Loading...</p>
+      </div>
+    );
   }
 
   return (
-    <div className="p-6 max-w-4xl mx-auto">
+    <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="flex items-center justify-between mb-6">
-        <button
-          onClick={() => router.push("/dashboard")}
-          className="text-blue-500 hover:underline"
-        >
-          ← Back to Dashboard
-        </button>
-        
-        <div className="flex items-center space-x-4">
-          {lastSaved && (
-            <span className="text-sm text-gray-500">
-              Saved at {lastSaved}
-            </span>
-          )}
-          <button
-            onClick={handleSave}
-            disabled={saving}
-            className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 disabled:bg-gray-400"
-          >
-            {saving ? "Saving..." : "Save"}
-          </button>
+      <header className="bg-white border-b border-gray-200 sticky top-0 z-40">
+        <div className="max-w-4xl mx-auto px-4 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <Link href="/dashboard" className="text-gray-400 hover:text-red-600">←</Link>
+              <h1 className="text-xl font-bold text-gray-900">{form.title}</h1>
+            </div>
+            
+            <div className="flex items-center gap-4">
+              {lastSaved && (
+                <span className="text-sm text-gray-500">
+                  Saved at {lastSaved}
+                </span>
+              )}
+              <button
+                onClick={handleSave}
+                disabled={saving}
+                className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-medium disabled:bg-gray-400"
+              >
+                {saving ? "Saving..." : "Save"}
+              </button>
+            </div>
+          </div>
         </div>
-      </div>
+      </header>
 
-      {/* Form Title */}
-      <h1 className="text-2xl font-bold mb-4">{form.title}</h1>
+      <main className="max-w-4xl mx-auto px-4 py-6">
+        {/* Editor */}
+        <div className="bg-white border border-gray-200 rounded-xl p-6">
+          <textarea
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+            placeholder="Start typing your notes, evidence, or form details here..."
+            className="w-full h-96 p-4 border border-gray-300 rounded-lg resize-none focus:outline-none focus:border-red-500 text-gray-900"
+          />
+          
+          <p className="text-sm text-gray-500 mt-4">
+            Use this space to draft your documents, take notes, or prepare your case materials.
+          </p>
+        </div>
 
-      {/* Content Editor */}
-      <textarea
-        value={content}
-        onChange={(e) => setContent(e.target.value)}
-        placeholder="Start typing your notes, evidence, or form details here..."
-        className="w-full h-96 p-4 border rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
-      />
-
-      {/* Help Text */}
-      <p className="text-sm text-gray-500 mt-2">
-        Use this space to draft your documents, take notes, or prepare your case materials.
-      </p>
+        {/* Tips Card */}
+        <div className="mt-6 bg-red-50 border border-red-200 rounded-xl p-4">
+          <h3 className="font-semibold text-red-800 mb-2">💡 Tips</h3>
+          <ul className="text-sm text-red-700 space-y-1">
+            <li>• Keep your notes organized by topic or date</li>
+            <li>• Document important conversations and events</li>
+            <li>• Save frequently to avoid losing your work</li>
+          </ul>
+        </div>
+      </main>
     </div>
   );
 }
