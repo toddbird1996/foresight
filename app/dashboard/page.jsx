@@ -111,7 +111,7 @@ export default function Dashboard() {
 
       <div className="flex flex-wrap gap-4 mb-6">
         <Link
-          href="/filing-guide"
+          href="/filing"
           className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
         >
           📋 Filing Guide
@@ -231,4 +231,4 @@ export default function Dashboard() {
       )}
     </div>
   );
-        }
+}
