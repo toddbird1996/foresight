@@ -16,7 +16,6 @@ export default function Dashboard() {
   const [editingFormTitle, setEditingFormTitle] = useState("");
   const [creatingForm, setCreatingForm] = useState(false);
 
-  // Fetch logged-in user
   useEffect(() => {
     supabase.auth.getUser().then(({ data: { user } }) => {
       if (!user) {
@@ -28,7 +27,6 @@ export default function Dashboard() {
     });
   }, []);
 
-  // Fetch user's forms
   const fetchUserForms = async (userId) => {
     setLoading(true);
     const { data, error } = await supabase
@@ -43,14 +41,12 @@ export default function Dashboard() {
     setLoading(false);
   };
 
-  // Logout
   const handleLogout = async () => {
     const { error } = await supabase.auth.signOut();
     if (error) alert("Logout error: " + error.message);
     else router.push("/auth/login");
   };
 
-  // Create a new form
   const handleCreateForm = async () => {
     if (!newFormTitle.trim()) return alert("Form title cannot be empty");
     setCreatingForm(true);
@@ -66,13 +62,11 @@ export default function Dashboard() {
     setCreatingForm(false);
   };
 
-  // Start editing a form
   const startEditForm = (form) => {
     setEditingFormId(form.id);
     setEditingFormTitle(form.title);
   };
 
-  // Save edited form
   const saveEditForm = async () => {
     if (!editingFormTitle.trim()) return alert("Form title cannot be empty");
 
@@ -87,13 +81,11 @@ export default function Dashboard() {
     fetchUserForms(user.id);
   };
 
-  // Cancel editing
   const cancelEdit = () => {
     setEditingFormId(null);
     setEditingFormTitle("");
   };
 
-  // Delete a form
   const deleteForm = async (id) => {
     if (!confirm("Are you sure you want to delete this form?")) return;
 
@@ -105,136 +97,202 @@ export default function Dashboard() {
   if (!user) return null;
 
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold mb-4">Dashboard</h1>
-      <p className="mb-4">Welcome, {user.email}</p>
+    <div className="min-h-screen bg-gray-50">
+      {/* Header */}
+      <header className="bg-white border-b border-gray-200 sticky top-0 z-40">
+        <div className="max-w-6xl mx-auto px-4 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-red-600 rounded-lg flex items-center justify-center">
+                <span className="text-white font-bold text-xl">F</span>
+              </div>
+              <h1 className="text-xl font-bold text-gray-900">Foresight</h1>
+            </div>
+            <div className="flex items-center gap-4">
+              <span className="text-sm text-gray-600">{user.email}</span>
+              <Link
+                href="/profile"
+                className="text-gray-600 hover:text-red-600"
+              >
+                👤
+              </Link>
+            </div>
+          </div>
+        </div>
+      </header>
 
-      <div className="flex flex-wrap gap-4 mb-6">
-        <Link
-          href="/filing"
-          className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
-        >
-          📋 Filing Guide
-        </Link>
-        <Link
-          href="/deadlines"
-          className="bg-orange-500 text-white px-4 py-2 rounded hover:bg-orange-600"
-        >
-          ⏰ Deadlines
-        </Link>
-        <Link
-          href="/court-forms"
-          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-        >
-          📄 Court Forms
-        </Link>
-        <Link
-          href="/ai"
-          className="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700"
-        >
-          🤖 AI Assistant
-        </Link>
-        <Link
-          href="/community"
-          className="bg-pink-600 text-white px-4 py-2 rounded hover:bg-pink-700"
-        >
-          💬 Community
-        </Link>
-        <Link
-          href="/pricing"
-          className="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600"
-        >
-          ⭐ Pricing
-        </Link>
-        <button
-          onClick={handleLogout}
-          className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
-        >
-          Logout
-        </button>
-      </div>
+      <main className="max-w-6xl mx-auto px-4 py-8">
+        {/* Welcome */}
+        <div className="mb-8">
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">Welcome back!</h2>
+          <p className="text-gray-600">Manage your custody case from one place.</p>
+        </div>
 
-      {/* New Form Creation */}
-      <div className="mb-6 flex flex-col md:flex-row md:items-center md:space-x-4">
-        <input
-          type="text"
-          placeholder="New form title"
-          value={newFormTitle}
-          onChange={(e) => setNewFormTitle(e.target.value)}
-          className="border p-2 rounded w-full md:w-auto"
-        />
-        <button
-          onClick={handleCreateForm}
-          disabled={creatingForm}
-          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 mt-2 md:mt-0"
-        >
-          {creatingForm ? "Creating..." : "Create Form"}
-        </button>
-      </div>
+        {/* Navigation Cards */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+          <Link
+            href="/filing"
+            className="bg-white border border-gray-200 rounded-xl p-4 hover:border-red-500 hover:shadow-md transition-all"
+          >
+            <div className="text-2xl mb-2">📋</div>
+            <h3 className="font-semibold text-gray-900">Filing Guide</h3>
+            <p className="text-sm text-gray-500">Step-by-step process</p>
+          </Link>
 
-      <h2 className="text-xl font-semibold mb-2">Your Forms</h2>
+          <Link
+            href="/deadlines"
+            className="bg-white border border-gray-200 rounded-xl p-4 hover:border-red-500 hover:shadow-md transition-all"
+          >
+            <div className="text-2xl mb-2">⏰</div>
+            <h3 className="font-semibold text-gray-900">Deadlines</h3>
+            <p className="text-sm text-gray-500">Track important dates</p>
+          </Link>
 
-      {loading ? (
-        <p>Loading your forms...</p>
-      ) : userForms.length === 0 ? (
-        <p>You have no forms yet.</p>
-      ) : (
-        <ul className="space-y-2">
-          {userForms.map((form) => (
-            <li
-              key={form.id}
-              className="border p-4 rounded shadow flex flex-col md:flex-row md:justify-between items-start md:items-center"
+          <Link
+            href="/court-forms"
+            className="bg-white border border-gray-200 rounded-xl p-4 hover:border-red-500 hover:shadow-md transition-all"
+          >
+            <div className="text-2xl mb-2">📄</div>
+            <h3 className="font-semibold text-gray-900">Court Forms</h3>
+            <p className="text-sm text-gray-500">Download official forms</p>
+          </Link>
+
+          <Link
+            href="/ai"
+            className="bg-white border border-gray-200 rounded-xl p-4 hover:border-red-500 hover:shadow-md transition-all"
+          >
+            <div className="text-2xl mb-2">🤖</div>
+            <h3 className="font-semibold text-gray-900">AI Assistant</h3>
+            <p className="text-sm text-gray-500">Get instant answers</p>
+          </Link>
+
+          <Link
+            href="/community"
+            className="bg-white border border-gray-200 rounded-xl p-4 hover:border-red-500 hover:shadow-md transition-all"
+          >
+            <div className="text-2xl mb-2">💬</div>
+            <h3 className="font-semibold text-gray-900">Community</h3>
+            <p className="text-sm text-gray-500">Connect with others</p>
+          </Link>
+
+          <Link
+            href="/pricing"
+            className="bg-white border border-gray-200 rounded-xl p-4 hover:border-red-500 hover:shadow-md transition-all"
+          >
+            <div className="text-2xl mb-2">⭐</div>
+            <h3 className="font-semibold text-gray-900">Pricing</h3>
+            <p className="text-sm text-gray-500">Upgrade your plan</p>
+          </Link>
+
+          <Link
+            href="/profile"
+            className="bg-white border border-gray-200 rounded-xl p-4 hover:border-red-500 hover:shadow-md transition-all"
+          >
+            <div className="text-2xl mb-2">👤</div>
+            <h3 className="font-semibold text-gray-900">Profile</h3>
+            <p className="text-sm text-gray-500">Account settings</p>
+          </Link>
+
+          <button
+            onClick={handleLogout}
+            className="bg-white border border-gray-200 rounded-xl p-4 hover:border-red-500 hover:shadow-md transition-all text-left"
+          >
+            <div className="text-2xl mb-2">🚪</div>
+            <h3 className="font-semibold text-gray-900">Logout</h3>
+            <p className="text-sm text-gray-500">Sign out of account</p>
+          </button>
+        </div>
+
+        {/* My Documents Section */}
+        <div className="bg-white border border-gray-200 rounded-xl p-6">
+          <div className="flex items-center justify-between mb-6">
+            <h3 className="text-lg font-semibold text-gray-900">My Documents</h3>
+          </div>
+
+          {/* New Form Creation */}
+          <div className="flex gap-3 mb-6">
+            <input
+              type="text"
+              placeholder="New document title..."
+              value={newFormTitle}
+              onChange={(e) => setNewFormTitle(e.target.value)}
+              className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-red-500"
+            />
+            <button
+              onClick={handleCreateForm}
+              disabled={creatingForm}
+              className="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:bg-gray-400 font-medium"
             >
-              {editingFormId === form.id ? (
-                <div className="flex flex-col md:flex-row md:items-center md:space-x-2 w-full">
-                  <input
-                    type="text"
-                    value={editingFormTitle}
-                    onChange={(e) => setEditingFormTitle(e.target.value)}
-                    className="border p-2 rounded flex-1"
-                  />
-                  <button
-                    onClick={saveEditForm}
-                    className="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 mt-2 md:mt-0"
-                  >
-                    Save
-                  </button>
-                  <button
-                    onClick={cancelEdit}
-                    className="bg-gray-500 text-white px-3 py-1 rounded hover:bg-gray-600 mt-2 md:mt-0"
-                  >
-                    Cancel
-                  </button>
-                </div>
-              ) : (
-                <div className="flex flex-col md:flex-row md:items-center md:space-x-4 w-full justify-between">
-                  <Link
-                    href={`/forms/${form.id}`}
-                    className="font-semibold text-blue-500 hover:underline"
-                  >
-                    {form.title}
-                  </Link>
+              {creatingForm ? "Creating..." : "Create"}
+            </button>
+          </div>
 
-                  <div className="space-x-2 mt-2 md:mt-0">
-                    <button
-                      onClick={() => startEditForm(form)}
-                      className="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600"
-                    >
-                      Edit
-                    </button>
-                    <button
-                      onClick={() => deleteForm(form.id)}
-                      className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700"
-                    >
-                      Delete
-                    </button>
-                  </div>
-                </div>
-              )}
-            </li>
-          ))}
-        </ul>
-      )}
+          {/* Forms List */}
+          {loading ? (
+            <p className="text-gray-500">Loading your documents...</p>
+          ) : userForms.length === 0 ? (
+            <div className="text-center py-8">
+              <div className="text-4xl mb-3">📝</div>
+              <p className="text-gray-500">No documents yet. Create your first one above!</p>
+            </div>
+          ) : (
+            <ul className="space-y-3">
+              {userForms.map((form) => (
+                <li
+                  key={form.id}
+                  className="border border-gray-200 rounded-lg p-4 hover:border-gray-300 transition-colors"
+                >
+                  {editingFormId === form.id ? (
+                    <div className="flex items-center gap-3">
+                      <input
+                        type="text"
+                        value={editingFormTitle}
+                        onChange={(e) => setEditingFormTitle(e.target.value)}
+                        className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-red-500"
+                      />
+                      <button
+                        onClick={saveEditForm}
+                        className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm font-medium"
+                      >
+                        Save
+                      </button>
+                      <button
+                        onClick={cancelEdit}
+                        className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 text-sm font-medium"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="flex items-center justify-between">
+                      <Link
+                        href={`/forms/${form.id}`}
+                        className="font-medium text-gray-900 hover:text-red-600"
+                      >
+                        {form.title}
+                      </Link>
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={() => startEditForm(form)}
+                          className="px-3 py-1 text-sm text-gray-600 hover:text-red-600"
+                        >
+                          Edit
+                        </button>
+                        <button
+                          onClick={() => deleteForm(form.id)}
+                          className="px-3 py-1 text-sm text-red-600 hover:text-red-800"
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      </main>
     </div>
   );
-            }
+      }
