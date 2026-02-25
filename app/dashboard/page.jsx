@@ -105,24 +105,26 @@ export default function Dashboard() {
   if (!user) return null;
 
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold mb-4">Dashboard</h1>
-      <p className="mb-4">Welcome, {user.email}</p>
-
-      <div className="flex gap-4 mb-6">
-        <Link
-          href="/filing-guide"
-          className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
-        >
-          📋 Filing Guide
-        </Link>
-        <button
-          onClick={handleLogout}
-          className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
-        >
-          Logout
-        </button>
-      </div>
+  <div className="flex flex-wrap gap-4 mb-6">
+  <Link
+    href="/filing-guide"
+    className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
+  >
+    📋 Filing Guide
+  </Link>
+  <Link
+    href="/deadlines"
+    className="bg-orange-500 text-white px-4 py-2 rounded hover:bg-orange-600"
+  >
+    ⏰ Deadlines
+  </Link>
+  <button
+    onClick={handleLogout}
+    className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
+  >
+    Logout
+  </button>
+</div>
 
       {/* New Form Creation */}
       <div className="mb-6 flex flex-col md:flex-row md:items-center md:space-x-4">
