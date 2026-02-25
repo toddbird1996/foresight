@@ -32,7 +32,7 @@ export default function Dashboard() {
   const fetchUserForms = async (userId) => {
     setLoading(true);
     const { data, error } = await supabase
-      .from("user_forms")  // ← CHANGED
+      .from("user_forms")
       .select("*")
       .eq("user_id", userId)
       .order("created_at", { ascending: false });
@@ -55,7 +55,7 @@ export default function Dashboard() {
     if (!newFormTitle.trim()) return alert("Form title cannot be empty");
     setCreatingForm(true);
 
-    const { error } = await supabase.from("user_forms").insert([  // ← CHANGED
+    const { error } = await supabase.from("user_forms").insert([
       { title: newFormTitle, user_id: user.id },
     ]);
 
@@ -77,7 +77,7 @@ export default function Dashboard() {
     if (!editingFormTitle.trim()) return alert("Form title cannot be empty");
 
     const { error } = await supabase
-      .from("user_forms")  // ← CHANGED
+      .from("user_forms")
       .update({ title: editingFormTitle })
       .eq("id", editingFormId);
 
@@ -97,7 +97,7 @@ export default function Dashboard() {
   const deleteForm = async (id) => {
     if (!confirm("Are you sure you want to delete this form?")) return;
 
-    const { error } = await supabase.from("user_forms").delete().eq("id", id);  // ← CHANGED
+    const { error } = await supabase.from("user_forms").delete().eq("id", id);
     if (error) alert("Error deleting form: " + error.message);
     else fetchUserForms(user.id);
   };
@@ -109,12 +109,20 @@ export default function Dashboard() {
       <h1 className="text-2xl font-bold mb-4">Dashboard</h1>
       <p className="mb-4">Welcome, {user.email}</p>
 
-      <button
-        onClick={handleLogout}
-        className="bg-red-600 text-white p-2 rounded hover:bg-red-700 mb-6"
-      >
-        Logout
-      </button>
+      <div className="flex gap-4 mb-6">
+        <Link
+          href="/filing-guide"
+          className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
+        >
+          📋 Filing Guide
+        </Link>
+        <button
+          onClick={handleLogout}
+          className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
+        >
+          Logout
+        </button>
+      </div>
 
       {/* New Form Creation */}
       <div className="mb-6 flex flex-col md:flex-row md:items-center md:space-x-4">
