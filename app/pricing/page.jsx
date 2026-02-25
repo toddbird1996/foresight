@@ -55,7 +55,7 @@ export default function PricingPage() {
         'Mentor access',
       ],
       buttonText: userTier === 'bronze' ? 'Current Plan' : 'Downgrade',
-      buttonStyle: 'bg-slate-700 hover:bg-slate-600',
+      buttonStyle: 'bg-gray-200 hover:bg-gray-300 text-gray-700',
       popular: false,
     },
     {
@@ -76,7 +76,7 @@ export default function PricingPage() {
         'Mentor access',
       ],
       buttonText: userTier === 'silver' ? 'Current Plan' : 'Upgrade to Silver',
-      buttonStyle: 'bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600',
+      buttonStyle: 'bg-red-600 hover:bg-red-700 text-white',
       popular: true,
     },
     {
@@ -95,7 +95,7 @@ export default function PricingPage() {
       ],
       notIncluded: [],
       buttonText: userTier === 'gold' ? 'Current Plan' : 'Upgrade to Gold',
-      buttonStyle: 'bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700',
+      buttonStyle: 'bg-gray-900 hover:bg-gray-800 text-white',
       popular: false,
     },
   ];
@@ -127,20 +127,20 @@ export default function PricingPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-950 text-white flex items-center justify-center">
-        <p>Loading...</p>
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <p className="text-gray-600">Loading...</p>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 text-white">
+    <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <header className="bg-slate-900/95 border-b border-slate-800">
+      <header className="bg-white border-b border-gray-200">
         <div className="max-w-6xl mx-auto px-4 py-4">
           <div className="flex items-center gap-3">
-            <Link href="/dashboard" className="text-slate-400 hover:text-white">←</Link>
-            <h1 className="text-xl font-bold">Pricing</h1>
+            <Link href="/dashboard" className="text-gray-400 hover:text-red-600">←</Link>
+            <h1 className="text-xl font-bold text-gray-900">Pricing</h1>
           </div>
         </div>
       </header>
@@ -148,8 +148,8 @@ export default function PricingPage() {
       <main className="max-w-6xl mx-auto px-4 py-12">
         {/* Title */}
         <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold mb-4">Choose Your Plan</h2>
-          <p className="text-slate-400 max-w-2xl mx-auto">
+          <h2 className="text-3xl font-bold text-gray-900 mb-4">Choose Your Plan</h2>
+          <p className="text-gray-600 max-w-2xl mx-auto">
             Get the support you need to navigate your custody case. All plans include access to our community and filing guides.
           </p>
         </div>
@@ -159,37 +159,37 @@ export default function PricingPage() {
           {plans.map((plan) => (
             <div
               key={plan.id}
-              className={`relative bg-slate-900 border rounded-2xl p-6 ${
-                plan.popular ? 'border-orange-500' : 'border-slate-800'
+              className={`relative bg-white border rounded-2xl p-6 ${
+                plan.popular ? 'border-red-500 shadow-lg' : 'border-gray-200'
               }`}
             >
               {plan.popular && (
                 <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                  <span className="bg-gradient-to-r from-orange-500 to-amber-500 text-white text-xs font-bold px-3 py-1 rounded-full">
+                  <span className="bg-red-600 text-white text-xs font-bold px-3 py-1 rounded-full">
                     MOST POPULAR
                   </span>
                 </div>
               )}
 
               <div className="text-center mb-6">
-                <h3 className="text-xl font-bold mb-2">{plan.name}</h3>
+                <h3 className="text-xl font-bold text-gray-900 mb-2">{plan.name}</h3>
                 <div className="flex items-baseline justify-center gap-1">
-                  <span className="text-4xl font-bold">{plan.price}</span>
-                  <span className="text-slate-400">{plan.period}</span>
+                  <span className="text-4xl font-bold text-gray-900">{plan.price}</span>
+                  <span className="text-gray-500">{plan.period}</span>
                 </div>
-                <p className="text-slate-400 text-sm mt-2">{plan.description}</p>
+                <p className="text-gray-600 text-sm mt-2">{plan.description}</p>
               </div>
 
               {/* Features */}
               <ul className="space-y-3 mb-6">
                 {plan.features.map((feature, i) => (
-                  <li key={i} className="flex items-center gap-2 text-sm">
-                    <span className="text-green-400">✓</span>
+                  <li key={i} className="flex items-center gap-2 text-sm text-gray-700">
+                    <span className="text-green-600">✓</span>
                     {feature}
                   </li>
                 ))}
                 {plan.notIncluded.map((feature, i) => (
-                  <li key={i} className="flex items-center gap-2 text-sm text-slate-500">
+                  <li key={i} className="flex items-center gap-2 text-sm text-gray-400">
                     <span>✗</span>
                     {feature}
                   </li>
@@ -212,38 +212,38 @@ export default function PricingPage() {
 
         {/* FAQ */}
         <div className="mt-16 max-w-3xl mx-auto">
-          <h3 className="text-2xl font-bold text-center mb-8">Frequently Asked Questions</h3>
+          <h3 className="text-2xl font-bold text-gray-900 text-center mb-8">Frequently Asked Questions</h3>
           
           <div className="space-y-4">
-            <div className="bg-slate-900 border border-slate-800 rounded-xl p-4">
-              <h4 className="font-semibold mb-2">Can I cancel anytime?</h4>
-              <p className="text-slate-400 text-sm">Yes! You can cancel or downgrade your subscription at any time. You'll keep access until the end of your billing period.</p>
+            <div className="bg-white border border-gray-200 rounded-xl p-4">
+              <h4 className="font-semibold text-gray-900 mb-2">Can I cancel anytime?</h4>
+              <p className="text-gray-600 text-sm">Yes! You can cancel or downgrade your subscription at any time. You'll keep access until the end of your billing period.</p>
             </div>
             
-            <div className="bg-slate-900 border border-slate-800 rounded-xl p-4">
-              <h4 className="font-semibold mb-2">Is the AI assistant a lawyer?</h4>
-              <p className="text-slate-400 text-sm">No. The AI provides general information about custody procedures, not legal advice. Always consult a lawyer for your specific situation.</p>
+            <div className="bg-white border border-gray-200 rounded-xl p-4">
+              <h4 className="font-semibold text-gray-900 mb-2">Is the AI assistant a lawyer?</h4>
+              <p className="text-gray-600 text-sm">No. The AI provides general information about custody procedures, not legal advice. Always consult a lawyer for your specific situation.</p>
             </div>
             
-            <div className="bg-slate-900 border border-slate-800 rounded-xl p-4">
-              <h4 className="font-semibold mb-2">What payment methods do you accept?</h4>
-              <p className="text-slate-400 text-sm">We accept all major credit cards through Stripe. Your payment information is securely processed and never stored on our servers.</p>
+            <div className="bg-white border border-gray-200 rounded-xl p-4">
+              <h4 className="font-semibold text-gray-900 mb-2">What payment methods do you accept?</h4>
+              <p className="text-gray-600 text-sm">We accept all major credit cards through Stripe. Your payment information is securely processed and never stored on our servers.</p>
             </div>
 
-            <div className="bg-slate-900 border border-slate-800 rounded-xl p-4">
-              <h4 className="font-semibold mb-2">Do you offer refunds?</h4>
-              <p className="text-slate-400 text-sm">We offer a 7-day money-back guarantee. If you're not satisfied, contact us within 7 days for a full refund.</p>
+            <div className="bg-white border border-gray-200 rounded-xl p-4">
+              <h4 className="font-semibold text-gray-900 mb-2">Do you offer refunds?</h4>
+              <p className="text-gray-600 text-sm">We offer a 7-day money-back guarantee. If you're not satisfied, contact us within 7 days for a full refund.</p>
             </div>
           </div>
         </div>
 
         {/* Contact */}
         <div className="mt-12 text-center">
-          <p className="text-slate-400">
-            Have questions? <a href="mailto:support@foresight.app" className="text-orange-400 hover:underline">Contact us</a>
+          <p className="text-gray-600">
+            Have questions? <a href="mailto:support@foresight.app" className="text-red-600 hover:underline">Contact us</a>
           </p>
         </div>
       </main>
     </div>
   );
-      }
+          }
