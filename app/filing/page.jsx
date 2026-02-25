@@ -1,57 +1,119 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-
-const SAMPLE_PHASES = [
-  {
-    id: 'pre-filing',
-    name: 'Pre-Filing Requirements',
-    steps: [
-      { id: 1, title: 'Complete Family Dispute Resolution (FDR)', completed: true, required: true },
-      { id: 2, title: 'Take "For Kids\' Sake" Parenting Course', completed: true, required: true },
-      { id: 3, title: 'Gather Financial Documents', completed: false, required: true },
-    ]
-  },
-  {
-    id: 'filing',
-    name: 'Initial Filing',
-    steps: [
-      { id: 4, title: 'Prepare Petition (Form 70A)', completed: false, required: true },
-      { id: 5, title: 'Complete Financial Statement (Form 70D)', completed: false, required: true },
-      { id: 6, title: 'Prepare Supporting Affidavit', completed: false, required: true },
-      { id: 7, title: 'File Documents with Court', completed: false, required: true },
-    ]
-  },
-  {
-    id: 'service',
-    name: 'Service',
-    steps: [
-      { id: 8, title: 'Serve the Respondent', completed: false, required: true },
-      { id: 9, title: 'File Proof of Service', completed: false, required: true },
-    ]
-  },
-];
+import { supabase } from '../../lib/supabaseClient';
+import { useRouter } from 'next/navigation';
 
 export default function FilingGuidePage() {
-  const [phases, setPhases] = useState(SAMPLE_PHASES);
-  
-  const totalSteps = phases.flatMap(p => p.steps).length;
-  const completedSteps = phases.flatMap(p => p.steps).filter(s => s.completed).length;
-  const progress = Math.round((completedSteps / totalSteps) * 100);
+  const router = useRouter();
+  const [user, setUser] = useState(null);
+  const [phases, setPhases] = useState([]);
+  const [progress, setProgress] = useState({});
+  const [loading, setLoading] = useState(true);
 
-  const toggleStep = (phaseId, stepId) => {
-    setPhases(phases.map(phase => {
-      if (phase.id === phaseId) {
-        return {
-          ...phase,
-          steps: phase.steps.map(step => 
-            step.id === stepId ? { ...step, completed: !step.completed } : step
-          )
-        };
+  useEffect(() => {
+    const init = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (!user) {
+        router.push("/auth/login");
+        return;
       }
-      return phase;
+      
+      setUser(user);
+      await fetchFilingGuide();
+      await fetchUserProgress(user.id);
+      setLoading(false);
+    };
+
+    init();
+  }, []);
+
+  const fetchFilingGuide = async () => {
+    const { data: phasesData, error: phasesError } = await supabase
+      .from("filing_phases")
+      .select("*")
+      .eq("jurisdiction_id", "saskatchewan")
+      .order("display_order");
+
+    if (phasesError) {
+      console.error("Error fetching phases:", phasesError);
+      return;
+    }
+
+    const { data: stepsData, error: stepsError } = await supabase
+      .from("filing_steps")
+      .select("*")
+      .order("display_order");
+
+    if (stepsError) {
+      console.error("Error fetching steps:", stepsError);
+      return;
+    }
+
+    const phasesWithSteps = phasesData.map(phase => ({
+      ...phase,
+      steps: stepsData.filter(step => step.phase_id === phase.id)
     }));
+
+    setPhases(phasesWithSteps);
   };
+
+  const fetchUserProgress = async (userId) => {
+    const { data, error } = await supabase
+      .from("user_progress")
+      .select("*")
+      .eq("user_id", userId);
+
+    if (error) {
+      console.error("Error fetching progress:", error);
+      return;
+    }
+
+    const progressMap = {};
+    data.forEach(p => {
+      progressMap[p.step_id] = p.completed;
+    });
+    setProgress(progressMap);
+  };
+
+  const toggleStep = async (stepId) => {
+    const isCompleted = !progress[stepId];
+
+    // Update UI immediately
+    setProgress(prev => ({ ...prev, [stepId]: isCompleted }));
+
+    // Check if record exists
+    const { data: existing } = await supabase
+      .from("user_progress")
+      .select("id")
+      .eq("user_id", user.id)
+      .eq("step_id", stepId)
+      .single();
+
+    if (existing) {
+      await supabase
+        .from("user_progress")
+        .update({ completed: isCompleted, completed_at: isCompleted ? new Date().toISOString() : null })
+        .eq("id", existing.id);
+    } else {
+      await supabase
+        .from("user_progress")
+        .insert({ user_id: user.id, step_id: stepId, completed: isCompleted, completed_at: isCompleted ? new Date().toISOString() : null });
+    }
+  };
+
+  const totalSteps = phases.flatMap(p => p.steps || []).length;
+  const completedSteps = phases.flatMap(p => p.steps || []).filter(s => progress[s.id]).length;
+  const progressPercent = totalSteps > 0 ? Math.round((completedSteps / totalSteps) * 100) : 0;
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-slate-950 text-white flex items-center justify-center">
+        <p>Loading filing guide...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-slate-950 text-white">
@@ -70,12 +132,12 @@ export default function FilingGuidePage() {
           <div>
             <div className="flex justify-between text-sm mb-2">
               <span>Progress</span>
-              <span className="text-orange-400">{completedSteps}/{totalSteps} steps ({progress}%)</span>
+              <span className="text-orange-400">{completedSteps}/{totalSteps} steps ({progressPercent}%)</span>
             </div>
             <div className="h-2 bg-slate-800 rounded-full overflow-hidden">
               <div 
                 className="h-full bg-gradient-to-r from-orange-500 to-amber-500 transition-all"
-                style={{ width: `${progress}%` }}
+                style={{ width: `${progressPercent}%` }}
               />
             </div>
           </div>
@@ -91,36 +153,37 @@ export default function FilingGuidePage() {
                 <div className="w-8 h-8 rounded-full bg-orange-500/20 flex items-center justify-center text-orange-400 font-bold">
                   {phaseIndex + 1}
                 </div>
-                <h2 className="font-semibold">{phase.name}</h2>
+                <div>
+                  <h2 className="font-semibold">{phase.name}</h2>
+                  <p className="text-sm text-slate-400">{phase.description}</p>
+                </div>
               </div>
             </div>
             
             <div className="p-4 space-y-3">
-              {phase.steps.map((step) => (
+              {phase.steps && phase.steps.map((step) => (
                 <div 
                   key={step.id}
-                  className={`flex items-center gap-3 p-3 rounded-lg transition-colors ${
-                    step.completed ? 'bg-green-500/10' : 'bg-slate-800/50'
+                  className={`flex items-start gap-3 p-3 rounded-lg transition-colors ${
+                    progress[step.id] ? 'bg-green-500/10' : 'bg-slate-800/50'
                   }`}
                 >
                   <button
-                    onClick={() => toggleStep(phase.id, step.id)}
-                    className={`w-6 h-6 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${
-                      step.completed
+                    onClick={() => toggleStep(step.id)}
+                    className={`w-6 h-6 rounded-full border-2 flex items-center justify-center flex-shrink-0 mt-0.5 ${
+                      progress[step.id]
                         ? 'bg-green-500 border-green-500 text-white'
                         : 'border-slate-600 hover:border-green-500'
                     }`}
                   >
-                    {step.completed && '✓'}
+                    {progress[step.id] && '✓'}
                   </button>
                   <div className="flex-1">
-                    <div className={step.completed ? 'text-slate-400 line-through' : ''}>
+                    <div className={`font-medium ${progress[step.id] ? 'text-slate-400 line-through' : ''}`}>
                       {step.title}
                     </div>
+                    <p className="text-sm text-slate-500">{step.description}</p>
                   </div>
-                  {step.required && (
-                    <span className="text-xs text-orange-400">Required</span>
-                  )}
                 </div>
               ))}
             </div>
@@ -143,4 +206,4 @@ export default function FilingGuidePage() {
       </main>
     </div>
   );
-}
+      }
