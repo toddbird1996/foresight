@@ -1,17 +1,46 @@
 'use client';
 import React, { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
-
-// Simulated user - in production, get from auth
-const mockUser = { id: '123', tier: 'bronze' }; // Change to 'silver' or 'gold' to test
+import { supabase } from '../../lib/supabaseClient';
+import { useRouter } from 'next/navigation';
 
 export default function AIPage() {
+  const router = useRouter();
+  const [user, setUser] = useState(null);
+  const [userTier, setUserTier] = useState('bronze');
+  const [loading, setLoading] = useState(true);
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [sending, setSending] = useState(false);
   const messagesEndRef = useRef(null);
 
-  const isPaidUser = mockUser.tier !== 'bronze';
+  useEffect(() => {
+    const init = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+
+      if (!user) {
+        router.push("/auth/login");
+        return;
+      }
+
+      setUser(user);
+
+      // Get user tier from users table
+      const { data: profile } = await supabase
+        .from("users")
+        .select("tier")
+        .eq("id", user.id)
+        .single();
+
+      if (profile?.tier) {
+        setUserTier(profile.tier);
+      }
+
+      setLoading(false);
+    };
+
+    init();
+  }, []);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -21,13 +50,15 @@ export default function AIPage() {
     scrollToBottom();
   }, [messages]);
 
+  const isPaidUser = userTier !== 'bronze';
+
   const sendMessage = async () => {
-    if (!input.trim() || loading) return;
+    if (!input.trim() || sending) return;
 
     const userMessage = { role: 'user', content: input };
     setMessages(prev => [...prev, userMessage]);
     setInput('');
-    setLoading(true);
+    setSending(true);
 
     try {
       const res = await fetch('/api/ai/chat', {
@@ -35,7 +66,7 @@ export default function AIPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           message: input,
-          userId: mockUser.id,
+          userId: user.id,
           jurisdiction: 'saskatchewan'
         })
       });
@@ -54,9 +85,17 @@ export default function AIPage() {
     } catch (err) {
       setMessages(prev => [...prev, { role: 'assistant', content: 'Sorry, something went wrong.' }]);
     } finally {
-      setLoading(false);
+      setSending(false);
     }
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-slate-950 text-white flex items-center justify-center">
+        <p>Loading...</p>
+      </div>
+    );
+  }
 
   // Show upgrade gate for free users
   if (!isPaidUser) {
@@ -121,7 +160,7 @@ export default function AIPage() {
         <Link href="/dashboard" className="text-slate-400 hover:text-white">←</Link>
         <h1 className="font-bold">AI Assistant</h1>
         <span className="ml-auto text-xs text-slate-500">
-          {mockUser.tier === 'gold' ? 'Unlimited' : '25 queries/day'}
+          {userTier === 'gold' ? 'Unlimited' : '25 queries/day'}
         </span>
       </header>
 
@@ -131,7 +170,7 @@ export default function AIPage() {
           <div className="text-center py-12">
             <div className="text-4xl mb-4">🤖</div>
             <h2 className="text-xl font-semibold mb-2">How can I help you today?</h2>
-            <p className="text-slate-400 mb-6">Ask me anything about custody procedures in Canada.</p>
+            <p className="text-slate-400 mb-6">Ask me anything about custody procedures in Saskatchewan.</p>
             <div className="flex flex-wrap justify-center gap-2">
               {['How do I file for custody?', 'What is a JCC?', 'How long does the process take?'].map((q, i) => (
                 <button
@@ -163,7 +202,7 @@ export default function AIPage() {
           </div>
         ))}
 
-        {loading && (
+        {sending && (
           <div className="flex gap-3">
             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-orange-500 to-amber-500 flex items-center justify-center">
               🤖
@@ -193,7 +232,7 @@ export default function AIPage() {
           />
           <button
             onClick={sendMessage}
-            disabled={loading || !input.trim()}
+            disabled={sending || !input.trim()}
             className="px-6 py-3 bg-orange-500 rounded-xl font-medium disabled:opacity-50"
           >
             Send
@@ -202,4 +241,4 @@ export default function AIPage() {
       </div>
     </div>
   );
-}
+      }
