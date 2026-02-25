@@ -1,23 +1,151 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
-
-const SAMPLE_CHANNELS = [
-  { id: 'sk-parents', name: 'Saskatchewan Parents', icon: '⚖️', unread: 3, category: 'legal' },
-  { id: 'high-conflict', name: 'High Conflict', icon: '🔥', unread: 0, category: 'support' },
-  { id: 'mental-health', name: 'Mental Health', icon: '💚', unread: 1, category: 'support' },
-  { id: 'gaming', name: 'Gaming Lounge', icon: '🎮', unread: 0, category: 'hobbies' },
-];
-
-const SAMPLE_MESSAGES = [
-  { id: 1, user: 'Sarah M.', avatar: 'S', message: 'Just filed my response today! The AI assistant really helped me understand what to include.', time: '10 min ago' },
-  { id: 2, user: 'Mike T.', avatar: 'M', message: 'Has anyone dealt with a JCC in Regina? How long does it usually take to get a date?', time: '25 min ago' },
-  { id: 3, user: 'Jennifer K.', avatar: 'J', message: '@Mike T. Took me about 6 weeks to get scheduled. Make sure you have all your documents ready!', time: '20 min ago' },
-];
+import { supabase } from '../../lib/supabaseClient';
+import { useRouter } from 'next/navigation';
 
 export default function CommunityPage() {
-  const [activeChannel, setActiveChannel] = useState('sk-parents');
+  const router = useRouter();
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [channels, setChannels] = useState([]);
+  const [activeChannel, setActiveChannel] = useState(null);
+  const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
+  const [sending, setSending] = useState(false);
+  const messagesEndRef = useRef(null);
+
+  useEffect(() => {
+    const init = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+
+      if (!user) {
+        router.push("/auth/login");
+        return;
+      }
+
+      setUser(user);
+      await fetchChannels();
+      setLoading(false);
+    };
+
+    init();
+  }, []);
+
+  useEffect(() => {
+    if (activeChannel) {
+      fetchMessages(activeChannel.id);
+
+      // Subscribe to new messages
+      const subscription = supabase
+        .channel(`messages:${activeChannel.id}`)
+        .on('postgres_changes', {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'messages',
+          filter: `channel_id=eq.${activeChannel.id}`
+        }, (payload) => {
+          setMessages(prev => [...prev, payload.new]);
+        })
+        .subscribe();
+
+      return () => {
+        subscription.unsubscribe();
+      };
+    }
+  }, [activeChannel]);
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages]);
+
+  const fetchChannels = async () => {
+    const { data, error } = await supabase
+      .from("channels")
+      .select("*")
+      .order("display_order", { ascending: true });
+
+    if (error) {
+      console.error("Error fetching channels:", error);
+      return;
+    }
+
+    setChannels(data || []);
+    if (data && data.length > 0) {
+      setActiveChannel(data[0]);
+    }
+  };
+
+  const fetchMessages = async (channelId) => {
+    const { data, error } = await supabase
+      .from("messages")
+      .select(`
+        *,
+        user:users(id, full_name, email)
+      `)
+      .eq("channel_id", channelId)
+      .order("created_at", { ascending: true })
+      .limit(50);
+
+    if (error) {
+      console.error("Error fetching messages:", error);
+      return;
+    }
+
+    setMessages(data || []);
+  };
+
+  const handleSendMessage = async () => {
+    if (!newMessage.trim() || sending || !activeChannel) return;
+
+    setSending(true);
+
+    const { error } = await supabase.from("messages").insert({
+      channel_id: activeChannel.id,
+      user_id: user.id,
+      content: newMessage.trim()
+    });
+
+    if (error) {
+      alert("Error sending message: " + error.message);
+    } else {
+      setNewMessage("");
+      await fetchMessages(activeChannel.id);
+    }
+
+    setSending(false);
+  };
+
+  const getInitial = (msg) => {
+    if (msg.user?.full_name) return msg.user.full_name[0].toUpperCase();
+    if (msg.user?.email) return msg.user.email[0].toUpperCase();
+    return "?";
+  };
+
+  const getUserName = (msg) => {
+    if (msg.user?.full_name) return msg.user.full_name;
+    if (msg.user?.email) return msg.user.email.split("@")[0];
+    return "Anonymous";
+  };
+
+  const formatTime = (timestamp) => {
+    const date = new Date(timestamp);
+    const now = new Date();
+    const diff = (now - date) / 1000 / 60; // minutes
+
+    if (diff < 1) return "Just now";
+    if (diff < 60) return `${Math.floor(diff)} min ago`;
+    if (diff < 1440) return `${Math.floor(diff / 60)} hours ago`;
+    return date.toLocaleDateString();
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-slate-950 text-white flex items-center justify-center">
+        <p>Loading community...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="h-screen bg-slate-950 text-white flex flex-col">
@@ -32,53 +160,68 @@ export default function CommunityPage() {
         <aside className="w-64 border-r border-slate-800 overflow-y-auto hidden md:block">
           <div className="p-4">
             <h2 className="text-xs font-semibold text-slate-500 uppercase mb-3">Channels</h2>
-            {SAMPLE_CHANNELS.map(channel => (
-              <button
-                key={channel.id}
-                onClick={() => setActiveChannel(channel.id)}
-                className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg mb-1 ${
-                  activeChannel === channel.id 
-                    ? 'bg-orange-500/20 text-orange-400' 
-                    : 'hover:bg-slate-800 text-slate-300'
-                }`}
-              >
-                <span>{channel.icon}</span>
-                <span className="flex-1 text-left text-sm">{channel.name}</span>
-                {channel.unread > 0 && (
-                  <span className="px-2 py-0.5 bg-orange-500 rounded-full text-xs">
-                    {channel.unread}
-                  </span>
-                )}
-              </button>
-            ))}
+            {channels.length === 0 ? (
+              <p className="text-sm text-slate-500">No channels yet</p>
+            ) : (
+              channels.map(channel => (
+                <button
+                  key={channel.id}
+                  onClick={() => setActiveChannel(channel)}
+                  className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg mb-1 ${
+                    activeChannel?.id === channel.id 
+                      ? 'bg-orange-500/20 text-orange-400' 
+                      : 'hover:bg-slate-800 text-slate-300'
+                  }`}
+                >
+                  <span>{channel.icon || '💬'}</span>
+                  <span className="flex-1 text-left text-sm">{channel.name}</span>
+                  {channel.member_count > 0 && (
+                    <span className="text-xs text-slate-500">
+                      {channel.member_count}
+                    </span>
+                  )}
+                </button>
+              ))
+            )}
           </div>
         </aside>
 
         {/* Main Chat Area */}
         <main className="flex-1 flex flex-col">
           {/* Channel Header */}
-          <div className="h-12 border-b border-slate-800 flex items-center px-4">
-            <span className="text-lg mr-2">⚖️</span>
-            <span className="font-semibold">Saskatchewan Parents</span>
-            <span className="ml-2 text-sm text-slate-500">• 156 members</span>
-          </div>
+          {activeChannel && (
+            <div className="h-12 border-b border-slate-800 flex items-center px-4">
+              <span className="text-lg mr-2">{activeChannel.icon || '💬'}</span>
+              <span className="font-semibold">{activeChannel.name}</span>
+              {activeChannel.description && (
+                <span className="ml-2 text-sm text-slate-500">• {activeChannel.description}</span>
+              )}
+            </div>
+          )}
 
           {/* Messages */}
           <div className="flex-1 overflow-y-auto p-4 space-y-4">
-            {SAMPLE_MESSAGES.map(msg => (
-              <div key={msg.id} className="flex gap-3">
-                <div className="w-10 h-10 rounded-full bg-orange-500 flex items-center justify-center font-bold flex-shrink-0">
-                  {msg.avatar}
-                </div>
-                <div className="flex-1">
-                  <div className="flex items-center gap-2 mb-1">
-                    <span className="font-semibold">{msg.user}</span>
-                    <span className="text-xs text-slate-500">{msg.time}</span>
-                  </div>
-                  <p className="text-slate-300">{msg.message}</p>
-                </div>
+            {messages.length === 0 ? (
+              <div className="text-center py-12 text-slate-500">
+                <p>No messages yet. Start the conversation!</p>
               </div>
-            ))}
+            ) : (
+              messages.map(msg => (
+                <div key={msg.id} className="flex gap-3">
+                  <div className="w-10 h-10 rounded-full bg-orange-500 flex items-center justify-center font-bold flex-shrink-0">
+                    {getInitial(msg)}
+                  </div>
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="font-semibold">{getUserName(msg)}</span>
+                      <span className="text-xs text-slate-500">{formatTime(msg.created_at)}</span>
+                    </div>
+                    <p className="text-slate-300">{msg.content}</p>
+                  </div>
+                </div>
+              ))
+            )}
+            <div ref={messagesEndRef} />
           </div>
 
           {/* Message Input */}
@@ -88,16 +231,38 @@ export default function CommunityPage() {
                 type="text"
                 value={newMessage}
                 onChange={(e) => setNewMessage(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
                 placeholder="Type a message..."
                 className="flex-1 px-4 py-3 bg-slate-800 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-orange-500"
               />
-              <button className="px-6 py-3 bg-orange-500 rounded-xl font-medium hover:bg-orange-600">
-                Send
+              <button 
+                onClick={handleSendMessage}
+                disabled={sending || !newMessage.trim()}
+                className="px-6 py-3 bg-orange-500 rounded-xl font-medium hover:bg-orange-600 disabled:opacity-50"
+              >
+                {sending ? "..." : "Send"}
               </button>
             </div>
           </div>
         </main>
       </div>
+
+      {/* Mobile Channel Selector */}
+      <div className="md:hidden border-t border-slate-800 p-2 flex gap-2 overflow-x-auto">
+        {channels.map(channel => (
+          <button
+            key={channel.id}
+            onClick={() => setActiveChannel(channel)}
+            className={`px-3 py-2 rounded-lg text-sm whitespace-nowrap ${
+              activeChannel?.id === channel.id 
+                ? 'bg-orange-500 text-white' 
+                : 'bg-slate-800 text-slate-300'
+            }`}
+          >
+            {channel.icon} {channel.name}
+          </button>
+        ))}
+      </div>
     </div>
   );
-}
+              }
