@@ -118,6 +118,12 @@ export default function Dashboard() {
   >
     ⏰ Deadlines
   </Link>
+  <Link
+    href="/court-forms"
+    className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+  >
+    📄 Court Forms
+  </Link>
   <button
     onClick={handleLogout}
     className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
