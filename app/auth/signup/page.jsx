@@ -49,19 +49,13 @@ export default function Signup() {
     }
 
     if (data.user) {
-      const { error: profileError } = await supabase
-        .from('users')
-        .insert({
-          id: data.user.id,
-          email: email,
-          full_name: fullName,
-          tier: 'bronze',
-          jurisdiction: 'saskatchewan',
-        });
-
-      if (profileError) {
-        console.error('Error creating profile:', profileError);
-      }
+      await supabase.from('users').insert({
+        id: data.user.id,
+        email: email,
+        full_name: fullName,
+        tier: 'bronze',
+        jurisdiction: 'saskatchewan',
+      });
     }
 
     setSuccess(true);
@@ -90,7 +84,7 @@ export default function Signup() {
               </div>
               <h2 className="text-2xl font-bold text-gray-900 mb-2">Check your email</h2>
               <p className="text-gray-600 mb-6">
-                We've sent a confirmation link to <strong>{email}</strong>. Click the link to activate your account.
+                We've sent a confirmation link to <strong>{email}</strong>.
               </p>
               <Link
                 href="/auth/login"
@@ -165,7 +159,6 @@ export default function Signup() {
                   required
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-red-500 text-gray-900"
                 />
-                <p className="text-xs text-gray-500 mt-1">Must be at least 6 characters</p>
               </div>
 
               <div>
@@ -202,4 +195,4 @@ export default function Signup() {
       </main>
     </div>
   );
-              }
+}
