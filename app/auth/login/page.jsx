@@ -80,16 +80,6 @@ export default function Login() {
                 />
               </div>
 
-              <div className="flex items-center justify-between">
-                <label className="flex items-center">
-                  <input type="checkbox" className="w-4 h-4 text-red-600 border-gray-300 rounded" />
-                  <span className="ml-2 text-sm text-gray-600">Remember me</span>
-                </label>
-                <Link href="/auth/reset-password" className="text-sm text-red-600 hover:underline">
-                  Forgot password?
-                </Link>
-              </div>
-
               <button
                 type="submit"
                 disabled={loading}
@@ -112,4 +102,4 @@ export default function Login() {
       </main>
     </div>
   );
-                }
+                  }
