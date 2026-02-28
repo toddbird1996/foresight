@@ -12,7 +12,7 @@ import React, { useState, useEffect } from 'react';
 
 export function LandingPage() {
   return (
-    <div className="min-h-screen bg-slate-950 text-white">
+    <div className="min-h-screen bg-white text-gray-900">
       <Navbar />
       <HeroSection />
       <SocialProofBar />
@@ -45,36 +45,36 @@ function Navbar() {
 
   return (
     <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-      scrolled ? 'bg-slate-950/95 backdrop-blur-lg border-b border-slate-800' : ''
+      scrolled ? 'bg-white/95 backdrop-blur-lg border-b border-gray-200 shadow-sm' : 'bg-white'
     }`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 sm:h-20">
           {/* Logo */}
           <a href="/" className="flex items-center gap-2">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-orange-500 to-amber-500 flex items-center justify-center text-xl">
-              👁️
+            <div className="w-10 h-10 rounded-xl bg-red-600 flex items-center justify-center">
+              <span className="text-white font-bold text-xl">F</span>
             </div>
-            <span className="text-xl font-bold bg-gradient-to-r from-orange-400 to-amber-400 bg-clip-text text-transparent">
+            <span className="text-xl font-bold text-gray-900">
               Foresight
             </span>
           </a>
 
           {/* Desktop Nav */}
           <div className="hidden md:flex items-center gap-8">
-            <a href="#features" className="text-slate-300 hover:text-white transition-colors">Features</a>
-            <a href="#how-it-works" className="text-slate-300 hover:text-white transition-colors">How It Works</a>
-            <a href="#pricing" className="text-slate-300 hover:text-white transition-colors">Pricing</a>
-            <a href="#faq" className="text-slate-300 hover:text-white transition-colors">FAQ</a>
+            <a href="#features" className="text-gray-600 hover:text-red-600 transition-colors">Features</a>
+            <a href="#how-it-works" className="text-gray-600 hover:text-red-600 transition-colors">How It Works</a>
+            <a href="#pricing" className="text-gray-600 hover:text-red-600 transition-colors">Pricing</a>
+            <a href="#faq" className="text-gray-600 hover:text-red-600 transition-colors">FAQ</a>
           </div>
 
           {/* CTA Buttons */}
           <div className="hidden md:flex items-center gap-4">
-            <a href="/login" className="text-slate-300 hover:text-white transition-colors">
+            <a href="/auth/login" className="text-gray-600 hover:text-red-600 transition-colors">
               Sign In
             </a>
             <a
-              href="/signup"
-              className="px-5 py-2.5 bg-gradient-to-r from-orange-500 to-amber-500 rounded-xl font-medium hover:opacity-90 transition-opacity"
+              href="/auth/signup"
+              className="px-5 py-2.5 bg-red-600 hover:bg-red-700 text-white rounded-xl font-medium transition-colors"
             >
               Get Started Free
             </a>
@@ -83,7 +83,7 @@ function Navbar() {
           {/* Mobile Menu Button */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden p-2 text-slate-400"
+            className="md:hidden p-2 text-gray-600"
           >
             {mobileMenuOpen ? '✕' : '☰'}
           </button>
@@ -91,15 +91,15 @@ function Navbar() {
 
         {/* Mobile Menu */}
         {mobileMenuOpen && (
-          <div className="md:hidden py-4 border-t border-slate-800">
+          <div className="md:hidden py-4 border-t border-gray-200">
             <div className="flex flex-col gap-4">
-              <a href="#features" className="text-slate-300 hover:text-white">Features</a>
-              <a href="#how-it-works" className="text-slate-300 hover:text-white">How It Works</a>
-              <a href="#pricing" className="text-slate-300 hover:text-white">Pricing</a>
-              <a href="#faq" className="text-slate-300 hover:text-white">FAQ</a>
-              <hr className="border-slate-800" />
-              <a href="/login" className="text-slate-300 hover:text-white">Sign In</a>
-              <a href="/signup" className="px-5 py-2.5 bg-gradient-to-r from-orange-500 to-amber-500 rounded-xl font-medium text-center">
+              <a href="#features" className="text-gray-600 hover:text-red-600">Features</a>
+              <a href="#how-it-works" className="text-gray-600 hover:text-red-600">How It Works</a>
+              <a href="#pricing" className="text-gray-600 hover:text-red-600">Pricing</a>
+              <a href="#faq" className="text-gray-600 hover:text-red-600">FAQ</a>
+              <hr className="border-gray-200" />
+              <a href="/auth/login" className="text-gray-600 hover:text-red-600">Sign In</a>
+              <a href="/auth/signup" className="px-5 py-2.5 bg-red-600 hover:bg-red-700 text-white rounded-xl font-medium text-center">
                 Get Started Free
               </a>
             </div>
@@ -116,31 +116,31 @@ function Navbar() {
 
 function HeroSection() {
   return (
-    <section className="relative pt-32 pb-20 sm:pt-40 sm:pb-32 overflow-hidden">
+    <section className="relative pt-32 pb-20 sm:pt-40 sm:pb-32 overflow-hidden bg-gray-50">
       {/* Background Effects */}
       <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-orange-500/20 rounded-full blur-3xl" />
-        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-amber-500/20 rounded-full blur-3xl" />
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-red-100 rounded-full blur-3xl" />
+        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-gray-200 rounded-full blur-3xl" />
       </div>
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-4xl mx-auto">
           {/* Badge */}
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-orange-500/10 border border-orange-500/30 mb-8">
-            <span className="w-2 h-2 rounded-full bg-orange-500 animate-pulse" />
-            <span className="text-sm text-orange-300">Now available in Saskatchewan, Alberta, Ontario & BC</span>
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-red-50 border border-red-200 mb-8">
+            <span className="w-2 h-2 rounded-full bg-red-600 animate-pulse" />
+            <span className="text-sm text-red-700">Now available in Saskatchewan, Alberta, Ontario & BC</span>
           </div>
 
           {/* Headline */}
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight mb-6">
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight mb-6 text-gray-900">
             Navigate Custody Battles{' '}
-            <span className="bg-gradient-to-r from-orange-400 to-amber-400 bg-clip-text text-transparent">
+            <span className="text-red-600">
               Without Breaking the Bank
             </span>
           </h1>
 
           {/* Subheadline */}
-          <p className="text-xl sm:text-2xl text-slate-400 mb-8 max-w-3xl mx-auto">
+          <p className="text-xl sm:text-2xl text-gray-600 mb-8 max-w-3xl mx-auto">
             Built by a parent who spent $30,000 on lawyers and lost—then figured out the system and won. 
             Now helping thousands do the same.
           </p>
@@ -148,15 +148,15 @@ function HeroSection() {
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
             <a
-              href="/signup"
-              className="w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-orange-500 to-amber-500 rounded-xl font-semibold text-lg hover:opacity-90 transition-opacity flex items-center justify-center gap-2"
+              href="/auth/signup"
+              className="w-full sm:w-auto px-8 py-4 bg-red-600 hover:bg-red-700 text-white rounded-xl font-semibold text-lg transition-colors flex items-center justify-center gap-2"
             >
               Start Free Today
               <span>→</span>
             </a>
             <a
               href="#how-it-works"
-              className="w-full sm:w-auto px-8 py-4 border border-slate-700 rounded-xl font-semibold text-lg hover:bg-slate-800 transition-colors flex items-center justify-center gap-2"
+              className="w-full sm:w-auto px-8 py-4 border border-gray-300 rounded-xl font-semibold text-lg hover:bg-gray-100 transition-colors flex items-center justify-center gap-2 text-gray-700"
             >
               <span>▶</span>
               See How It Works
@@ -164,17 +164,17 @@ function HeroSection() {
           </div>
 
           {/* Trust Indicators */}
-          <div className="flex flex-wrap items-center justify-center gap-6 text-sm text-slate-500">
+          <div className="flex flex-wrap items-center justify-center gap-6 text-sm text-gray-500">
             <div className="flex items-center gap-2">
-              <span className="text-green-400">✓</span>
+              <span className="text-green-600">✓</span>
               No credit card required
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-green-400">✓</span>
+              <span className="text-green-600">✓</span>
               Cancel anytime
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-green-400">✓</span>
+              <span className="text-green-600">✓</span>
               24/7 AI assistance
             </div>
           </div>
@@ -182,18 +182,18 @@ function HeroSection() {
 
         {/* Hero Image / App Preview */}
         <div className="mt-16 relative">
-          <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent z-10" />
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-2xl shadow-orange-500/10">
-            <div className="p-1 bg-slate-800 flex items-center gap-2">
+          <div className="absolute inset-0 bg-gradient-to-t from-gray-50 via-transparent to-transparent z-10" />
+          <div className="bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-2xl shadow-gray-200">
+            <div className="p-1 bg-gray-100 flex items-center gap-2">
               <div className="flex gap-1.5 px-2">
                 <div className="w-3 h-3 rounded-full bg-red-500" />
                 <div className="w-3 h-3 rounded-full bg-yellow-500" />
                 <div className="w-3 h-3 rounded-full bg-green-500" />
               </div>
-              <div className="flex-1 text-center text-xs text-slate-500">app.foresight.ca</div>
+              <div className="flex-1 text-center text-xs text-gray-500">app.foresight.ca</div>
             </div>
-            <div className="aspect-[16/9] bg-gradient-to-br from-slate-900 to-slate-800 flex items-center justify-center">
-              <div className="text-center text-slate-600">
+            <div className="aspect-[16/9] bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center">
+              <div className="text-center text-gray-400">
                 <div className="text-6xl mb-4">📊</div>
                 <div>Dashboard Preview</div>
               </div>
@@ -218,13 +218,13 @@ function SocialProofBar() {
   ];
 
   return (
-    <section className="py-12 border-y border-slate-800 bg-slate-900/50">
+    <section className="py-12 border-y border-gray-200 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
           {stats.map((stat, i) => (
             <div key={i} className="text-center">
-              <div className="text-3xl sm:text-4xl font-bold text-orange-400 mb-1">{stat.value}</div>
-              <div className="text-sm text-slate-500">{stat.label}</div>
+              <div className="text-3xl sm:text-4xl font-bold text-red-600 mb-1">{stat.value}</div>
+              <div className="text-sm text-gray-500">{stat.label}</div>
             </div>
           ))}
         </div>
@@ -246,14 +246,14 @@ function ProblemSection() {
   ];
 
   return (
-    <section className="py-20 sm:py-32">
+    <section className="py-20 sm:py-32 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-3xl mx-auto mb-16">
-          <h2 className="text-3xl sm:text-4xl font-bold mb-6">
+          <h2 className="text-3xl sm:text-4xl font-bold mb-6 text-gray-900">
             The Family Court System is{' '}
-            <span className="text-red-400">Broken</span>
+            <span className="text-red-600">Broken</span>
           </h2>
-          <p className="text-xl text-slate-400">
+          <p className="text-xl text-gray-600">
             Every year, thousands of parents lose custody battles—not because they're bad parents, 
             but because they can't afford the legal help they need.
           </p>
@@ -263,11 +263,11 @@ function ProblemSection() {
           {problems.map((problem, i) => (
             <div
               key={i}
-              className="p-6 rounded-2xl bg-red-500/5 border border-red-500/20 text-center"
+              className="p-6 rounded-2xl bg-white border border-red-200 text-center shadow-sm"
             >
               <div className="text-4xl mb-4">{problem.icon}</div>
-              <h3 className="text-xl font-semibold mb-2">{problem.title}</h3>
-              <p className="text-slate-400">{problem.description}</p>
+              <h3 className="text-xl font-semibold mb-2 text-gray-900">{problem.title}</h3>
+              <p className="text-gray-600">{problem.description}</p>
             </div>
           ))}
         </div>
@@ -282,21 +282,21 @@ function ProblemSection() {
 
 function SolutionSection() {
   return (
-    <section className="py-20 sm:py-32 bg-gradient-to-b from-slate-950 to-slate-900">
+    <section className="py-20 sm:py-32 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           <div>
-            <div className="inline-block px-4 py-2 rounded-full bg-green-500/10 border border-green-500/30 text-green-400 text-sm mb-6">
+            <div className="inline-block px-4 py-2 rounded-full bg-green-50 border border-green-200 text-green-700 text-sm mb-6">
               There's a better way
             </div>
-            <h2 className="text-3xl sm:text-4xl font-bold mb-6">
+            <h2 className="text-3xl sm:text-4xl font-bold mb-6 text-gray-900">
               What if You Had a{' '}
-              <span className="bg-gradient-to-r from-orange-400 to-amber-400 bg-clip-text text-transparent">
+              <span className="text-red-600">
                 Custody Expert
               </span>{' '}
               in Your Pocket?
             </h2>
-            <p className="text-xl text-slate-400 mb-8">
+            <p className="text-xl text-gray-600 mb-8">
               Foresight gives you everything you need to navigate custody court confidently—
               step-by-step guides, AI assistance, and a community of parents who've been there.
             </p>
@@ -307,8 +307,8 @@ function SolutionSection() {
                 'Never miss a deadline again',
                 'Connect with parents who\'ve won their cases'
               ].map((item, i) => (
-                <li key={i} className="flex items-center gap-3 text-lg">
-                  <span className="w-6 h-6 rounded-full bg-green-500/20 flex items-center justify-center text-green-400 text-sm">✓</span>
+                <li key={i} className="flex items-center gap-3 text-lg text-gray-700">
+                  <span className="w-6 h-6 rounded-full bg-green-100 flex items-center justify-center text-green-600 text-sm">✓</span>
                   {item}
                 </li>
               ))}
@@ -316,24 +316,24 @@ function SolutionSection() {
           </div>
 
           <div className="relative">
-            <div className="absolute inset-0 bg-gradient-to-br from-orange-500/20 to-amber-500/20 rounded-3xl blur-3xl" />
-            <div className="relative bg-slate-900 border border-slate-800 rounded-2xl p-6">
+            <div className="absolute inset-0 bg-gradient-to-br from-red-100 to-gray-100 rounded-3xl blur-3xl" />
+            <div className="relative bg-white border border-gray-200 rounded-2xl p-6 shadow-lg">
               {/* Mock AI Chat */}
               <div className="space-y-4">
                 <div className="flex gap-3">
-                  <div className="w-8 h-8 rounded-full bg-slate-700 flex items-center justify-center">👤</div>
-                  <div className="flex-1 p-3 rounded-xl bg-slate-800 text-sm">
+                  <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center">👤</div>
+                  <div className="flex-1 p-3 rounded-xl bg-gray-100 text-sm text-gray-700">
                     How do I file for custody in Saskatchewan?
                   </div>
                 </div>
                 <div className="flex gap-3">
-                  <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-orange-500 to-amber-500 flex items-center justify-center text-sm">🤖</div>
-                  <div className="flex-1 p-3 rounded-xl bg-orange-500/10 border border-orange-500/30 text-sm">
-                    <p className="mb-2">Here's your step-by-step guide for Saskatchewan:</p>
-                    <p className="text-slate-400">1. Complete Family Dispute Resolution (FDR)</p>
-                    <p className="text-slate-400">2. Take the "For Kids' Sake" parenting course</p>
-                    <p className="text-slate-400">3. Prepare Form 70A (Petition)...</p>
-                    <p className="text-orange-400 mt-2">Want me to explain each step in detail?</p>
+                  <div className="w-8 h-8 rounded-xl bg-red-600 flex items-center justify-center text-white text-sm">F</div>
+                  <div className="flex-1 p-3 rounded-xl bg-red-50 border border-red-200 text-sm">
+                    <p className="mb-2 text-gray-900">Here's your step-by-step guide for Saskatchewan:</p>
+                    <p className="text-gray-600">1. Complete Family Dispute Resolution (FDR)</p>
+                    <p className="text-gray-600">2. Take the "For Kids' Sake" parenting course</p>
+                    <p className="text-gray-600">3. Prepare Form 70A (Petition)...</p>
+                    <p className="text-red-600 mt-2">Want me to explain each step in detail?</p>
                   </div>
                 </div>
               </div>
@@ -354,61 +354,46 @@ function FeaturesSection() {
     {
       icon: '📋',
       title: 'Step-by-Step Filing Guides',
-      description: 'Province-specific guides walk you through every form, every deadline, every step. Never wonder "what\'s next?" again.',
-      color: 'orange'
+      description: 'Province-specific guides walk you through every form, every deadline, every step. Never wonder "what\'s next?" again.'
     },
     {
       icon: '🤖',
       title: '24/7 AI Legal Assistant',
-      description: 'Get instant answers to your custody questions. Our AI understands Canadian family law and speaks plain English.',
-      color: 'blue'
+      description: 'Get instant answers to your custody questions. Our AI understands Canadian family law and speaks plain English.'
     },
     {
       icon: '👥',
       title: 'Parent Community',
-      description: 'Connect with thousands of parents going through the same thing. Share experiences, get advice, find support.',
-      color: 'green'
+      description: 'Connect with thousands of parents going through the same thing. Share experiences, get advice, find support.'
     },
     {
       icon: '🤝',
       title: 'Mentor Matching',
-      description: 'Get paired with parents who\'ve successfully navigated their cases. Learn from their experience.',
-      color: 'purple'
+      description: 'Get paired with parents who\'ve successfully navigated their cases. Learn from their experience.'
     },
     {
       icon: '📄',
       title: 'Document Analysis',
-      description: 'Upload your documents for AI-powered review. Get suggestions to strengthen your filings.',
-      color: 'pink'
+      description: 'Upload your documents for AI-powered review. Get suggestions to strengthen your filings.'
     },
     {
       icon: '📅',
       title: 'Deadline Tracking',
-      description: 'Never miss a court date or filing deadline. Get reminders via email, text, and push notifications.',
-      color: 'red'
+      description: 'Never miss a court date or filing deadline. Get reminders via email, text, and push notifications.'
     }
   ];
 
-  const colorClasses = {
-    orange: 'from-orange-500/20 to-orange-600/20 border-orange-500/30',
-    blue: 'from-blue-500/20 to-blue-600/20 border-blue-500/30',
-    green: 'from-green-500/20 to-green-600/20 border-green-500/30',
-    purple: 'from-purple-500/20 to-purple-600/20 border-purple-500/30',
-    pink: 'from-pink-500/20 to-pink-600/20 border-pink-500/30',
-    red: 'from-red-500/20 to-red-600/20 border-red-500/30'
-  };
-
   return (
-    <section id="features" className="py-20 sm:py-32">
+    <section id="features" className="py-20 sm:py-32 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-3xl mx-auto mb-16">
-          <h2 className="text-3xl sm:text-4xl font-bold mb-6">
+          <h2 className="text-3xl sm:text-4xl font-bold mb-6 text-gray-900">
             Everything You Need to{' '}
-            <span className="bg-gradient-to-r from-orange-400 to-amber-400 bg-clip-text text-transparent">
+            <span className="text-red-600">
               Win Your Case
             </span>
           </h2>
-          <p className="text-xl text-slate-400">
+          <p className="text-xl text-gray-600">
             A complete toolkit designed by parents, for parents.
           </p>
         </div>
@@ -417,11 +402,11 @@ function FeaturesSection() {
           {features.map((feature, i) => (
             <div
               key={i}
-              className={`p-6 rounded-2xl bg-gradient-to-br ${colorClasses[feature.color]} border hover:scale-[1.02] transition-transform`}
+              className="p-6 rounded-2xl bg-white border border-gray-200 hover:border-red-300 hover:shadow-lg transition-all"
             >
               <div className="text-4xl mb-4">{feature.icon}</div>
-              <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
-              <p className="text-slate-400">{feature.description}</p>
+              <h3 className="text-xl font-semibold mb-2 text-gray-900">{feature.title}</h3>
+              <p className="text-gray-600">{feature.description}</p>
             </div>
           ))}
         </div>
@@ -463,13 +448,13 @@ function HowItWorksSection() {
   ];
 
   return (
-    <section id="how-it-works" className="py-20 sm:py-32 bg-slate-900/50">
+    <section id="how-it-works" className="py-20 sm:py-32 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-3xl mx-auto mb-16">
-          <h2 className="text-3xl sm:text-4xl font-bold mb-6">
+          <h2 className="text-3xl sm:text-4xl font-bold mb-6 text-gray-900">
             How Foresight Works
           </h2>
-          <p className="text-xl text-slate-400">
+          <p className="text-xl text-gray-600">
             From confusion to clarity in four simple steps.
           </p>
         </div>
@@ -478,19 +463,19 @@ function HowItWorksSection() {
           {steps.map((step, i) => (
             <div key={i} className="relative">
               {i < steps.length - 1 && (
-                <div className="hidden lg:block absolute top-12 left-full w-full h-0.5 bg-gradient-to-r from-orange-500 to-transparent" />
+                <div className="hidden lg:block absolute top-12 left-full w-full h-0.5 bg-gradient-to-r from-red-400 to-transparent" />
               )}
               <div className="text-center">
                 <div className="relative inline-block mb-6">
-                  <div className="w-24 h-24 rounded-2xl bg-gradient-to-br from-orange-500/20 to-amber-500/20 border border-orange-500/30 flex items-center justify-center text-4xl">
+                  <div className="w-24 h-24 rounded-2xl bg-red-50 border border-red-200 flex items-center justify-center text-4xl">
                     {step.icon}
                   </div>
-                  <div className="absolute -top-2 -right-2 w-8 h-8 rounded-full bg-orange-500 flex items-center justify-center text-sm font-bold">
+                  <div className="absolute -top-2 -right-2 w-8 h-8 rounded-full bg-red-600 text-white flex items-center justify-center text-sm font-bold">
                     {step.number}
                   </div>
                 </div>
-                <h3 className="text-xl font-semibold mb-2">{step.title}</h3>
-                <p className="text-slate-400">{step.description}</p>
+                <h3 className="text-xl font-semibold mb-2 text-gray-900">{step.title}</h3>
+                <p className="text-gray-600">{step.description}</p>
               </div>
             </div>
           ))}
@@ -530,12 +515,12 @@ function TestimonialsSection() {
   ];
 
   return (
-    <section className="py-20 sm:py-32">
+    <section className="py-20 sm:py-32 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-3xl mx-auto mb-16">
-          <h2 className="text-3xl sm:text-4xl font-bold mb-6">
+          <h2 className="text-3xl sm:text-4xl font-bold mb-6 text-gray-900">
             Trusted by Parents{' '}
-            <span className="bg-gradient-to-r from-orange-400 to-amber-400 bg-clip-text text-transparent">
+            <span className="text-red-600">
               Across Canada
             </span>
           </h2>
@@ -545,23 +530,23 @@ function TestimonialsSection() {
           {testimonials.map((t, i) => (
             <div
               key={i}
-              className="p-6 rounded-2xl bg-slate-900 border border-slate-800"
+              className="p-6 rounded-2xl bg-white border border-gray-200 shadow-sm"
             >
-              <div className="flex gap-1 mb-4 text-yellow-400">
+              <div className="flex gap-1 mb-4 text-yellow-500">
                 {[...Array(5)].map((_, i) => <span key={i}>★</span>)}
               </div>
-              <p className="text-lg mb-6">"{t.quote}"</p>
+              <p className="text-lg mb-6 text-gray-700">"{t.quote}"</p>
               <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-orange-500 to-amber-500 flex items-center justify-center font-bold">
+                <div className="w-12 h-12 rounded-full bg-red-600 text-white flex items-center justify-center font-bold">
                   {t.avatar}
                 </div>
                 <div>
-                  <div className="font-semibold">{t.author}</div>
-                  <div className="text-sm text-slate-400">{t.location}</div>
+                  <div className="font-semibold text-gray-900">{t.author}</div>
+                  <div className="text-sm text-gray-500">{t.location}</div>
                 </div>
               </div>
-              <div className="mt-4 pt-4 border-t border-slate-800">
-                <div className="inline-block px-3 py-1 rounded-full bg-green-500/10 border border-green-500/30 text-green-400 text-sm">
+              <div className="mt-4 pt-4 border-t border-gray-200">
+                <div className="inline-block px-3 py-1 rounded-full bg-green-50 border border-green-200 text-green-700 text-sm">
                   ✓ {t.result}
                 </div>
               </div>
@@ -639,13 +624,13 @@ function PricingSection() {
   ];
 
   return (
-    <section id="pricing" className="py-20 sm:py-32 bg-slate-900/50">
+    <section id="pricing" className="py-20 sm:py-32 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-3xl mx-auto mb-16">
-          <h2 className="text-3xl sm:text-4xl font-bold mb-6">
+          <h2 className="text-3xl sm:text-4xl font-bold mb-6 text-gray-900">
             Simple, Transparent Pricing
           </h2>
-          <p className="text-xl text-slate-400">
+          <p className="text-xl text-gray-600">
             Less than a single hour of lawyer time. Full access to everything you need.
           </p>
         </div>
@@ -656,35 +641,44 @@ function PricingSection() {
               key={i}
               className={`relative p-6 rounded-2xl border ${
                 plan.popular
-                  ? 'bg-gradient-to-br from-orange-500/10 to-amber-500/10 border-orange-500/50'
-                  : 'bg-slate-900 border-slate-800'
+                  ? 'bg-red-50 border-red-300 shadow-lg'
+                  : 'bg-white border-gray-200'
               }`}
             >
               {plan.popular && (
-                <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 bg-orange-500 text-black rounded-full text-sm font-semibold">
+                <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 bg-red-600 text-white rounded-full text-sm font-semibold">
                   MOST POPULAR
                 </div>
               )}
 
               <div className="text-center mb-6">
                 <div className="text-4xl mb-2">{plan.icon}</div>
-                <h3 className="text-2xl font-bold mb-1">{plan.name}</h3>
-                <p className="text-slate-400 text-sm">{plan.description}</p>
+                <h3 className="text-2xl font-bold mb-1 text-gray-900">{plan.name}</h3>
+                <p className="text-gray-500 text-sm">{plan.description}</p>
               </div>
 
               <div className="text-center mb-6">
-                <span className="text-4xl font-bold">{plan.price}</span>
+                <span className="text-4xl font-bold text-gray-900">{plan.price}</span>
                 {plan.period !== 'forever' && (
-                  <span className="text-slate-400 ml-1">{plan.period}</span>
+                  <span className="text-gray-500 ml-1">{plan.period}</span>
                 )}
               </div>
 
-<a
-                href="/signup"
+              <ul className="space-y-3 mb-6">
+                {plan.features.map((feature, j) => (
+                  <li key={j} className="flex items-center gap-2 text-sm text-gray-700">
+                    <span className="text-green-600">✓</span>
+                    {feature}
+                  </li>
+                ))}
+              </ul>
+
+              <a
+                href="/auth/signup"
                 className={`block w-full py-3 rounded-xl font-semibold text-center transition-colors ${
                   plan.popular
-                    ? 'bg-gradient-to-r from-orange-500 to-amber-500 text-white hover:opacity-90'
-                    : 'border border-slate-700 text-white hover:bg-slate-800'
+                    ? 'bg-red-600 hover:bg-red-700 text-white'
+                    : 'border border-gray-300 text-gray-700 hover:bg-gray-100'
                 }`}
               >
                 {plan.cta}
@@ -693,7 +687,7 @@ function PricingSection() {
           ))}
         </div>
 
-        <p className="text-center text-slate-500 mt-8">
+        <p className="text-center text-gray-500 mt-8">
           All plans include 7-day money-back guarantee. Cancel anytime.
         </p>
       </div>
@@ -736,10 +730,10 @@ function FAQSection() {
   ];
 
   return (
-    <section id="faq" className="py-20 sm:py-32">
+    <section id="faq" className="py-20 sm:py-32 bg-gray-50">
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
-          <h2 className="text-3xl sm:text-4xl font-bold mb-6">
+          <h2 className="text-3xl sm:text-4xl font-bold mb-6 text-gray-900">
             Frequently Asked Questions
           </h2>
         </div>
@@ -748,18 +742,18 @@ function FAQSection() {
           {faqs.map((faq, i) => (
             <div
               key={i}
-              className="border border-slate-800 rounded-xl overflow-hidden"
+              className="border border-gray-200 rounded-xl overflow-hidden bg-white"
             >
               <button
                 onClick={() => setOpenIndex(openIndex === i ? -1 : i)}
-                className="w-full px-6 py-4 flex items-center justify-between text-left hover:bg-slate-900/50"
+                className="w-full px-6 py-4 flex items-center justify-between text-left hover:bg-gray-50"
               >
-                <span className="font-semibold">{faq.question}</span>
-                <span className="text-2xl">{openIndex === i ? '−' : '+'}</span>
+                <span className="font-semibold text-gray-900">{faq.question}</span>
+                <span className="text-2xl text-gray-400">{openIndex === i ? '−' : '+'}</span>
               </button>
               {openIndex === i && (
                 <div className="px-6 pb-4">
-                  <p className="text-slate-400">{faq.answer}</p>
+                  <p className="text-gray-600">{faq.answer}</p>
                 </div>
               )}
             </div>
@@ -776,25 +770,25 @@ function FAQSection() {
 
 function CTASection() {
   return (
-    <section className="py-20 sm:py-32 bg-gradient-to-br from-orange-500/10 to-amber-500/10">
+    <section className="py-20 sm:py-32 bg-red-50">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <h2 className="text-3xl sm:text-4xl font-bold mb-6">
+        <h2 className="text-3xl sm:text-4xl font-bold mb-6 text-gray-900">
           Ready to Fight for Your Kids?
         </h2>
-        <p className="text-xl text-slate-400 mb-8">
+        <p className="text-xl text-gray-600 mb-8">
           Join thousands of parents who've navigated custody court with confidence. 
           Start free today—no credit card required.
         </p>
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
           <a
-            href="/signup"
-            className="w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-orange-500 to-amber-500 rounded-xl font-semibold text-lg hover:opacity-90 transition-opacity"
+            href="/auth/signup"
+            className="w-full sm:w-auto px-8 py-4 bg-red-600 hover:bg-red-700 text-white rounded-xl font-semibold text-lg transition-colors"
           >
             Get Started Free →
           </a>
           <a
             href="/demo"
-            className="w-full sm:w-auto px-8 py-4 border border-slate-700 rounded-xl font-semibold text-lg hover:bg-slate-800 transition-colors"
+            className="w-full sm:w-auto px-8 py-4 border border-gray-300 bg-white rounded-xl font-semibold text-lg hover:bg-gray-100 transition-colors text-gray-700"
           >
             Watch Demo
           </a>
@@ -810,56 +804,56 @@ function CTASection() {
 
 function Footer() {
   return (
-    <footer className="py-16 border-t border-slate-800">
+    <footer className="py-16 border-t border-gray-200 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
           <div>
             <div className="flex items-center gap-2 mb-4">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-orange-500 to-amber-500 flex items-center justify-center text-xl">
-                👁️
+              <div className="w-10 h-10 rounded-xl bg-red-600 flex items-center justify-center">
+                <span className="text-white font-bold text-xl">F</span>
               </div>
-              <span className="text-xl font-bold">Foresight</span>
+              <span className="text-xl font-bold text-gray-900">Foresight</span>
             </div>
-            <p className="text-slate-400 text-sm">
+            <p className="text-gray-500 text-sm">
               Helping parents navigate custody battles with confidence.
             </p>
           </div>
 
           <div>
-            <h4 className="font-semibold mb-4">Product</h4>
-            <ul className="space-y-2 text-sm text-slate-400">
-              <li><a href="#features" className="hover:text-white">Features</a></li>
-              <li><a href="#pricing" className="hover:text-white">Pricing</a></li>
-              <li><a href="#faq" className="hover:text-white">FAQ</a></li>
-              <li><a href="/demo" className="hover:text-white">Demo</a></li>
+            <h4 className="font-semibold mb-4 text-gray-900">Product</h4>
+            <ul className="space-y-2 text-sm text-gray-500">
+              <li><a href="#features" className="hover:text-red-600">Features</a></li>
+              <li><a href="#pricing" className="hover:text-red-600">Pricing</a></li>
+              <li><a href="#faq" className="hover:text-red-600">FAQ</a></li>
+              <li><a href="/demo" className="hover:text-red-600">Demo</a></li>
             </ul>
           </div>
 
           <div>
-            <h4 className="font-semibold mb-4">Resources</h4>
-            <ul className="space-y-2 text-sm text-slate-400">
-              <li><a href="/blog" className="hover:text-white">Blog</a></li>
-              <li><a href="/guides" className="hover:text-white">Guides</a></li>
-              <li><a href="/community" className="hover:text-white">Community</a></li>
-              <li><a href="/support" className="hover:text-white">Support</a></li>
+            <h4 className="font-semibold mb-4 text-gray-900">Resources</h4>
+            <ul className="space-y-2 text-sm text-gray-500">
+              <li><a href="/blog" className="hover:text-red-600">Blog</a></li>
+              <li><a href="/guides" className="hover:text-red-600">Guides</a></li>
+              <li><a href="/community" className="hover:text-red-600">Community</a></li>
+              <li><a href="/support" className="hover:text-red-600">Support</a></li>
             </ul>
           </div>
 
           <div>
-            <h4 className="font-semibold mb-4">Legal</h4>
-            <ul className="space-y-2 text-sm text-slate-400">
-              <li><a href="/privacy" className="hover:text-white">Privacy Policy</a></li>
-              <li><a href="/terms" className="hover:text-white">Terms of Service</a></li>
-              <li><a href="/disclaimer" className="hover:text-white">Legal Disclaimer</a></li>
+            <h4 className="font-semibold mb-4 text-gray-900">Legal</h4>
+            <ul className="space-y-2 text-sm text-gray-500">
+              <li><a href="/privacy" className="hover:text-red-600">Privacy Policy</a></li>
+              <li><a href="/terms" className="hover:text-red-600">Terms of Service</a></li>
+              <li><a href="/disclaimer" className="hover:text-red-600">Legal Disclaimer</a></li>
             </ul>
           </div>
         </div>
 
-        <div className="pt-8 border-t border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-sm text-slate-500">
+        <div className="pt-8 border-t border-gray-200 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <p className="text-sm text-gray-500">
             © {new Date().getFullYear()} Foresight. All rights reserved.
           </p>
-          <p className="text-sm text-slate-500">
+          <p className="text-sm text-gray-500">
             Made with ❤️ in Saskatchewan, Canada
           </p>
         </div>
