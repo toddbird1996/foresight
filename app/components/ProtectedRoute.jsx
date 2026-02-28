@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { supabase } from "../../lib/supabaseClient";
+import { supabase } from "../lib/supabaseClient";
 import { useRouter } from "next/navigation";
 
 export default function ProtectedRoute({ children }) {
@@ -13,9 +13,9 @@ export default function ProtectedRoute({ children }) {
       const { data: { session } } = await supabase.auth.getSession();
 
       if (!session) {
-        router.push("/auth/login"); // Redirect to login if not signed in
+        router.push("/auth/login");
       } else {
-        setLoading(false); // User is logged in
+        setLoading(false);
       }
     };
 
