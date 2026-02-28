@@ -456,3 +456,75 @@ export const mentorService = {
   },
 
   async getConversationMessages
+
+  async getConversationMessages(conversationId, limit = 50, before = null) {
+    let query = supabase.from('mentor_messages')
+      .select(`*, user:users(id, full_name, avatar_url)`)
+      .eq('conversation_id', conversationId)
+      .order('created_at', { ascending: false })
+      .limit(limit);
+    if (before) query = query.lt('created_at', before);
+    const { data, error } = await query;
+    if (error) throw error;
+    return data?.reverse() || [];
+  },
+
+  async sendMessage(conversationId, userId, content) {
+    const { data, error } = await supabase.from('mentor_messages')
+      .insert({ conversation_id: conversationId, user_id: userId, content })
+      .select(`*, user:users(id, full_name, avatar_url)`)
+      .single();
+    if (error) throw error;
+    return data;
+  }
+};
+
+// ============================================
+// NOTIFICATION SERVICE
+// ============================================
+
+export const notificationService = {
+  async getUserNotifications(userId, limit = 50) {
+    const { data, error } = await supabase.from('notifications')
+      .select('*')
+      .eq('user_id', userId)
+      .order('created_at', { ascending: false })
+      .limit(limit);
+    if (error) throw error;
+    return data;
+  },
+
+  async markAsRead(notificationId) {
+    const { data, error } = await supabase.from('notifications')
+      .update({ read: true, read_at: new Date().toISOString() })
+      .eq('id', notificationId)
+      .select()
+      .single();
+    if (error) throw error;
+    return data;
+  },
+
+  async markAllAsRead(userId) {
+    const { error } = await supabase.from('notifications')
+      .update({ read: true, read_at: new Date().toISOString() })
+      .eq('user_id', userId);
+    if (error) throw error;
+  }
+};
+
+// ============================================
+// EXPORT DEFAULT
+// ============================================
+
+export default {
+  authService,
+  userService,
+  jurisdictionService,
+  progressService,
+  documentService,
+  deadlineService,
+  channelService,
+  messageService,
+  mentorService,
+  notificationService
+};
