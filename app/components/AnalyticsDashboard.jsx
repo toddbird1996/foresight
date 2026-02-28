@@ -3,7 +3,7 @@
 // ============================================
 
 import React, { useState, useEffect, useMemo } from 'react';
-import { supabase } from './supabase-client';
+import { supabase } from "../../lib/supabaseClient";
 
 // ============================================
 // ANALYTICS SERVICE
