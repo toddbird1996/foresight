@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { supabase } from "../../lib/supabaseClient";
+import { supabase } from "../lib/supabaseClient";
 import { useRouter } from "next/navigation";
 
 export default function Header() {
@@ -10,13 +10,11 @@ export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [user, setUser] = useState(null);
 
-  // Fetch the logged-in user on mount
   useEffect(() => {
-    const currentUser = supabase.auth.getUser().then(({ data: { user } }) => {
+    supabase.auth.getUser().then(({ data: { user } }) => {
       setUser(user);
     });
 
-    // Listen for auth changes
     const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user || null);
     });
@@ -37,24 +35,29 @@ export default function Header() {
   };
 
   return (
-    <header className="bg-slate-900 text-white p-4 flex justify-between items-center relative">
+    <header className="bg-white border-b border-gray-200 text-gray-900 p-4 flex justify-between items-center relative">
       {/* Logo + welcome */}
       <div className="flex items-center space-x-4">
         <Link href="/">
-          <span className="font-bold text-xl cursor-pointer">Foresight</span>
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-red-600 rounded-lg flex items-center justify-center">
+              <span className="text-white font-bold text-xl">F</span>
+            </div>
+            <span className="font-bold text-xl cursor-pointer text-gray-900">Foresight</span>
+          </div>
         </Link>
-        {user && <span className="text-sm text-gray-300">Welcome, {user.email}</span>}
+        {user && <span className="text-sm text-gray-500">Welcome, {user.email}</span>}
       </div>
 
       {/* Desktop navigation */}
       <nav className="hidden md:flex items-center space-x-6">
-        <Link href="/dashboard" className="hover:underline">Dashboard</Link>
-        <Link href="/programs" className="hover:underline">Programs</Link>
-        <Link href="/forms" className="hover:underline">Forms</Link>
-        <Link href="/mentors" className="hover:underline">Mentors</Link>
+        <Link href="/dashboard" className="text-gray-700 hover:text-red-600">Dashboard</Link>
+        <Link href="/filing" className="text-gray-700 hover:text-red-600">Filing Guide</Link>
+        <Link href="/court-forms" className="text-gray-700 hover:text-red-600">Forms</Link>
+        <Link href="/community" className="text-gray-700 hover:text-red-600">Community</Link>
         <button
           onClick={handleLogout}
-          className="bg-red-600 px-3 py-1 rounded hover:bg-red-700"
+          className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700"
         >
           Logout
         </button>
@@ -62,7 +65,7 @@ export default function Header() {
 
       {/* Mobile hamburger button */}
       <button
-        className="md:hidden ml-2 p-2 bg-gray-700 rounded"
+        className="md:hidden ml-2 p-2 bg-gray-100 rounded-lg text-gray-700"
         onClick={() => setMenuOpen(!menuOpen)}
       >
         <span>{menuOpen ? "✖" : "☰"}</span>
@@ -70,17 +73,17 @@ export default function Header() {
 
       {/* Mobile menu */}
       {menuOpen && (
-        <div className="absolute top-16 right-4 bg-slate-900 rounded shadow-md p-4 flex flex-col space-y-2 md:hidden">
-          <Link href="/dashboard" className="hover:underline" onClick={() => setMenuOpen(false)}>Dashboard</Link>
-          <Link href="/programs" className="hover:underline" onClick={() => setMenuOpen(false)}>Programs</Link>
-          <Link href="/forms" className="hover:underline" onClick={() => setMenuOpen(false)}>Forms</Link>
-          <Link href="/mentors" className="hover:underline" onClick={() => setMenuOpen(false)}>Mentors</Link>
+        <div className="absolute top-16 right-4 bg-white border border-gray-200 rounded-lg shadow-lg p-4 flex flex-col space-y-3 md:hidden z-50">
+          <Link href="/dashboard" className="text-gray-700 hover:text-red-600" onClick={() => setMenuOpen(false)}>Dashboard</Link>
+          <Link href="/filing" className="text-gray-700 hover:text-red-600" onClick={() => setMenuOpen(false)}>Filing Guide</Link>
+          <Link href="/court-forms" className="text-gray-700 hover:text-red-600" onClick={() => setMenuOpen(false)}>Forms</Link>
+          <Link href="/community" className="text-gray-700 hover:text-red-600" onClick={() => setMenuOpen(false)}>Community</Link>
           <button
             onClick={() => {
               handleLogout();
               setMenuOpen(false);
             }}
-            className="bg-red-600 px-3 py-1 rounded hover:bg-red-700"
+            className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700"
           >
             Logout
           </button>
