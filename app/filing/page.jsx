@@ -40,6 +40,8 @@ export default function FilingGuidePage() {
   }, [selectedJurisdiction]);
 
   const fetchJurisdictions = async () => {
+    console.log("Fetching jurisdictions...");
+    
     const { data, error } = await supabase
       .from("jurisdictions")
       .select("*")
@@ -49,6 +51,8 @@ export default function FilingGuidePage() {
       console.error("Error fetching jurisdictions:", error);
       return;
     }
+
+    console.log("Jurisdictions fetched:", data);
 
     setJurisdictions(data || []);
     
@@ -168,7 +172,7 @@ export default function FilingGuidePage() {
                 const j = jurisdictions.find(j => j.id === e.target.value);
                 setSelectedJurisdiction(j);
               }}
-              className="w-full p-3 bg-white border border-gray-300 rounded-lg focus:outline-none focus:border-red-500"
+              className="w-full p-3 bg-white border border-gray-300 rounded-lg focus:outline-none focus:border-red-500 text-gray-900"
             >
               <optgroup label="🇨🇦 Canada">
                 {canadianJurisdictions.map(j => (
