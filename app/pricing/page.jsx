@@ -246,4 +246,4 @@ export default function PricingPage() {
       </main>
     </div>
   );
-          }
+                  }
