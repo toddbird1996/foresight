@@ -5,7 +5,7 @@
 import { supabase } from '../../lib/supabaseClient'; // import the client
 
 // ============================================
-// TYPES & TIER LIMITS
+// TYPES & TIER LIMITS (UPDATED)
 // ============================================
 
 /**
@@ -17,9 +17,9 @@ import { supabase } from '../../lib/supabaseClient'; // import the client
  */
 
 export const TIER_LIMITS = {
-  bronze: { dailyQueries: 10, monthlyDocs: 1, jurisdictions: 1, mentorAccess: false },
-  silver: { dailyQueries: 25, monthlyDocs: 5, jurisdictions: 3, mentorAccess: 'limited' },
-  gold: { dailyQueries: 50, monthlyDocs: 10, jurisdictions: 'all', mentorAccess: 'unlimited' }
+  bronze: { dailyQueries: 0, monthlyDocs: 0, jurisdictions: 1, mentorAccess: false, price: 0 },
+  silver: { dailyQueries: 50, monthlyDocs: 5, jurisdictions: 3, mentorAccess: 'limited', price: 9.99 },
+  gold: { dailyQueries: 100, monthlyDocs: 10, jurisdictions: 'all', mentorAccess: 'unlimited', price: 19.99 }
 };
 
 // ============================================
@@ -333,7 +333,7 @@ export const channelService = {
 
   async join(userId, channelId) {
     const { data, error } = await supabase.from('channel_members').insert({ user_id: userId, channel_id: channelId }).select().single();
-    if (error && error.code !== '23505') throw error; // ignore duplicate
+    if (error && error.code !== '23505') throw error;
     return data;
   },
 
@@ -390,7 +390,7 @@ export const messageService = {
   },
 
   async addReaction(messageId, userId, emoji) {
-    const { data, error } = await supabase.from('message_reactions').insert({ message_id: messageId, user_id, emoji }).select().single();
+    const { data, error } = await supabase.from('message_reactions').insert({ message_id: messageId, user_id: userId, emoji }).select().single();
     if (error && error.code !== '23505') throw error;
     return data;
   },
@@ -454,8 +454,6 @@ export const mentorService = {
     if (error) throw error;
     return data;
   },
-
-  async getConversationMessages
 
   async getConversationMessages(conversationId, limit = 50, before = null) {
     let query = supabase.from('mentor_messages')
