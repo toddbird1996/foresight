@@ -185,6 +185,15 @@ export default function Dashboard() {
           </Link>
 
           <Link
+            href="/programs"
+            className="bg-white border border-gray-200 rounded-xl p-4 hover:border-red-500 hover:shadow-md transition-all"
+          >
+            <div className="text-2xl mb-2">🛡️</div>
+            <h3 className="font-semibold text-gray-900">Programs</h3>
+            <p className="text-sm text-gray-500">Support & resources</p>
+          </Link>
+
+          <Link
             href="/profile"
             className="bg-white border border-gray-200 rounded-xl p-4 hover:border-red-500 hover:shadow-md transition-all"
           >

@@ -55,6 +55,7 @@ export default function Header() {
         <Link href="/filing" className="text-gray-700 hover:text-red-600">Filing Guide</Link>
         <Link href="/court-forms" className="text-gray-700 hover:text-red-600">Forms</Link>
         <Link href="/community" className="text-gray-700 hover:text-red-600">Community</Link>
+        <Link href="/programs" className="text-gray-700 hover:text-red-600">Programs</Link>
         <button
           onClick={handleLogout}
           className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700"
@@ -78,6 +79,7 @@ export default function Header() {
           <Link href="/filing" className="text-gray-700 hover:text-red-600" onClick={() => setMenuOpen(false)}>Filing Guide</Link>
           <Link href="/court-forms" className="text-gray-700 hover:text-red-600" onClick={() => setMenuOpen(false)}>Forms</Link>
           <Link href="/community" className="text-gray-700 hover:text-red-600" onClick={() => setMenuOpen(false)}>Community</Link>
+          <Link href="/programs" className="text-gray-700 hover:text-red-600" onClick={() => setMenuOpen(false)}>Programs</Link>
           <button
             onClick={() => {
               handleLogout();
