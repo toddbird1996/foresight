@@ -11,7 +11,7 @@ export const FORMS_DATABASE = {
     jurisdiction: 'Saskatchewan',
     court: 'Court of King\'s Bench',
     website: 'https://sasklawcourts.ca',
-    formsUrl: 'https://sasklawcourts.ca/forms',
+    formsUrl: 'https://publications.saskatchewan.ca/#/categories/5801',
     categories: [
       {
         id: 'initial-filing',
@@ -235,8 +235,8 @@ export const FORMS_DATABASE = {
             formNumber: 'FL-1',
             description: 'Main document to start divorce proceedings in Alberta.',
             required: true,
-            downloadUrl: 'https://albertacourts.ca/docs/default-source/qb/form-fl-1.doc',
-            fileType: 'doc',
+            downloadUrl: 'https://cfr.forms.gov.ab.ca/Form/CTS3614.pdf',
+            fileType: 'pdf',
             fillable: true,
             pages: 6
           },
@@ -246,8 +246,8 @@ export const FORMS_DATABASE = {
             formNumber: 'FL-12',
             description: 'Complete disclosure of financial situation.',
             required: true,
-            downloadUrl: 'https://albertacourts.ca/docs/default-source/qb/form-fl-12.doc',
-            fileType: 'doc',
+            downloadUrl: 'https://cfr.forms.gov.ab.ca/Form/CTS3625.pdf',
+            fileType: 'pdf',
             fillable: true,
             pages: 14
           },
@@ -257,8 +257,8 @@ export const FORMS_DATABASE = {
             formNumber: 'FL-2',
             description: 'Sworn statement about parenting arrangements and children.',
             required: true,
-            downloadUrl: 'https://albertacourts.ca/docs/default-source/qb/form-fl-2.doc',
-            fileType: 'doc',
+            downloadUrl: 'https://cfr.forms.gov.ab.ca/Form/CTS3615.pdf',
+            fileType: 'pdf',
             fillable: true,
             pages: 8
           }
@@ -301,7 +301,7 @@ export const FORMS_DATABASE = {
             formNumber: 'Form 8',
             description: 'The standard form to start most family law cases in Ontario.',
             required: true,
-            downloadUrl: 'https://ontariocourtforms.on.ca/en/family-law-rules-forms/8/',
+            downloadUrl: 'https://ontariocourtforms.on.ca/static/media/uploads/courtforms/family/08/flr-8-jun25-en.pdf',
             fileType: 'pdf',
             fillable: true,
             pages: 6,
@@ -318,7 +318,7 @@ export const FORMS_DATABASE = {
             formNumber: 'Form 13',
             description: 'Required when claiming child or spousal support.',
             required: true,
-            downloadUrl: 'https://ontariocourtforms.on.ca/en/family-law-rules-forms/13/',
+            downloadUrl: 'https://ontariocourtforms.on.ca/static/media/uploads/courtforms/family/13/flr-13-may21-en.pdf',
             fileType: 'pdf',
             fillable: true,
             pages: 16
@@ -329,7 +329,7 @@ export const FORMS_DATABASE = {
             formNumber: 'Form 13.1',
             description: 'Required when property division is an issue.',
             required: false,
-            downloadUrl: 'https://ontariocourtforms.on.ca/en/family-law-rules-forms/13-1/',
+            downloadUrl: 'https://ontariocourtforms.on.ca/static/media/uploads/courtforms/family/13_1/flr-13-1-may21-en.pdf',
             fileType: 'pdf',
             fillable: true,
             pages: 20
@@ -340,7 +340,7 @@ export const FORMS_DATABASE = {
             formNumber: 'Form 35.1',
             description: 'Sworn statement providing facts and evidence.',
             required: true,
-            downloadUrl: 'https://ontariocourtforms.on.ca/en/family-law-rules-forms/35-1/',
+            downloadUrl: 'https://ontariocourtforms.on.ca/static/media/uploads/courtforms/family/35_1/flr-35-1-may21-en.pdf',
             fileType: 'pdf',
             fillable: false,
             pages: 'Variable'
@@ -357,7 +357,7 @@ export const FORMS_DATABASE = {
             formNumber: 'Form 10',
             description: 'Response to an Application. File within 30 days of being served.',
             required: true,
-            downloadUrl: 'https://ontariocourtforms.on.ca/en/family-law-rules-forms/10/',
+            downloadUrl: 'https://ontariocourtforms.on.ca/static/media/uploads/courtforms/family/10/flr-10-may21-en.pdf',
             fileType: 'pdf',
             fillable: true,
             pages: 6
@@ -374,7 +374,7 @@ export const FORMS_DATABASE = {
             formNumber: 'Form 6B',
             description: 'Proof that documents were served.',
             required: true,
-            downloadUrl: 'https://ontariocourtforms.on.ca/en/family-law-rules-forms/6b/',
+            downloadUrl: 'https://ontariocourtforms.on.ca/static/media/uploads/courtforms/family/06b/flr-6b-may21-en.pdf',
             fileType: 'pdf',
             fillable: true,
             pages: 2
@@ -401,7 +401,7 @@ export const FORMS_DATABASE = {
             formNumber: 'Form 3',
             description: 'Start a family law case in Provincial Court.',
             required: true,
-            downloadUrl: 'https://www2.gov.bc.ca/assets/gov/law-crime-and-justice/courthouse-services/court-files-records/court-forms/family/pfa712.pdf',
+            downloadUrl: 'https://www2.gov.bc.ca/gov/content/justice/courthouse-services/documents-forms-records/court-forms/prov-family-forms',
             fileType: 'pdf',
             fillable: true,
             pages: 8
@@ -412,7 +412,7 @@ export const FORMS_DATABASE = {
             formNumber: 'Form 4',
             description: 'Financial disclosure for support claims.',
             required: true,
-            downloadUrl: 'https://www2.gov.bc.ca/assets/gov/law-crime-and-justice/courthouse-services/court-files-records/court-forms/family/pfa713.pdf',
+            downloadUrl: 'https://www2.gov.bc.ca/gov/content/justice/courthouse-services/documents-forms-records/court-forms/prov-family-forms',
             fileType: 'pdf',
             fillable: true,
             pages: 12
@@ -835,6 +835,9 @@ export function FormsLibrary({ jurisdictionId = 'saskatchewan' }) {
 function FormCard({ form }) {
   const [expanded, setExpanded] = useState(false);
 
+  const isDirectDownload = form.downloadUrl?.match(/\.(pdf|doc|docx|xdp)$/i) || form.downloadUrl?.includes('/download');
+  const buttonText = isDirectDownload ? 'Download' : 'Find Form';
+
   const handleDownload = () => {
     // Track download analytics
     if (typeof window !== 'undefined' && window.gtag) {
@@ -888,7 +891,7 @@ function FormCard({ form }) {
               onClick={handleDownload}
               className="px-4 py-2 bg-orange-500 hover:bg-orange-600 rounded-lg font-medium text-sm"
             >
-              Download
+              {buttonText}
             </button>
           </div>
         </div>
