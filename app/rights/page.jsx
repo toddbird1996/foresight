@@ -384,7 +384,7 @@ const LEGISLATION_DB = {
     jurisdiction: 'Quebec',
     flag: '🇨🇦',
     status: 'live',
-    actName: 'Youth Protection Act (Loi sur la protection de la jeunesse)',
+    actName: 'Youth Protection Act (Loi sur la protection de la jeunesse, P-34.1)',
     agency: 'Direction de la protection de la jeunesse (DPJ)',
     legislationUrl: 'https://www.legisquebec.gouv.qc.ca/en/document/cs/P-34.1',
     pdfUrl: 'https://www.legisquebec.gouv.qc.ca/en/document/cs/P-34.1',
@@ -397,31 +397,57 @@ const LEGISLATION_DB = {
       {
         id: 'investigation', title: 'Your Rights During an Investigation', icon: '🔍',
         rights: [
-          { right: 'DPJ must assess the report within specific timelines', section: 'Section 32', detail: 'The DPJ must assess whether the child\'s security or development is compromised within prescribed timelines.' },
-          { right: 'You have the right to consult a lawyer', section: 'Section 5', detail: 'Every person has the right to be assisted by a lawyer at every stage of the proceedings.' },
-          { right: 'Voluntary measures must be considered first', section: 'Section 51', detail: 'The DPJ must consider voluntary measures and agreements with the family before resorting to court intervention.' },
+          { right: 'DPJ must assess the report within specific timelines', section: 'Section 32', detail: 'The DPJ must assess whether the child\'s security or development is compromised within prescribed timelines after receiving a report.' },
+          { right: 'You have the right to a lawyer at every stage', section: 'Section 5', detail: 'Every person has the right to be assisted and represented by a lawyer at every stage of proceedings under this Act. Contact Legal Aid Quebec.' },
+          { right: 'Voluntary measures must be considered first', section: 'Section 51', detail: 'The DPJ must propose voluntary measures and agreements with the family before resorting to court intervention.' },
+          { right: 'You have the right to be informed of your rights', section: 'Section 8', detail: 'The DPJ must inform you of your rights, including the right to consult a lawyer and to contest decisions.' },
+          { right: 'Your consent is needed for voluntary measures', section: 'Section 52', detail: 'Voluntary measures require the consent of both the parent and the child (if 14 or older). You cannot be forced to accept voluntary measures.' },
+          { right: 'Reports must meet the definition of compromised security', section: 'Section 38', detail: 'The Act defines specific situations where security or development is compromised, including abandonment, neglect, psychological ill-treatment, sexual abuse, and physical abuse.' },
         ]
       },
       {
-        id: 'apprehension', title: 'Your Rights During an Apprehension', icon: '⚠️',
+        id: 'apprehension', title: 'Your Rights During an Apprehension (Emergency Removal)', icon: '⚠️',
         rights: [
-          { right: 'Emergency removal requires specific grounds', section: 'Section 46', detail: 'A child can only be removed immediately if their security or development is considered to be in danger.' },
-          { right: 'You must be informed of the reasons', section: 'Section 48', detail: 'You must be notified of the reasons for the intervention and your rights.' },
-          { right: 'Court hearing within specific timelines', section: 'Section 47', detail: 'The matter must be brought before the tribunal within prescribed timelines.' },
+          { right: 'Emergency removal requires imminent danger', section: 'Section 46', detail: 'A child can only be removed immediately (without a court order) if their security or development is considered to be in immediate danger.' },
+          { right: 'You must be informed of the reasons and your rights', section: 'Section 48', detail: 'You must be notified promptly of the specific reasons for the removal and informed of your rights, including the right to a lawyer.' },
+          { right: 'Court hearing within specific timelines', section: 'Section 47', detail: 'If the child is removed on an emergency basis, the matter must be brought before the tribunal within the timelines prescribed by the Act.' },
+          { right: 'Placement with extended family is preferred', section: 'Section 4', detail: 'The Act prioritizes maintaining the child within their family environment. Placement with extended family or in a familiar environment is preferred.' },
+          { right: 'The DPJ must attempt to return the child quickly', section: 'Section 46', detail: 'Emergency measures are temporary. The DPJ must work toward returning the child or seeking a court order as soon as possible.' },
         ]
       },
       {
-        id: 'court', title: 'Your Rights in Court', icon: '⚖️',
+        id: 'court', title: 'Your Rights in Court (Tribunal)', icon: '⚖️',
         rights: [
-          { right: 'Right to be heard by the tribunal', section: 'Section 74', detail: 'All parties have the right to be heard and to present evidence at the tribunal hearing.' },
-          { right: 'Right to appeal', section: 'Section 100', detail: 'You can appeal any decision of the tribunal to a higher court.' },
+          { right: 'Right to be heard by the tribunal', section: 'Section 74', detail: 'All parties — including parents and children 14 and older — have the right to be heard and to present evidence at the tribunal hearing.' },
+          { right: 'Children 14+ can consent or refuse measures independently', section: 'Section 52', detail: 'Children 14 years and older have the right to consent to or refuse voluntary measures and must be a party to court proceedings.' },
+          { right: 'Right to appeal any tribunal decision', section: 'Section 100', detail: 'You can appeal any decision of the tribunal to the Superior Court.' },
+          { right: 'Right to legal representation', section: 'Section 5', detail: 'You have the right to be represented by a lawyer throughout all proceedings. Legal Aid Quebec can provide a lawyer if you qualify financially.' },
+          { right: 'Time limits on court orders', section: 'Section 91.1', detail: 'The Act imposes maximum duration limits on court orders to ensure children do not remain in care indefinitely without review.' },
+        ]
+      },
+      {
+        id: 'access', title: 'Your Rights to Access & Visits', icon: '👨‍👩‍👧',
+        rights: [
+          { right: 'Access can be included in any order', section: 'General', detail: 'The tribunal can include access (visitation) provisions in any protection order, allowing you to maintain contact with your child.' },
+          { right: 'Voluntary measures can include access terms', section: 'Section 54', detail: 'If you agree to voluntary measures, the agreement can include specific terms about your access to the child.' },
+          { right: 'You can apply to modify access', section: 'General', detail: 'You can apply to the tribunal to change the terms of your access if your circumstances change.' },
+        ]
+      },
+      {
+        id: 'indigenous', title: 'Indigenous Family Rights', icon: '🪶',
+        rights: [
+          { right: 'Cultural identity must be preserved', section: 'Section 3', detail: 'The Act recognizes the importance of preserving the cultural identity of Indigenous children in all decisions.' },
+          { right: 'Indigenous community involvement', section: 'General', detail: 'Indigenous communities should be involved in decisions regarding their children, consistent with federal legislation (Bill C-92).' },
+          { right: 'Federal Act may apply', section: 'An Act Respecting First Nations, Inuit and Métis Children', detail: 'If the child belongs to an Indigenous community that has established its own child welfare law, that law may take precedence.' },
         ]
       },
       {
         id: 'complaints', title: 'How to File a Complaint', icon: '📋',
         rights: [
-          { right: 'Contact the Commission des droits', section: 'General', detail: 'The Commission des droits de la personne et des droits de la jeunesse can investigate complaints. Call 1-800-265-0779.' },
-          { right: 'Request a revision of a DPJ decision', section: 'Section 9', detail: 'You can request a revision of any decision made by the DPJ.' },
+          { right: 'Contact the Commission des droits de la personne', section: 'General', detail: 'The Commission can investigate complaints about children\'s rights violations. Call 1-800-265-0779.' },
+          { right: 'Request a revision of a DPJ decision', section: 'Section 9', detail: 'You can request a formal revision of any decision made by the DPJ within the prescribed timelines.' },
+          { right: 'File a complaint with the institution\'s complaints commissioner', section: 'General', detail: 'Each health and social services institution has a complaints commissioner who can handle complaints about DPJ services.' },
+          { right: 'Contact the Quebec Ombudsman (Protecteur du citoyen)', section: 'General', detail: 'The Protecteur du citoyen can investigate complaints about public services. Call 1-800-463-5070.' },
         ]
       }
     ]
@@ -445,21 +471,48 @@ const LEGISLATION_DB = {
         rights: [
           { right: 'The agency must investigate reports', section: 'Section 24', detail: 'An agency must investigate any information that a child may be in need of protective services.' },
           { right: 'You have the right to a lawyer', section: 'General', detail: 'Contact Nova Scotia Legal Aid at 902-420-6573.' },
-          { right: 'Services must be offered to keep the family together', section: 'Section 13', detail: 'The agency should provide protective services that support the family and prevent removal.' },
+          { right: 'Services must be offered to keep the family together', section: 'Section 13', detail: 'The agency should provide protective services that support the family and prevent removal whenever possible.' },
+          { right: 'You can refuse entry without a warrant', section: 'Section 27', detail: 'A worker generally requires a court order to enter your home unless the child is believed to be in immediate danger.' },
+          { right: 'Duty to report is broad in NS', section: 'Section 23', detail: 'In Nova Scotia, the duty to report applies even where information comes through a confidential relationship (including solicitor-client). This is broader than most provinces.' },
         ]
       },
       {
         id: 'apprehension', title: 'Your Rights During an Apprehension', icon: '⚠️',
         rights: [
-          { right: 'You must be notified', section: 'Section 33', detail: 'The agency must notify you of the apprehension and the reasons for it.' },
+          { right: 'You must be notified of the apprehension', section: 'Section 33', detail: 'The agency must notify you of the apprehension and the specific reasons for it.' },
           { right: 'A court hearing must occur promptly', section: 'Section 39', detail: 'The matter must be brought before the court within prescribed timelines after apprehension.' },
           { right: 'Placement with family is preferred', section: 'Section 42', detail: 'Priority is given to placing the child with a relative or within their community.' },
+          { right: 'You can consent to a voluntary agreement instead', section: 'Section 14', detail: 'Instead of court proceedings, you may agree to a voluntary care and custody agreement.' },
+        ]
+      },
+      {
+        id: 'court', title: 'Your Rights in Court', icon: '⚖️',
+        rights: [
+          { right: 'You can contest any protection application', section: 'General', detail: 'You have the right to appear, present evidence, call witnesses, and cross-examine agency witnesses.' },
+          { right: 'You can appeal court orders', section: 'General', detail: 'You have the right to appeal any order made under the Act.' },
+          { right: 'Time limits on care orders', section: 'General', detail: 'Temporary care and custody orders have maximum time limits.' },
+        ]
+      },
+      {
+        id: 'access', title: 'Your Rights to Access & Visits', icon: '👨‍👩‍👧',
+        rights: [
+          { right: 'Access provisions can be included in orders', section: 'Section 43', detail: 'The court can include access provisions allowing you to visit your child while they are in care.' },
+          { right: 'You can apply to vary access', section: 'General', detail: 'You can apply to the court to change access terms if circumstances have changed.' },
+        ]
+      },
+      {
+        id: 'indigenous', title: 'Indigenous Family Rights', icon: '🪶',
+        rights: [
+          { right: 'Mi\'kmaq Family and Children\'s Services', section: 'General', detail: 'Mi\'kmaq Family and Children\'s Services of Nova Scotia provides culturally appropriate child welfare services to Mi\'kmaq communities.' },
+          { right: 'Cultural considerations in placement', section: 'Section 42', detail: 'The child\'s cultural and religious heritage must be considered when making placement decisions.' },
         ]
       },
       {
         id: 'complaints', title: 'How to File a Complaint', icon: '📋',
         rights: [
           { right: 'Contact the Nova Scotia Ombudsman', section: 'Ombudsman Act', detail: 'The Ombudsman can investigate complaints about government services. Call 902-424-6070.' },
+          { right: 'File a complaint with the Department', section: 'General', detail: 'Contact the Department of Community Services directly to file a formal complaint.' },
+          { right: 'Contact your MLA', section: 'General', detail: 'Your Member of the Legislative Assembly can raise concerns on your behalf.' },
         ]
       }
     ]
@@ -481,22 +534,51 @@ const LEGISLATION_DB = {
       {
         id: 'investigation', title: 'Your Rights During an Investigation', icon: '🔍',
         rights: [
-          { right: 'The Minister must investigate reports of abuse or neglect', section: 'Section 31', detail: 'The Minister must investigate where there is information that a child\'s security or development may be in danger.' },
+          { right: 'The Minister must investigate reports', section: 'Section 31', detail: 'The Minister must investigate where there is information that a child\'s security or development may be in danger.' },
           { right: 'You have the right to a lawyer', section: 'General', detail: 'Contact Legal Aid New Brunswick at 1-800-442-4862.' },
-          { right: 'Support services must be considered', section: 'Section 34', detail: 'Voluntary agreements and support services must be considered before court intervention.' },
+          { right: 'Support services must be considered first', section: 'Section 34', detail: 'Voluntary agreements and support services must be considered before court intervention or removal.' },
+          { right: 'You can refuse entry without a warrant', section: 'General', detail: 'A worker generally needs a court order to enter your home unless there is immediate danger to the child.' },
+          { right: 'Solicitor-client privilege is protected', section: 'Section 30', detail: 'In New Brunswick, the duty to report does not extend to information protected by solicitor-client privilege.' },
         ]
       },
       {
         id: 'apprehension', title: 'Your Rights During an Apprehension', icon: '⚠️',
         rights: [
-          { right: 'You must be informed of the reasons', section: 'Section 36', detail: 'You must be notified of the grounds for removal and your right to counsel.' },
-          { right: 'A court hearing must be held promptly', section: 'Section 37', detail: 'The matter must be brought before the court within prescribed timelines.' },
+          { right: 'You must be informed of the reasons', section: 'Section 36', detail: 'You must be notified of the grounds for removal and your right to consult a lawyer.' },
+          { right: 'A court hearing must be held promptly', section: 'Section 37', detail: 'The matter must be brought before the court within the prescribed timelines.' },
+          { right: 'Placement with family is preferred', section: 'General', detail: 'Priority should be given to placing the child with extended family or within their community.' },
+          { right: 'You can enter a voluntary agreement', section: 'Section 34', detail: 'Instead of apprehension, the Minister can enter into a voluntary agreement with you for support services.' },
+        ]
+      },
+      {
+        id: 'court', title: 'Your Rights in Court', icon: '⚖️',
+        rights: [
+          { right: 'You can contest any application', section: 'General', detail: 'You have the right to appear in court, present evidence, and challenge the Minister\'s application.' },
+          { right: 'You can appeal court decisions', section: 'General', detail: 'You have the right to appeal any order made under the Act.' },
+          { right: 'Orders have time limits', section: 'General', detail: 'Supervision and custody orders have maximum durations and must be reviewed.' },
+        ]
+      },
+      {
+        id: 'access', title: 'Your Rights to Access & Visits', icon: '👨‍👩‍👧',
+        rights: [
+          { right: 'Access can be ordered by the court', section: 'General', detail: 'The court can include access provisions in any order, allowing you to maintain contact with your child.' },
+          { right: 'You can apply to vary access terms', section: 'General', detail: 'If your circumstances change, you can apply to modify the access arrangements.' },
+        ]
+      },
+      {
+        id: 'indigenous', title: 'Indigenous Family Rights', icon: '🪶',
+        rights: [
+          { right: 'Eight First Nations child and family service agencies', section: 'General', detail: 'New Brunswick has eight First Nations Child and Family Service agencies serving 15 First Nations communities.' },
+          { right: 'Cultural placement considerations', section: 'General', detail: 'The child\'s cultural background must be considered in placement decisions.' },
+          { right: 'Federal Act may apply', section: 'Bill C-92', detail: 'Indigenous communities that have established their own child welfare laws may have jurisdiction.' },
         ]
       },
       {
         id: 'complaints', title: 'How to File a Complaint', icon: '📋',
         rights: [
-          { right: 'Contact the Child and Youth Advocate', section: 'Child and Youth Advocate Act', detail: 'Independent advocate who can investigate complaints. Call 1-888-465-1100.' },
+          { right: 'Contact the Child and Youth Advocate', section: 'Child and Youth Advocate Act', detail: 'Independent advocate who can investigate complaints about child welfare services. Call 1-888-465-1100.' },
+          { right: 'File a complaint with the Department', section: 'General', detail: 'Contact the Department of Social Development to file a formal complaint.' },
+          { right: 'Contact the NB Ombudsman', section: 'Ombudsman Act', detail: 'The Ombudsman can investigate complaints about government services. Call 1-888-465-1100.' },
         ]
       }
     ]
@@ -518,22 +600,50 @@ const LEGISLATION_DB = {
       {
         id: 'investigation', title: 'Your Rights During an Investigation', icon: '🔍',
         rights: [
-          { right: 'A manager must assess reports', section: 'Section 14', detail: 'A manager must assess whether a child is in need of protective intervention.' },
+          { right: 'A manager must assess reports', section: 'Section 14', detail: 'A manager must assess whether a child is in need of protective intervention upon receiving a report.' },
           { right: 'You have the right to counsel', section: 'General', detail: 'Contact Legal Aid NL at 1-800-563-9911.' },
-          { right: 'Voluntary services agreements are available', section: 'Section 15', detail: 'A manager may enter into agreements with families to provide support services.' },
+          { right: 'Voluntary services agreements are available', section: 'Section 15', detail: 'A manager may enter into agreements with families to provide support services voluntarily, without court proceedings.' },
+          { right: 'You can refuse entry without a warrant', section: 'General', detail: 'A worker needs a court order to enter your home unless the child is in immediate danger.' },
+          { right: 'Protection eligibility up to age 16', section: 'Section 10', detail: 'In Newfoundland, child protection services apply to children under 16 — one of the lower age thresholds in Canada.' },
         ]
       },
       {
         id: 'apprehension', title: 'Your Rights During an Apprehension', icon: '⚠️',
         rights: [
-          { right: 'You must be notified', section: 'Section 20', detail: 'You must be informed of the apprehension and the reasons for it.' },
-          { right: 'A hearing must occur within prescribed timelines', section: 'Section 22', detail: 'The matter must be brought before the court promptly.' },
+          { right: 'You must be notified promptly', section: 'Section 20', detail: 'You must be informed of the apprehension, the specific reasons, and your right to a lawyer.' },
+          { right: 'A hearing must occur within prescribed timelines', section: 'Section 22', detail: 'The matter must be brought before the court promptly after apprehension.' },
+          { right: 'Placement with family is preferred', section: 'Section 16', detail: 'The Act prioritizes keeping the child within their family and community.' },
+          { right: 'You can negotiate a voluntary care agreement', section: 'Section 15', detail: 'Instead of court proceedings, you may agree to a voluntary care arrangement.' },
+        ]
+      },
+      {
+        id: 'court', title: 'Your Rights in Court', icon: '⚖️',
+        rights: [
+          { right: 'You can challenge any protection order', section: 'General', detail: 'You have the right to present evidence and contest the manager\'s application.' },
+          { right: 'You can appeal court decisions', section: 'General', detail: 'You can appeal any order to a higher court.' },
+          { right: 'Orders have maximum time limits', section: 'General', detail: 'Protection orders have prescribed maximum durations and must be reviewed.' },
+        ]
+      },
+      {
+        id: 'access', title: 'Your Rights to Access & Visits', icon: '👨‍👩‍👧',
+        rights: [
+          { right: 'Access can be included in protection orders', section: 'General', detail: 'The court can include access provisions allowing you to visit your child.' },
+          { right: 'You can apply to modify access', section: 'General', detail: 'Apply to the court to change access arrangements if your circumstances improve.' },
+        ]
+      },
+      {
+        id: 'indigenous', title: 'Indigenous Family Rights', icon: '🪶',
+        rights: [
+          { right: 'Nunatsiavut Inuit communities are self-governing', section: 'General', detail: 'The Inuit communities of Northern Labrador (Nunatsiavut) are self-governing but have not yet implemented separate child protection legislation.' },
+          { right: 'Cultural considerations in placement', section: 'General', detail: 'The child\'s Indigenous cultural heritage must be considered in all placement decisions.' },
         ]
       },
       {
         id: 'complaints', title: 'How to File a Complaint', icon: '📋',
         rights: [
-          { right: 'Contact the Child and Youth Advocate', section: 'Advocate for Children and Youth Act', detail: 'Independent advocate who investigates complaints. Call 1-877-753-3840.' },
+          { right: 'Contact the Child and Youth Advocate', section: 'Advocate for Children and Youth Act', detail: 'Independent advocate who investigates complaints about child welfare services. Call 1-877-753-3840.' },
+          { right: 'File a complaint with the Department', section: 'General', detail: 'Contact the Department of Children, Seniors and Social Development directly.' },
+          { right: 'Contact the NL Citizens\' Representative', section: 'Citizens\' Representative Act', detail: 'The Citizens\' Representative (Ombudsman) can investigate complaints about government services. Call 1-800-559-0079.' },
         ]
       }
     ]
@@ -557,19 +667,47 @@ const LEGISLATION_DB = {
         rights: [
           { right: 'The Director must investigate reports', section: 'Section 11', detail: 'The Director must investigate any report that a child may be in need of protection.' },
           { right: 'You have the right to a lawyer', section: 'General', detail: 'Contact Legal Aid PEI at 902-368-6043.' },
+          { right: 'Support services should be considered', section: 'General', detail: 'The Director should consider providing support services to keep the family together before seeking removal.' },
+          { right: 'You can refuse entry without a warrant', section: 'General', detail: 'A worker generally needs a court order to enter your home.' },
         ]
       },
       {
         id: 'apprehension', title: 'Your Rights During an Apprehension', icon: '⚠️',
         rights: [
-          { right: 'You must be notified of the reasons', section: 'Section 22', detail: 'You must be informed of the apprehension and your right to counsel.' },
-          { right: 'A court hearing must occur promptly', section: 'Section 25', detail: 'The child must be brought before the court within prescribed timelines.' },
+          { right: 'You must be notified of the reasons', section: 'Section 22', detail: 'You must be informed of the apprehension, the reasons, and your right to counsel.' },
+          { right: 'A court hearing must occur promptly', section: 'Section 25', detail: 'The child must be brought before the court within the prescribed timelines.' },
+          { right: 'Placement with family is preferred', section: 'General', detail: 'Priority should be given to placing the child with extended family.' },
+          { right: 'Voluntary agreements are available', section: 'General', detail: 'The Director can enter into voluntary agreements for services instead of proceeding with court action.' },
+        ]
+      },
+      {
+        id: 'court', title: 'Your Rights in Court', icon: '⚖️',
+        rights: [
+          { right: 'You can contest any application', section: 'General', detail: 'You have the right to appear, present evidence, and challenge the Director\'s application.' },
+          { right: 'You can appeal orders', section: 'General', detail: 'You have the right to appeal any order made under the Act.' },
+          { right: 'Protection orders have time limits', section: 'General', detail: 'Orders must be reviewed and cannot be indefinite.' },
+        ]
+      },
+      {
+        id: 'access', title: 'Your Rights to Access & Visits', icon: '👨‍👩‍👧',
+        rights: [
+          { right: 'Access can be ordered by the court', section: 'General', detail: 'The court can include access provisions in protection orders.' },
+          { right: 'You can apply to modify access', section: 'General', detail: 'If circumstances change, you can apply to vary the access arrangements.' },
+        ]
+      },
+      {
+        id: 'indigenous', title: 'Indigenous Family Rights', icon: '🪶',
+        rights: [
+          { right: 'Mi\'kmaq cultural considerations', section: 'General', detail: 'PEI has a significant Mi\'kmaq population. Cultural background must be considered in placement decisions.' },
+          { right: 'Federal Act may apply', section: 'Bill C-92', detail: 'Indigenous communities that have established child welfare jurisdiction may have precedence.' },
         ]
       },
       {
         id: 'complaints', title: 'How to File a Complaint', icon: '📋',
         rights: [
           { right: 'Contact the PEI Ombudsperson', section: 'Ombudsperson Act', detail: 'Can investigate complaints about government services. Call 902-368-4500.' },
+          { right: 'File a complaint with the Department', section: 'General', detail: 'Contact the Department of Social Development and Seniors directly.' },
+          { right: 'Contact CLIA for legal information', section: 'General', detail: 'The Community Legal Information Association of PEI provides free legal information. Call 902-892-0853.' },
         ]
       }
     ]
@@ -591,21 +729,48 @@ const LEGISLATION_DB = {
       {
         id: 'investigation', title: 'Your Rights During an Investigation', icon: '🔍',
         rights: [
-          { right: 'A child protection worker must investigate reports', section: 'Section 9', detail: 'An investigation must be conducted when there are reasonable grounds to believe a child needs protection.' },
-          { right: 'You have the right to a lawyer', section: 'General', detail: 'Contact Legal Aid NWT at 867-920-6356.' },
+          { right: 'A child protection worker must investigate', section: 'Section 9', detail: 'An investigation must be conducted when there are reasonable grounds to believe a child needs protection.' },
+          { right: 'You have the right to a lawyer', section: 'General', detail: 'Contact the NWT Law Line at 867-920-6356 for free legal information.' },
+          { right: 'Support services should be offered', section: 'Section 7', detail: 'The Act emphasizes preventive services and support to families.' },
+          { right: 'A warrant is required to enter your home', section: 'Section 13', detail: 'Workers need a court order unless the child is in immediate danger.' },
+          { right: 'Definition of "child in need of protection" is specific', section: 'Section 7(3)', detail: 'The Act defines specific circumstances that constitute a child being in need of protection.' },
         ]
       },
       {
         id: 'apprehension', title: 'Your Rights During an Apprehension', icon: '⚠️',
         rights: [
-          { right: 'You must be notified', section: 'Section 14', detail: 'You must be informed of the apprehension and the reasons.' },
-          { right: 'A hearing must occur within prescribed timelines', section: 'Section 16', detail: 'The matter must be brought to court promptly.' },
+          { right: 'You must be notified promptly', section: 'Section 14', detail: 'You must be informed of the apprehension and the reasons for it.' },
+          { right: 'A hearing must occur within prescribed timelines', section: 'Section 16', detail: 'The matter must be brought to court promptly after apprehension.' },
+          { right: 'Community-based alternatives should be considered', section: 'General', detail: 'In remote NWT communities, culturally appropriate alternatives to apprehension should be explored.' },
+        ]
+      },
+      {
+        id: 'court', title: 'Your Rights in Court', icon: '⚖️',
+        rights: [
+          { right: 'You can challenge any protection order', section: 'General', detail: 'You have the right to present evidence and contest applications.' },
+          { right: 'You can appeal decisions', section: 'General', detail: 'You have the right to appeal any order.' },
+        ]
+      },
+      {
+        id: 'access', title: 'Your Rights to Access & Visits', icon: '👨‍👩‍👧',
+        rights: [
+          { right: 'Access provisions can be included in orders', section: 'General', detail: 'The court can order access (visits) between you and your child while in care.' },
+          { right: 'Remote community considerations', section: 'General', detail: 'In remote communities, the court may consider alternative access arrangements such as video calls.' },
+        ]
+      },
+      {
+        id: 'indigenous', title: 'Indigenous Family Rights', icon: '🪶',
+        rights: [
+          { right: 'Most NWT children in care are Indigenous', section: 'General', detail: 'The majority of children in care in the NWT are Indigenous. Cultural considerations are paramount in all decisions.' },
+          { right: 'Community involvement in child welfare', section: 'General', detail: 'Indigenous communities should be involved in decisions about children from their communities.' },
+          { right: 'Federal Act may apply', section: 'Bill C-92', detail: 'Indigenous governing bodies that have established their own child welfare laws may have jurisdiction.' },
         ]
       },
       {
         id: 'complaints', title: 'How to File a Complaint', icon: '📋',
         rights: [
           { right: 'File a complaint with the Department', section: 'General', detail: 'Contact the Department of Health and Social Services to file a formal complaint.' },
+          { right: 'Contact the NWT Information and Privacy Commissioner', section: 'General', detail: 'For issues related to access to your records. Call 867-920-8049.' },
         ]
       }
     ]
@@ -628,21 +793,50 @@ const LEGISLATION_DB = {
         id: 'investigation', title: 'Your Rights During an Investigation', icon: '🔍',
         rights: [
           { right: 'A director must investigate reports', section: 'Section 21', detail: 'The director must investigate where there are reasonable grounds to believe a child needs protection.' },
-          { right: 'You have the right to a lawyer', section: 'General', detail: 'Contact Yukon Legal Services at 867-667-5210.' },
-          { right: 'Support services must be considered', section: 'Section 4', detail: 'Consideration must be given to providing services that support family unity.' },
+          { right: 'You have the right to a lawyer', section: 'General', detail: 'Contact Yukon Legal Services at 867-667-5210 for free legal assistance.' },
+          { right: 'Support services must be considered', section: 'Section 4', detail: 'The Act emphasizes providing services that support family unity and prevent the need for removal.' },
+          { right: 'A warrant is required to enter your home', section: 'General', detail: 'Workers need a court order to enter your home unless the child is in immediate danger.' },
+          { right: 'First Nations involvement', section: 'Section 5', detail: 'When a child\'s First Nation is identified, the director must give the First Nation notice and an opportunity to be involved.' },
         ]
       },
       {
         id: 'apprehension', title: 'Your Rights During an Apprehension', icon: '⚠️',
         rights: [
-          { right: 'You must be notified of the reasons', section: 'Section 28', detail: 'You must be informed of the grounds for apprehension and your right to counsel.' },
-          { right: 'A court hearing must occur promptly', section: 'Section 30', detail: 'The matter must be brought before the court within prescribed timelines.' },
+          { right: 'You must be notified of the reasons', section: 'Section 28', detail: 'You must be informed of the grounds for apprehension and your right to consult a lawyer.' },
+          { right: 'A court hearing must occur promptly', section: 'Section 30', detail: 'The matter must be brought before the court within the prescribed timelines.' },
+          { right: 'Placement with family and community is prioritized', section: 'Section 4', detail: 'The Act prioritizes placing children with their family, extended family, or within their community.' },
+          { right: 'The director must consider cultural needs', section: 'Section 4', detail: 'The child\'s cultural, linguistic, and spiritual needs must be considered in all decisions.' },
+        ]
+      },
+      {
+        id: 'court', title: 'Your Rights in Court', icon: '⚖️',
+        rights: [
+          { right: 'You can challenge any protection order', section: 'General', detail: 'You have the right to appear in court, present evidence, and contest the director\'s application.' },
+          { right: 'You can appeal court decisions', section: 'General', detail: 'You can appeal any order made under the Act.' },
+          { right: 'Orders have time limits', section: 'General', detail: 'Protection orders must be reviewed and have maximum durations.' },
+        ]
+      },
+      {
+        id: 'access', title: 'Your Rights to Access & Visits', icon: '👨‍👩‍👧',
+        rights: [
+          { right: 'Access can be included in any order', section: 'General', detail: 'The court can include access provisions allowing you to maintain contact with your child.' },
+          { right: 'You can apply to modify access', section: 'General', detail: 'Apply to the court to change access arrangements if circumstances change.' },
+        ]
+      },
+      {
+        id: 'indigenous', title: 'Indigenous Family Rights', icon: '🪶',
+        rights: [
+          { right: 'First Nations must be notified and involved', section: 'Section 5', detail: 'When a child\'s First Nation is identified, the director must give the First Nation notice of proceedings and an opportunity to participate.' },
+          { right: 'Cultural placement priority', section: 'Section 4', detail: 'The Act prioritizes placing children in environments consistent with their cultural, linguistic, and spiritual heritage.' },
+          { right: 'Self-governing First Nations may exercise jurisdiction', section: 'Bill C-92', detail: 'Yukon has several self-governing First Nations that may establish their own child welfare laws.' },
         ]
       },
       {
         id: 'complaints', title: 'How to File a Complaint', icon: '📋',
         rights: [
-          { right: 'Contact the Yukon Child and Youth Advocate', section: 'Child and Youth Advocate Act', detail: 'Independent advocate who can investigate complaints. Call 867-456-5575.' },
+          { right: 'Contact the Child and Youth Advocate', section: 'Child and Youth Advocate Act', detail: 'Independent advocate who can investigate complaints about child welfare services. Call 867-456-5575.' },
+          { right: 'File a complaint with the Department', section: 'General', detail: 'Contact the Department of Health and Social Services directly.' },
+          { right: 'Contact the Yukon Ombudsman', section: 'Ombudsman Act', detail: 'The Ombudsman can investigate complaints about government services. Call 867-667-8468.' },
         ]
       }
     ]
@@ -664,28 +858,57 @@ const LEGISLATION_DB = {
       {
         id: 'investigation', title: 'Your Rights During an Investigation', icon: '🔍',
         rights: [
-          { right: 'A child protection worker must investigate', section: 'Section 9', detail: 'An investigation must be conducted when a child may need protection.' },
+          { right: 'A child protection worker must investigate', section: 'Section 9', detail: 'An investigation must be conducted when a child may be in need of protection.' },
           { right: 'You have the right to a lawyer', section: 'General', detail: 'Contact Maliiganik Tukisiiniakvik Legal Aid at 867-979-5377. Available in Inuktitut and English.' },
-          { right: 'Inuit cultural values must be considered', section: 'Section 2', detail: 'The Act requires consideration of Inuit societal values and cultural practices.' },
+          { right: 'Inuit cultural values must be considered', section: 'Section 2', detail: 'The Act requires consideration of Inuit societal values, Inuit Qaujimajatuqangit (traditional knowledge), and cultural practices in all decisions.' },
+          { right: 'Community-based approaches are encouraged', section: 'General', detail: 'Given the close-knit nature of Nunavut communities, community-based and culturally appropriate approaches should be prioritized.' },
+          { right: 'You can have a support person present', section: 'General', detail: 'You can have a family member, Elder, or community advocate present during meetings with workers.' },
         ]
       },
       {
         id: 'apprehension', title: 'Your Rights During an Apprehension', icon: '⚠️',
         rights: [
-          { right: 'You must be notified', section: 'Section 14', detail: 'You must be informed of the apprehension and your rights.' },
-          { right: 'A hearing must occur within prescribed timelines', section: 'Section 16', detail: 'The matter must be brought to court promptly.' },
-          { right: 'Community involvement in placement', section: 'Section 30', detail: 'The community should be involved in decisions about the child\'s placement.' },
+          { right: 'You must be notified of the apprehension', section: 'Section 14', detail: 'You must be informed of the apprehension and your rights, including the right to a lawyer.' },
+          { right: 'A hearing must occur within prescribed timelines', section: 'Section 16', detail: 'The matter must be brought to court promptly. In remote communities, court may occur via circuit court.' },
+          { right: 'Community involvement in placement', section: 'Section 30', detail: 'The community should be involved in decisions about the child\'s placement. Extended family and community placements are preferred.' },
+          { right: 'Timely review is a constitutional right', section: 'General', detail: 'The Supreme Court of Canada has affirmed that timely review of child apprehensions is a constitutional requirement under Section 7 of the Charter.' },
+        ]
+      },
+      {
+        id: 'court', title: 'Your Rights in Court', icon: '⚖️',
+        rights: [
+          { right: 'You can challenge any protection application', section: 'General', detail: 'You have the right to appear and present your case.' },
+          { right: 'You can appeal decisions', section: 'General', detail: 'You can appeal any order made under the Act.' },
+          { right: 'Hearings may be by telephone or video', section: 'General', detail: 'In remote communities, court hearings may be conducted by telephone or video to ensure timely access to justice.' },
+        ]
+      },
+      {
+        id: 'access', title: 'Your Rights to Access & Visits', icon: '👨‍👩‍👧',
+        rights: [
+          { right: 'Access provisions can be included in orders', section: 'General', detail: 'The court can order access between you and your child while in care.' },
+          { right: 'Remote community considerations', section: 'General', detail: 'Given Nunavut\'s geography, alternative access methods (phone, video) may be considered for families in different communities.' },
+        ]
+      },
+      {
+        id: 'indigenous', title: 'Inuit Family Rights', icon: '🪶',
+        rights: [
+          { right: 'Inuit Qaujimajatuqangit must guide decisions', section: 'Section 2', detail: 'Inuit traditional knowledge and values (Inuit Qaujimajatuqangit) must be considered in all child welfare decisions.' },
+          { right: 'Community and Elder involvement', section: 'General', detail: 'Elders and community members should be involved in decision-making about children from their communities.' },
+          { right: 'Customary adoption is recognized', section: 'Aboriginal Custom Adoption Recognition Act', detail: 'Nunavut recognizes Inuit customary adoption, which is a traditional practice of the Inuit people.' },
+          { right: 'Extended family placements are culturally preferred', section: 'General', detail: 'In Inuit culture, extended family care is a traditional and preferred arrangement. The Act should reflect this.' },
+          { right: 'Services should be available in Inuktitut', section: 'General', detail: 'Under the Official Languages Act, services should be available in Inuktitut, Inuinnaqtun, English, and French.' },
         ]
       },
       {
         id: 'complaints', title: 'How to File a Complaint', icon: '📋',
         rights: [
-          { right: 'Contact the Representative for Children and Youth', section: 'Representative for Children and Youth Act', detail: 'Independent advocate. Call 867-975-5090.' },
+          { right: 'Contact the Representative for Children and Youth', section: 'Representative for Children and Youth Act', detail: 'Independent advocate who can investigate complaints. Call 867-975-5090. Services available in Inuktitut.' },
+          { right: 'File a complaint with the Department of Family Services', section: 'General', detail: 'Contact the Department directly to raise concerns about a worker or services.' },
+          { right: 'Contact Nunavut Legal Aid', section: 'General', detail: 'Maliiganik Tukisiiniakvik (867-979-5377) or Kivalliq Legal Aid (867-645-2536) can provide legal advice in Inuktitut and English.' },
         ]
       }
     ]
-  },
-};
+  },};
 
 // Jurisdictions coming soon
 const COMING_SOON = {
