@@ -194,6 +194,15 @@ export default function Dashboard() {
           </Link>
 
           <Link
+            href="/rights"
+            className="bg-white border border-gray-200 rounded-xl p-4 hover:border-red-500 hover:shadow-md transition-all"
+          >
+            <div className="text-2xl mb-2">⚖️</div>
+            <h3 className="font-semibold text-gray-900">Know Your Rights</h3>
+            <p className="text-sm text-gray-500">CPS codes & regulations</p>
+          </Link>
+
+          <Link
             href="/profile"
             className="bg-white border border-gray-200 rounded-xl p-4 hover:border-red-500 hover:shadow-md transition-all"
           >
