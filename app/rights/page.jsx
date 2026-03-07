@@ -110,35 +110,59 @@ const LEGISLATION_DB = {
       {
         id: 'investigation', title: 'Your Rights During an Investigation', icon: '🔍',
         rights: [
-          { right: 'You must be informed of the concerns', section: 'Section 4', detail: 'A director must assess whether a child is in need of intervention and inform the family of the concerns.' },
-          { right: 'You have the right to consult a lawyer', section: 'General', detail: 'You can consult a lawyer at any stage. Contact Legal Aid Alberta at 1-866-845-3425.' },
-          { right: 'The least disruptive measures must be used', section: 'Section 2(d)', detail: 'The Act requires that the least disruptive course of action that is in the child\'s best interest should be followed.' },
-          { right: 'Family enhancement agreements can be offered', section: 'Section 8', detail: 'A director may enter into an enhancement agreement with you to provide services to keep your family together.' },
-          { right: 'You can refuse entry without a warrant', section: 'Section 18', detail: 'An officer generally requires a court order to enter your home, unless there are reasonable grounds to believe a child is in immediate danger.' },
+          { right: 'You must be informed of the concerns', section: 'Section 4', detail: 'Anyone with reasonable and probable grounds to believe a child is in need of intervention must report. A director must then assess the situation and inform the family of the concerns.' },
+          { right: 'You have the right to consult a lawyer immediately', section: 'Section 19(3)', detail: 'When a child is apprehended, notice must include the telephone number of the nearest Legal Aid office. You can consult a lawyer at any stage — contact Legal Aid Alberta at 1-866-845-3425.' },
+          { right: 'The least disruptive measures must be used', section: 'Section 2(d)', detail: 'The Act specifically requires that "if a child is in need of protective services, the child should, if possible, receive those services in a manner that least disrupts the child."' },
+          { right: 'Family enhancement agreements can be offered instead of court', section: 'Section 8', detail: 'A director may enter into a Family Enhancement Agreement with you to provide voluntary support services to keep your family together, without going to court.' },
+          { right: 'You can refuse entry without a warrant', section: 'Section 18', detail: 'An officer generally requires a court order (Apprehension Order) to enter your home. Without a warrant, entry is only permitted if there are reasonable grounds to believe a child is in immediate danger.' },
+          { right: 'Indigenous communities must be involved', section: 'Section 2(d)', detail: 'The Act states that Indigenous people should be involved in the planning and provision of services and decisions respecting Indigenous families and their children.' },
         ]
       },
       {
         id: 'apprehension', title: 'Your Rights During an Apprehension', icon: '⚠️',
         rights: [
-          { right: 'You must be told the reasons for apprehension', section: 'Section 19', detail: 'After apprehension, a director must inform the guardian of the reasons and the right to legal counsel.' },
-          { right: 'A court hearing must be held within specific timelines', section: 'Section 21', detail: 'An application for a supervision or temporary guardianship order must be filed promptly after apprehension.' },
-          { right: 'Your child should be placed with family when possible', section: 'Section 2(e)', detail: 'Placement priority goes to the child\'s extended family or community when appropriate.' },
-          { right: 'You can apply to have your child returned', section: 'Section 24', detail: 'You can apply to the court for the return of your child if circumstances have changed.' },
+          { right: 'You must be told the reasons and given Legal Aid\'s number', section: 'Section 19(3)', detail: 'Notice of apprehension must include a statement of the reasons AND the telephone number of the nearest Legal Aid office.' },
+          { right: 'Apprehension Orders can be obtained without notice to you', section: 'Section 19(1)', detail: 'Be aware: CFS can apply for an Apprehension Order without giving you notice first (ex parte). However, a court must still review the order.' },
+          { right: 'Court application within 2 days', section: 'Section 21(1)', detail: 'If a child is not returned within 2 days of apprehension, the director must apply to the court for an order (TGO, PGO, supervision, or other).' },
+          { right: 'The court must hear the matter within 10 days', section: 'Section 21', detail: 'The initial court appearance must be scheduled within 10 days of the apprehension.' },
+          { right: 'Your child should be placed with family', section: 'Section 2(e)', detail: 'The Act prioritizes placing children with immediate or extended family, then adoption, private guardianship, or supported independent living for youth.' },
+          { right: 'You can apply to have your child returned at any time', section: 'Section 24', detail: 'You can apply to the court for the return of your child if circumstances have changed.' },
+          { right: 'Maximum time limits on temporary guardianship', section: 'Section 33', detail: 'There are strict time limits on how long a child can be under Temporary Guardianship Orders. If the maximum is reached, the Director must apply for a Permanent Guardianship Order or return the child.' },
         ]
       },
       {
         id: 'court', title: 'Your Rights in Court', icon: '⚖️',
         rights: [
-          { right: 'You can challenge any order', section: 'General', detail: 'You have the right to contest any application made by the director and present your own evidence.' },
-          { right: 'Children can appeal court decisions', section: 'Section 116', detail: 'Children of any age have the right to appeal court decisions made under the Act.' },
-          { right: 'You can appeal to the Appeals Panel', section: 'Section 120', detail: 'Decisions made by directors can be appealed to the Appeals Panel.' },
+          { right: 'You can challenge any order made under the Act', section: 'General', detail: 'You have the right to contest any application made by the director, present your own evidence, call witnesses, and cross-examine.' },
+          { right: 'Children of any age can appeal court decisions', section: 'Section 116', detail: 'Unlike many provinces, Alberta allows children of any age to appeal court decisions made under the Act.' },
+          { right: 'You can appeal director\'s decisions to the Appeals Panel', section: 'Section 120', detail: 'Administrative decisions made by directors (not court orders) can be appealed to the Appeals Panel within 30 days.' },
+          { right: 'You can access your child welfare file', section: 'Section 126(1)(b)', detail: 'A parent or guardian may request information from the Director relating to themselves and/or their child. If refused, you can apply under Section 126.11.' },
+        ]
+      },
+      {
+        id: 'access', title: 'Your Rights to Access & Visits', icon: '👨‍👩‍👧',
+        rights: [
+          { right: 'You may have access to your child while in temporary care', section: 'Section 34', detail: 'The court can include access provisions in any temporary guardianship order.' },
+          { right: 'Access can be included in supervision orders', section: 'Section 32', detail: 'If a supervision order is made, it can include terms about your access to the child.' },
+          { right: 'You can apply to vary access conditions', section: 'General', detail: 'You can apply to the court to change the terms of access if circumstances change.' },
+        ]
+      },
+      {
+        id: 'indigenous', title: 'Indigenous Family Rights', icon: '🪶',
+        rights: [
+          { right: 'Indigenous people must be involved in planning', section: 'Section 2(d)', detail: 'The Act specifically states that Indigenous people should be involved with respect to the planning and provision of services to and decisions respecting Indigenous families and their children.' },
+          { right: 'Cultural connections must be maintained', section: 'Section 2(b)(iii)', detail: 'Children have the right to connections with their culture and cultural communities and opportunities to form those connections.' },
+          { right: 'Delegated First Nations Agencies provide services on-reserve', section: 'General', detail: 'There are 19 Delegated First Nations Agencies in Alberta with authority to provide child intervention services to First Nations children on-reserve.' },
+          { right: 'Federal Act may apply', section: 'An Act Respecting First Nations, Inuit and Métis Children', detail: 'If the child is a member of a First Nation, Inuit, or Métis community that has created its own child protection law, that Indigenous Law may prevail over the CYFEA.' },
         ]
       },
       {
         id: 'complaints', title: 'How to File a Complaint', icon: '📋',
         rights: [
-          { right: 'Contact the Child and Youth Advocate', section: 'Child and Youth Advocate Act', detail: 'The Advocate investigates complaints about child intervention services. Call 1-800-661-3446.' },
-          { right: 'Appeal a director\'s decision', section: 'Section 120', detail: 'You can appeal decisions to the Appeals Panel within 30 days.' },
+          { right: 'Contact the Child and Youth Advocate', section: 'Child and Youth Advocate Act', detail: 'The Advocate investigates complaints about child intervention services and advocates for young people. Call 1-800-661-3446.' },
+          { right: 'Appeal a director\'s decision to the Appeals Panel', section: 'Section 120', detail: 'You can appeal administrative decisions to the Appeals Panel within 30 days of the decision.' },
+          { right: 'Request your child welfare records', section: 'Section 126', detail: 'You have the right to request access to your child welfare file. If denied, you can apply to the court under Section 126.11.' },
+          { right: 'Contact the Alberta Ombudsman', section: 'Ombudsman Act', detail: 'The Ombudsman can investigate complaints about government services. Call 780-427-2756.' },
         ]
       }
     ]
@@ -160,34 +184,58 @@ const LEGISLATION_DB = {
       {
         id: 'investigation', title: 'Your Rights During an Investigation', icon: '🔍',
         rights: [
-          { right: 'You must be informed that a Children\'s Aid Society is investigating', section: 'Section 81', detail: 'A society must investigate allegations that a child is in need of protection and inform the family.' },
-          { right: 'You can consult a lawyer before and during any interview', section: 'General', detail: 'Contact Legal Aid Ontario at 1-800-668-8258 for free legal assistance.' },
-          { right: 'A warrant is generally required to enter your home', section: 'Section 84', detail: 'A CAS worker needs a warrant to enter, unless there are reasonable grounds to believe a child is in immediate danger.' },
-          { right: 'Voluntary services must be considered first', section: 'Section 80', detail: 'A society must consider providing services to keep the family together before seeking court intervention.' },
+          { right: 'You must be informed of the CAS investigation', section: 'Section 81', detail: 'A Children\'s Aid Society (CAS) must investigate allegations that a child is in need of protection and inform the family of the concerns being investigated.' },
+          { right: 'You can consult a lawyer before and during any interview', section: 'General', detail: 'You have the right to speak with a lawyer before answering questions. Contact Legal Aid Ontario at 1-800-668-8258 for free legal assistance.' },
+          { right: 'A warrant is generally required to enter your home', section: 'Section 84', detail: 'A CAS worker needs a warrant to enter your home. Without a warrant, entry is only permitted if there are reasonable grounds to believe a child is at immediate risk of harm.' },
+          { right: 'Voluntary services must be considered first', section: 'Section 80', detail: 'The CAS must consider providing services to keep the family together before seeking court intervention. Removal is meant to be a last resort.' },
+          { right: 'You can refuse to sign a voluntary agreement', section: 'General', detail: 'You are not required to sign any voluntary service agreement. If you refuse, the CAS must go to court to obtain authority.' },
+          { right: 'Investigations have time limits', section: 'Section 81', detail: 'The CAS must complete their investigation within a reasonable time and inform you of the outcome.' },
         ]
       },
       {
         id: 'apprehension', title: 'Your Rights During an Apprehension', icon: '⚠️',
         rights: [
-          { right: 'You must be told the reasons', section: 'Section 85', detail: 'The CAS must inform you of the reasons for apprehension and your right to a lawyer.' },
-          { right: 'A court hearing within 5 days', section: 'Section 86', detail: 'The child must be brought before the court within 5 days of apprehension.' },
-          { right: 'Placement with family is preferred', section: 'Section 96', detail: 'The society must consider placing the child with a relative, member of the community, or another suitable person.' },
-          { right: 'Indigenous community must be notified', section: 'Section 87', detail: 'If the child is Indigenous, the relevant First Nation, Inuit, or Métis community must be notified.' },
+          { right: 'You must be told the reasons for removal', section: 'Section 85', detail: 'The CAS must inform you of the specific reasons for apprehension and your right to a lawyer.' },
+          { right: 'A court hearing within 5 days', section: 'Section 86', detail: 'The child must be brought before the court within 5 days of apprehension — one of the shortest timelines in Canada.' },
+          { right: 'Placement with family is preferred', section: 'Section 96', detail: 'The CAS must consider placing the child with a relative, member of the community, or another suitable person before placing in foster care.' },
+          { right: 'You can seek the child\'s return at the first hearing', section: 'Section 86', detail: 'At the first court appearance, you can argue for the child\'s return. The court can order the child returned with or without CAS supervision.' },
+          { right: 'Indigenous community must be notified', section: 'Section 87', detail: 'If the child is First Nations, Inuit, or Métis, the relevant Indigenous community must be notified of the apprehension and entitled to participate.' },
         ]
       },
       {
         id: 'court', title: 'Your Rights in Court', icon: '⚖️',
         rights: [
-          { right: 'You have the right to legal representation', section: 'Section 91', detail: 'You can have a lawyer represent you. The Office of the Children\'s Lawyer may also be appointed for the child.' },
-          { right: 'You can contest any protection application', section: 'General', detail: 'You have full rights to present evidence, call witnesses, and cross-examine.' },
-          { right: 'Court orders must be reviewed', section: 'Section 101', detail: 'Temporary orders must be reviewed within prescribed timelines.' },
+          { right: 'You have the right to legal representation', section: 'Section 91', detail: 'You can have a lawyer represent you. If you cannot afford one, contact Legal Aid Ontario. The Office of the Children\'s Lawyer may also be appointed for the child.' },
+          { right: 'You can contest any protection application', section: 'General', detail: 'You have full rights to present evidence, call witnesses, and cross-examine CAS witnesses.' },
+          { right: 'Court orders must be reviewed', section: 'Section 101', detail: 'Temporary orders must be reviewed at regular intervals. You can also bring a motion to vary or terminate an order.' },
+          { right: 'There are maximum time limits on court orders', section: 'Section 98', detail: 'The Act sets maximum time limits for how long a child can be in care. After the maximum, the child must either be returned or placed in extended society care.' },
+          { right: 'You can appeal any order', section: 'General', detail: 'You have the right to appeal any order made under the Act to a higher court.' },
+        ]
+      },
+      {
+        id: 'access', title: 'Your Rights to Access & Visits', icon: '👨‍👩‍👧',
+        rights: [
+          { right: 'Access orders can be included in protection orders', section: 'Section 97', detail: 'The court can order access (visits) between you and your child while the child is in CAS care.' },
+          { right: 'You can apply to vary access', section: 'General', detail: 'If your circumstances change, you can apply to the court to change the terms of your access.' },
+          { right: 'The CAS must facilitate reasonable access', section: 'General', detail: 'Unless the court orders otherwise, the CAS must make reasonable efforts to facilitate your visits with your child.' },
+        ]
+      },
+      {
+        id: 'indigenous', title: 'Indigenous Family Rights', icon: '🪶',
+        rights: [
+          { right: 'Indigenous communities have the right to participate', section: 'Section 87', detail: 'First Nations, Inuit, and Métis communities must be notified and have the right to participate in protection proceedings involving their children.' },
+          { right: 'Customary care must be considered', section: 'Section 96', detail: 'The CAS must consider customary care arrangements that are consistent with the child\'s Indigenous heritage.' },
+          { right: 'Cultural continuity is a best interests factor', section: 'Section 74', detail: 'The child\'s cultural background, including Indigenous heritage, must be considered when determining best interests.' },
+          { right: 'Indigenous child welfare agencies may have jurisdiction', section: 'Bill C-92', detail: 'The federal Act respecting First Nations, Inuit and Métis children may give Indigenous governing bodies jurisdiction over their own child and family services.' },
         ]
       },
       {
         id: 'complaints', title: 'How to File a Complaint', icon: '📋',
         rights: [
-          { right: 'Contact the Ontario Ombudsman', section: 'Ombudsman Act', detail: 'The Ombudsman oversees Children\'s Aid Societies. Call 1-800-263-2841.' },
-          { right: 'Internal complaint to the CAS', section: 'General', detail: 'Each CAS must have an internal complaint process. Ask for their complaints procedure.' },
+          { right: 'Contact the Ontario Ombudsman', section: 'Ombudsman Act', detail: 'The Ombudsman now oversees Children\'s Aid Societies. You can file a complaint about CAS conduct. Call 1-800-263-2841.' },
+          { right: 'Internal complaint to the CAS', section: 'General', detail: 'Each CAS must have an internal complaint process. Ask for their formal complaints procedure in writing.' },
+          { right: 'Contact your MPP', section: 'General', detail: 'Your Member of Provincial Parliament can raise concerns about CAS conduct on your behalf.' },
+          { right: 'Request your CAS file', section: 'Section 283', detail: 'You have the right to request access to your own CAS records, subject to certain exceptions.' },
         ]
       }
     ]
@@ -210,30 +258,56 @@ const LEGISLATION_DB = {
         id: 'investigation', title: 'Your Rights During an Investigation', icon: '🔍',
         rights: [
           { right: 'You must be notified of the investigation', section: 'Section 16', detail: 'A director who investigates must inform you of the concerns and the actions being considered.' },
-          { right: 'You can consult a lawyer', section: 'General', detail: 'Contact Legal Aid BC at 1-866-577-2525 for free legal assistance.' },
-          { right: 'Support services must be offered', section: 'Section 5', detail: 'The director must consider available support services for the family and less disruptive alternatives.' },
-          { right: 'A warrant is needed to enter your home', section: 'Section 28', detail: 'A director needs a warrant unless the child is believed to be in immediate danger.' },
+          { right: 'You can consult a lawyer at any time', section: 'General', detail: 'Contact Legal Aid BC at 1-866-577-2525 for free legal assistance, including duty counsel at family court.' },
+          { right: 'Support services must be offered first', section: 'Section 5', detail: 'The director must consider available support services for the family and less disruptive alternatives before removing a child.' },
+          { right: 'A warrant is needed to enter your home', section: 'Section 28', detail: 'A director needs a court order to enter your home. Without one, entry is only permitted if the child is believed to be in immediate danger.' },
+          { right: 'You can refuse to answer questions', section: 'General', detail: 'You are not legally required to answer questions from a social worker, though cooperation may be viewed favorably.' },
+          { right: 'You can have a support person present', section: 'General', detail: 'You can have a friend, family member, or advocate present during any meeting with child welfare workers.' },
         ]
       },
       {
         id: 'apprehension', title: 'Your Rights During an Apprehension', icon: '⚠️',
         rights: [
-          { right: 'You must be told the reasons and your rights', section: 'Section 31', detail: 'After removing a child, the director must promptly notify you of the reasons and inform you of your right to legal counsel.' },
-          { right: 'Court presentation within 7 days', section: 'Section 33', detail: 'The director must present the matter to the court within 7 days of removing the child.' },
-          { right: 'Kinship and cultural placement priority', section: 'Section 71', detail: 'Priority must be given to placing the child with family members or within their cultural community.' },
+          { right: 'You must be told the reasons and your rights', section: 'Section 31', detail: 'After removing a child, the director must promptly notify you of the specific reasons and inform you of your right to legal counsel.' },
+          { right: 'Court presentation within 7 days', section: 'Section 33', detail: 'The director must present the matter to the Provincial Court within 7 days of removing the child.' },
+          { right: 'Kinship and cultural placement priority', section: 'Section 71', detail: 'Priority must be given to placing the child with a relative, with a person from the child\'s Indigenous community, or in an environment consistent with their cultural identity.' },
+          { right: 'You can consent to a voluntary care agreement', section: 'Section 6', detail: 'Instead of apprehension, you may agree to a Voluntary Care Agreement where you temporarily place your child in care while you address the concerns.' },
+          { right: 'The director must return the child if grounds no longer exist', section: 'Section 30', detail: 'If the director determines the child is no longer in need of protection, the child must be returned to you.' },
         ]
       },
       {
         id: 'court', title: 'Your Rights in Court', icon: '⚖️',
         rights: [
-          { right: 'You have the right to contest the removal', section: 'Section 34', detail: 'You can appear at the protection hearing and present your case.' },
-          { right: 'You can appeal any order', section: 'Section 82', detail: 'You have the right to appeal any order made under the Act.' },
+          { right: 'You have the right to contest the removal', section: 'Section 34', detail: 'You can appear at the protection hearing, present evidence, and argue for the child\'s return.' },
+          { right: 'You can appeal any order', section: 'Section 82', detail: 'You have the right to appeal any order made under the Act to the Supreme Court.' },
+          { right: 'Time limits on continuing custody orders', section: 'Section 43', detail: 'There are maximum time limits for temporary custody orders, after which the child must be returned or a permanent order sought.' },
+          { right: 'You can apply to vary or cancel any order', section: 'Section 54', detail: 'You can apply to the court to change or cancel a supervision or custody order if circumstances change.' },
+        ]
+      },
+      {
+        id: 'access', title: 'Your Rights to Access & Visits', icon: '👨‍👩‍👧',
+        rights: [
+          { right: 'Access can be included in custody orders', section: 'Section 48', detail: 'The court can order access (visits) between you and your child while the child is in the director\'s custody.' },
+          { right: 'You can apply for access at any time', section: 'Section 48', detail: 'You can apply to the court for an access order even if one wasn\'t initially included.' },
+          { right: 'The director must facilitate reasonable visits', section: 'General', detail: 'Unless the court orders otherwise, the director should make reasonable arrangements for you to visit your child.' },
+        ]
+      },
+      {
+        id: 'indigenous', title: 'Indigenous Family Rights', icon: '🪶',
+        rights: [
+          { right: 'Indigenous communities must be notified', section: 'Section 33.1', detail: 'If the child is Indigenous, the relevant Indigenous community or organization must be notified when the child is removed.' },
+          { right: 'Cultural placement is prioritized', section: 'Section 71', detail: 'The Act prioritizes placing Indigenous children with their extended family, within their Indigenous community, or in a culturally appropriate environment.' },
+          { right: 'Indigenous governing bodies may exercise jurisdiction', section: 'Bill 38 Amendments', detail: 'Recent amendments support Indigenous self-government in child and family services and remove barriers to Indigenous jurisdiction.' },
+          { right: 'Customary care arrangements', section: 'Section 71.1', detail: 'The director can make arrangements for customary care consistent with the traditions of the child\'s Indigenous community.' },
         ]
       },
       {
         id: 'complaints', title: 'How to File a Complaint', icon: '📋',
         rights: [
-          { right: 'Contact the Representative for Children and Youth', section: 'Representative for Children and Youth Act', detail: 'Independent advocate who can investigate complaints. Call 1-800-476-3933.' },
+          { right: 'Contact the Representative for Children and Youth', section: 'Representative for Children and Youth Act', detail: 'The RCY is an independent officer of the Legislature who advocates for children and youth. They can investigate complaints about MCFD services. Call 1-800-476-3933.' },
+          { right: 'Request a review of a director\'s decision', section: 'General', detail: 'You can request a formal review of any decision made by the director regarding your child.' },
+          { right: 'Contact the BC Ombudsperson', section: 'Ombudsperson Act', detail: 'The BC Ombudsperson can investigate complaints about provincial government services. Call 1-800-567-3247.' },
+          { right: 'Request your MCFD file', section: 'Freedom of Information and Protection of Privacy Act', detail: 'You can request access to your MCFD records through an FOI request.' },
         ]
       }
     ]
@@ -256,29 +330,52 @@ const LEGISLATION_DB = {
         id: 'investigation', title: 'Your Rights During an Investigation', icon: '🔍',
         rights: [
           { right: 'The agency must investigate reports of abuse or neglect', section: 'Section 18', detail: 'An agency must promptly investigate any report that a child may be in need of protection.' },
-          { right: 'You have the right to consult a lawyer', section: 'General', detail: 'Contact Legal Aid Manitoba at 1-800-261-2960.' },
-          { right: 'Family support services must be offered', section: 'Section 7', detail: 'Agencies must provide or arrange for family support services to prevent children from coming into care.' },
+          { right: 'You have the right to consult a lawyer', section: 'General', detail: 'Contact Legal Aid Manitoba at 1-800-261-2960 for free legal assistance.' },
+          { right: 'Family support services must be offered', section: 'Section 7', detail: 'Agencies must provide or arrange for family support services to prevent children from coming into care whenever possible.' },
+          { right: 'You can have a support person present during meetings', section: 'General', detail: 'You are entitled to have a family member, friend, or advocate present when meeting with agency workers.' },
+          { right: 'You can refuse entry to your home without a warrant', section: 'Section 17', detail: 'A worker generally needs a court order to enter your home unless there is an immediate risk to the child.' },
         ]
       },
       {
         id: 'apprehension', title: 'Your Rights During an Apprehension', icon: '⚠️',
         rights: [
-          { right: 'You must be notified of the apprehension', section: 'Section 24', detail: 'The agency must make reasonable efforts to notify parents or guardians of the apprehension.' },
+          { right: 'You must be notified of the apprehension', section: 'Section 24', detail: 'The agency must make reasonable efforts to notify parents or guardians of the apprehension of a child.' },
           { right: 'Access to your child pending a hearing', section: 'Section 27', detail: 'The Act provides for access by parents to an apprehended child pending a child protection hearing.' },
-          { right: 'A court hearing must be held within prescribed timelines', section: 'Section 27', detail: 'The agency must apply to the court for a hearing after apprehension.' },
+          { right: 'A court hearing must be held within prescribed timelines', section: 'Section 27', detail: 'The agency must apply to the court for a hearing after apprehension within the timelines set by the Act.' },
+          { right: 'The child can be left with or returned to a caregiver', section: 'Section 26', detail: 'The agency can leave the child with or return the child to the person who had charge of the child at the time of apprehension.' },
+          { right: 'No-contact orders as an alternative', section: 'Section 20', detail: 'Instead of removing the child, the court can order the alleged abuser to have no contact with the child — allowing the child to stay home.' },
         ]
       },
       {
         id: 'court', title: 'Your Rights in Court', icon: '⚖️',
         rights: [
-          { right: 'Children over 12 have the right to be heard', section: 'Section 2(2)', detail: 'Children over 12 have the right to have their views and preferences known to the court.' },
+          { right: 'Children over 12 have the right to be heard', section: 'Section 2(2)', detail: 'Children over 12 years of age have the right to have their views and preferences known to the court.' },
           { right: 'Right to legal counsel', section: 'Section 34', detail: 'The Act provides for the right to counsel in child protection proceedings.' },
+          { right: 'You can challenge any order', section: 'General', detail: 'You can contest applications, present evidence, and cross-examine witnesses.' },
+          { right: 'Orders can be varied or terminated', section: 'Section 40', detail: 'You can apply for further hearings and orders to change the terms of any existing order.' },
+        ]
+      },
+      {
+        id: 'access', title: 'Your Rights to Access & Visits', icon: '👨‍👩‍👧',
+        rights: [
+          { right: 'Access provisions for temporary and permanent wards', section: 'Section 39', detail: 'The Act contains specific provisions regarding access by parents or guardians to children who are temporary or permanent wards.' },
+          { right: 'Access pending a hearing', section: 'Section 27', detail: 'You have the right to access your child while waiting for a protection hearing, unless the court orders otherwise.' },
+        ]
+      },
+      {
+        id: 'indigenous', title: 'Indigenous Family Rights', icon: '🪶',
+        rights: [
+          { right: 'Four authorities oversee services including three Aboriginal authorities', section: 'Child and Family Services Authorities Act', detail: 'Manitoba has four CFS authorities: the General Authority, plus three Aboriginal authorities (Métis, First Nations of Southern Manitoba, and First Nations of Northern Manitoba).' },
+          { right: '18 agencies report to Aboriginal authorities', section: 'General', detail: 'There are 18 agencies reporting to the three Aboriginal authorities, providing culturally appropriate services.' },
+          { right: 'Cultural continuity must be considered', section: 'Section 7', detail: 'Services must be provided in a manner that respects the cultural and linguistic heritage of the family.' },
         ]
       },
       {
         id: 'complaints', title: 'How to File a Complaint', icon: '📋',
         rights: [
-          { right: 'Contact the Manitoba Advocate for Children and Youth', section: 'The Advocate for Children and Youth Act', detail: 'Independent office that reviews child welfare services. Call 1-800-263-7146.' },
+          { right: 'Contact the Manitoba Advocate for Children and Youth', section: 'The Advocate for Children and Youth Act', detail: 'Independent office that reviews child welfare services and investigates complaints. Call 1-800-263-7146.' },
+          { right: 'File a complaint with the agency', section: 'General', detail: 'Each CFS agency must have a complaint process. Request their formal complaints procedure.' },
+          { right: 'Contact the Manitoba Ombudsman', section: 'Ombudsman Act', detail: 'The Ombudsman can investigate complaints about government services. Call 1-800-665-0531.' },
         ]
       }
     ]
