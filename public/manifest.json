@@ -1,13 +1,15 @@
 {
-  "name": "Foresight - Custody Guide",
+  "name": "Foresight - Navigate Custody with Confidence",
   "short_name": "Foresight",
-  "description": "Navigate custody battles with confidence. Filing guides, AI assistance, and community support.",
+  "description": "Filing guides, AI assistance, community support, and resources for parents navigating custody battles.",
   "start_url": "/dashboard",
   "display": "standalone",
-  "background_color": "#0a0a0f",
-  "theme_color": "#f97316",
+  "background_color": "#ffffff",
+  "theme_color": "#DC2626",
   "orientation": "portrait-primary",
   "scope": "/",
+  "id": "/",
+  "categories": ["education", "lifestyle", "social"],
   "icons": [
     {
       "src": "/icons/icon-72x72.png",
@@ -55,12 +57,26 @@
   "shortcuts": [
     {
       "name": "Ask AI",
+      "short_name": "AI",
       "url": "/ai",
       "icons": [{ "src": "/icons/icon-96x96.png", "sizes": "96x96" }]
     },
     {
       "name": "Filing Guide",
+      "short_name": "Filing",
       "url": "/filing",
+      "icons": [{ "src": "/icons/icon-96x96.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "Community",
+      "short_name": "Community",
+      "url": "/community",
+      "icons": [{ "src": "/icons/icon-96x96.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "Know Your Rights",
+      "short_name": "Rights",
+      "url": "/rights",
       "icons": [{ "src": "/icons/icon-96x96.png", "sizes": "96x96" }]
     }
   ]

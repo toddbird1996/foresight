@@ -1,5 +1,6 @@
 import './globals.css';
 import { Inter } from 'next/font/google';
+import PWAInstall from './components/PWAInstall';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -39,6 +40,7 @@ export default function RootLayout({ children }) {
       </head>
       <body className={`${inter.className} bg-gray-50 text-gray-900 antialiased`}>
         <main>{children}</main>
+        <PWAInstall />
       </body>
     </html>
   );
