@@ -569,17 +569,18 @@ function PricingSection() {
       price: 'Free',
       period: 'forever',
       icon: '🥉',
-      description: 'Get started with the basics',
+      description: 'Get started with essential tools',
       features: [
         'Filing guide access',
-        'Community access',
         'Court forms library',
-        '1 jurisdiction'
+        'Deadline tracking',
+        'Community access',
+        'Mentor access'
       ],
       notIncluded: [
         'AI assistant',
-        'Document analysis',
-        'Mentor access'
+        'Document storage',
+        'Priority support'
       ],
       cta: 'Start Free',
       popular: false
@@ -589,15 +590,18 @@ function PricingSection() {
       price: '$9.99',
       period: 'CAD/month',
       icon: '🥈',
-      description: 'AI-powered assistance',
+      description: 'Everything you need to navigate custody',
       features: [
-        '25 AI queries per day',
-        '5 document analyses/month',
-        'Filing guide access',
-        'Community access',
-        'Court forms library',
-        '3 jurisdictions',
-        'Email support'
+        'Everything in Bronze',
+        'AI assistant (25 inquiries/day)',
+        '10 GB document storage',
+        'Scan PDFs to compare & summarize with AI',
+        '5 PDF uploads per month'
+      ],
+      notIncluded: [
+        'Priority 24/7 support',
+        'Unlimited document storage',
+        'Document review by mentors'
       ],
       cta: 'Get Silver',
       popular: false
@@ -607,16 +611,14 @@ function PricingSection() {
       price: '$19.99',
       period: 'CAD/month',
       icon: '🥇',
-      description: 'Everything you need to win',
+      description: 'Premium support for complex cases',
       features: [
-        'Unlimited AI queries',
-        'Unlimited document analyses',
-        'Filing guide access',
-        'Community access',
-        'Court forms library',
-        'All jurisdictions',
-        'Mentor access',
-        'Priority support'
+        'Everything in Silver',
+        'Priority 24/7 support',
+        'Unlimited document storage',
+        'Document review by mentors',
+        '50 AI inquiries per day',
+        '10 PDF scans per month'
       ],
       cta: 'Get Gold',
       popular: true

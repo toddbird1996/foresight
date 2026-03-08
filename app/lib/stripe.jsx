@@ -15,17 +15,22 @@ export const PRICING = {
     icon: '🥉',
     color: '#CD7F32',
     features: [
-      '10 AI queries per day',
-      '1 document analysis per month',
-      '1 jurisdiction',
+      'Filing guide access',
+      'Court forms library',
+      'Deadline tracking',
       'Community access',
-      'Filing guide access'
+      'Mentor access'
+    ],
+    notIncluded: [
+      'AI assistant',
+      'Document storage',
+      'Priority support'
     ],
     limits: {
-      dailyQueries: 10,
-      monthlyDocs: 1,
-      jurisdictions: 1,
-      mentorAccess: false
+      dailyQueries: 0,
+      monthlyDocs: 0,
+      jurisdictions: 'all',
+      mentorAccess: true
     }
   },
   silver: {
@@ -35,19 +40,17 @@ export const PRICING = {
     icon: '🥈',
     color: '#C0C0C0',
     features: [
-      '25 AI queries per day',
-      '5 document analyses per month',
-      '3 jurisdictions',
-      'Community access',
-      'Filing guide access',
-      'Limited mentor access',
-      'Priority email support'
+      'Everything in Bronze',
+      'AI assistant (25 inquiries/day)',
+      '10 GB document storage',
+      'Scan PDFs to compare & summarize with AI',
+      '5 PDF uploads per month'
     ],
     limits: {
       dailyQueries: 25,
       monthlyDocs: 5,
-      jurisdictions: 3,
-      mentorAccess: 'limited'
+      jurisdictions: 'all',
+      mentorAccess: true
     }
   },
   gold: {
@@ -57,20 +60,18 @@ export const PRICING = {
     icon: '🥇',
     color: '#FFD700',
     features: [
-      '50 AI queries per day',
-      '10 document analyses per month',
-      'All jurisdictions',
-      'Community access',
-      'Filing guide access',
-      'Unlimited mentor access',
-      'Priority support',
-      'Early access to new features'
+      'Everything in Silver',
+      'Priority 24/7 support',
+      'Unlimited document storage',
+      'Document review by mentors',
+      '50 AI inquiries per day',
+      '10 PDF scans per month'
     ],
     limits: {
       dailyQueries: 50,
       monthlyDocs: 10,
       jurisdictions: 'all',
-      mentorAccess: 'unlimited'
+      mentorAccess: true
     },
     popular: true
   }

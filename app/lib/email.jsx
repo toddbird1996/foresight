@@ -1034,23 +1034,21 @@ export const emailService = {
         name: 'Silver',
         icon: '🥈',
         features: [
-          '25 AI queries per day',
-          '5 document analyses per month',
-          '3 jurisdictions',
-          'Limited mentor access',
-          'Priority email support'
+          'AI assistant (25 inquiries/day)',
+          '10 GB document storage',
+          'Scan PDFs to compare & summarize with AI',
+          '5 PDF uploads per month'
         ]
       },
       gold: {
         name: 'Gold',
         icon: '🥇',
         features: [
-          '50 AI queries per day',
-          '10 document analyses per month',
-          'All jurisdictions',
-          'Unlimited mentor access',
-          'Priority support',
-          'Early access to new features'
+          'Priority 24/7 support',
+          'Unlimited document storage',
+          'Document review by mentors',
+          '50 AI inquiries per day',
+          '10 PDF scans per month'
         ]
       }
     };

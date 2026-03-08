@@ -24,7 +24,7 @@ export function useAIChat(user, profile) {
         setQueriesRemaining(0);
       } else {
         setUpgradeRequired(false);
-        const limits = { silver: 25, gold: 999 }; // Gold is unlimited
+        const limits = { bronze: 0, silver: 25, gold: 50 };
         const limit = limits[profile.tier] || 25;
         setQueriesRemaining(limit - (profile.daily_queries_used || 0));
       }
@@ -41,7 +41,7 @@ export function useAIChat(user, profile) {
     }
     
     if (queriesRemaining <= 0) {
-      setError('Daily query limit reached. Upgrade to Gold for unlimited queries.');
+      setError('Daily query limit reached. Upgrade your plan for more AI inquiries.');
       return;
     }
 

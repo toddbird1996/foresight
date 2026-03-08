@@ -112,11 +112,11 @@ export default function ProfilePage() {
   const getTierInfo = (tier) => {
     switch (tier) {
       case 'gold':
-        return { label: 'Gold', queries: 'Unlimited', docs: 'Unlimited' };
+        return { label: 'Gold', queries: '50/day', docs: '10/month' };
       case 'silver':
         return { label: 'Silver', queries: '25/day', docs: '5/month' };
       default:
-        return { label: 'Bronze', queries: '5/day', docs: '1/month' };
+        return { label: 'Bronze', queries: 'None', docs: 'None' };
     }
   };
 

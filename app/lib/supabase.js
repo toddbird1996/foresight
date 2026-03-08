@@ -17,9 +17,9 @@ import { supabase } from '../../lib/supabaseClient'; // import the client
  */
 
 export const TIER_LIMITS = {
-  bronze: { dailyQueries: 0, monthlyDocs: 0, jurisdictions: 1, mentorAccess: false, price: 0 },
+  bronze: { dailyQueries: 0, monthlyDocs: 0, jurisdictions: 'all', mentorAccess: true, price: 0 },
   silver: { dailyQueries: 50, monthlyDocs: 5, jurisdictions: 3, mentorAccess: 'limited', price: 9.99 },
-  gold: { dailyQueries: 100, monthlyDocs: 10, jurisdictions: 'all', mentorAccess: 'unlimited', price: 19.99 }
+  gold: { dailyQueries: 50, monthlyDocs: 10, jurisdictions: 'all', mentorAccess: 'full', price: 19.99 }
 };
 
 // ============================================

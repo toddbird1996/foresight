@@ -16,8 +16,8 @@ export const mentors = [
 
 export const pricingPlans = [
   { id: 1, type: "Bronze", price: "Free" },
-  { id: 2, type: "Silver", price: "$9.99 USD" },
-  { id: 3, type: "Gold", price: "$19.99 USD" },
+  { id: 2, type: "Silver", price: "$9.99 CAD/month" },
+  { id: 3, type: "Gold", price: "$19.99 CAD/month" },
 ];
 
 export const documents = [

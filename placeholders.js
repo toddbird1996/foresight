@@ -11,9 +11,9 @@ export const placeholderPrograms = [
 ];
 
 export const placeholderPricing = [
-  { id: 1, plan: "Bronze", price: "Free", features: ["Basic features"] },
-  { id: 2, plan: "Silver", price: "$9.99", features: ["All Bronze features", "Extra features"] },
-  { id: 3, plan: "Gold", price: "$19.99", features: ["All Silver features", "Premium features"] },
+  { id: 1, plan: "Bronze", price: "Free", features: ["Filing guide", "Court forms", "Community", "Mentors"] },
+  { id: 2, plan: "Silver", price: "$9.99 CAD/month", features: ["Everything in Bronze", "AI assistant (25/day)", "10 GB storage", "PDF scanning (5/month)"] },
+  { id: 3, plan: "Gold", price: "$19.99 CAD/month", features: ["Everything in Silver", "Priority 24/7 support", "Unlimited storage", "Mentor doc review", "50 AI/day", "10 PDF scans/month"] },
 ];
 
 export const placeholderMentors = [
