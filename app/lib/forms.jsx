@@ -184,7 +184,7 @@ export const FORMS_DATABASE = {
             formNumber: 'Form 70P',
             description: 'Agreement between parties to be made a court order. Both parties must sign.',
             required: false,
-            downloadUrl: 'https://publications.saskatchewan.ca/#/categories/5801',
+            downloadUrl: 'https://publications.saskatchewan.ca/api/v1/products/114414/formats/129082/download',
             fileType: 'pdf',
             fillable: true,
             pages: 3,
@@ -202,7 +202,7 @@ export const FORMS_DATABASE = {
             formNumber: 'N/A',
             description: 'Template for creating a detailed parenting plan. Not a court form but very useful.',
             required: false,
-            downloadUrl: '/templates/sk-parenting-plan.pdf',
+            downloadUrl: 'https://sasklawcourts.ca/wp-content/uploads/2022/10/KB_Family_PD7_JudicialCaseConferences.pdf',
             fileType: 'pdf',
             fillable: true,
             pages: 8,
@@ -274,7 +274,7 @@ export const FORMS_DATABASE = {
             formNumber: 'N/A',
             description: 'Template for detailed parenting arrangements.',
             required: false,
-            downloadUrl: '/templates/ab-parenting-plan.pdf',
+            downloadUrl: 'https://www.alberta.ca/family-law-forms',
             fileType: 'pdf',
             fillable: true,
             pages: 10,
@@ -399,9 +399,9 @@ export const FORMS_DATABASE = {
             id: 'bc-application',
             name: 'Application About a Family Law Matter',
             formNumber: 'Form 3',
-            description: 'Start a family law case in Provincial Court.',
+            description: 'Start a family law case in Provincial Court for parenting, support, or guardianship.',
             required: true,
-            downloadUrl: 'https://www2.gov.bc.ca/gov/content/justice/courthouse-services/documents-forms-records/court-forms/prov-family-forms',
+            downloadUrl: 'https://www2.gov.bc.ca/assets/gov/law-crime-and-justice/courthouse-services/court-files-records/court-forms/family/pfa712.pdf',
             fileType: 'pdf',
             fillable: true,
             pages: 8
@@ -410,12 +410,34 @@ export const FORMS_DATABASE = {
             id: 'bc-financial-statement',
             name: 'Financial Statement',
             formNumber: 'Form 4',
-            description: 'Financial disclosure for support claims.',
+            description: 'Financial disclosure for child or spousal support claims in Provincial Court.',
             required: true,
-            downloadUrl: 'https://www2.gov.bc.ca/gov/content/justice/courthouse-services/documents-forms-records/court-forms/prov-family-forms',
+            downloadUrl: 'https://www2.gov.bc.ca/assets/gov/law-crime-and-justice/courthouse-services/court-files-records/court-forms/family/pfa713.pdf',
             fileType: 'pdf',
             fillable: true,
             pages: 12
+          },
+          {
+            id: 'bc-guardianship-affidavit',
+            name: 'Guardianship Affidavit',
+            formNumber: 'Form 5',
+            description: 'Required when applying for guardianship of a child.',
+            required: false,
+            downloadUrl: 'https://www2.gov.bc.ca/assets/gov/law-crime-and-justice/courthouse-services/court-files-records/court-forms/family/pfa714.pdf',
+            fileType: 'pdf',
+            fillable: true,
+            pages: 4
+          },
+          {
+            id: 'bc-reply',
+            name: 'Reply to Application',
+            formNumber: 'Form 6',
+            description: 'Response to a family law application. File within 30 days of being served.',
+            required: false,
+            downloadUrl: 'https://www2.gov.bc.ca/assets/gov/law-crime-and-justice/courthouse-services/court-files-records/court-forms/family/pfa715.pdf',
+            fileType: 'pdf',
+            fillable: true,
+            pages: 6
           }
         ]
       },
@@ -428,12 +450,45 @@ export const FORMS_DATABASE = {
             id: 'bc-notice-family-claim',
             name: 'Notice of Family Claim',
             formNumber: 'Form F3',
-            description: 'Start a family law case in Supreme Court.',
+            description: 'Start a family law case in Supreme Court (required for divorce).',
             required: true,
-            downloadUrl: 'https://www2.gov.bc.ca/gov/content/justice/courthouse-services/documents-forms-records/court-forms/sup-family-forms',
+            downloadUrl: 'https://www2.gov.bc.ca/assets/gov/law-crime-and-justice/courthouse-services/court-files-records/court-forms/supreme-family/f3.pdf',
             fileType: 'pdf',
             fillable: true,
             pages: 10
+          },
+          {
+            id: 'bc-response-family-claim',
+            name: 'Response to Family Claim',
+            formNumber: 'Form F4',
+            description: 'Response to a Notice of Family Claim. File within 30 days.',
+            required: false,
+            downloadUrl: 'https://www2.gov.bc.ca/assets/gov/law-crime-and-justice/courthouse-services/court-files-records/court-forms/supreme-family/f4.pdf',
+            fileType: 'pdf',
+            fillable: true,
+            pages: 8
+          },
+          {
+            id: 'bc-financial-statement-supreme',
+            name: 'Financial Statement (Supreme Court)',
+            formNumber: 'Form F8',
+            description: 'Financial disclosure for Supreme Court family proceedings.',
+            required: true,
+            downloadUrl: 'https://www2.gov.bc.ca/assets/gov/law-crime-and-justice/courthouse-services/court-files-records/court-forms/supreme-family/f8.pdf',
+            fileType: 'pdf',
+            fillable: true,
+            pages: 14
+          },
+          {
+            id: 'bc-affidavit-service',
+            name: 'Affidavit of Personal Service',
+            formNumber: 'Form F15',
+            description: 'Proof that documents were personally served on the other party.',
+            required: true,
+            downloadUrl: 'https://www2.gov.bc.ca/assets/gov/law-crime-and-justice/courthouse-services/court-files-records/court-forms/supreme-family/f15.pdf',
+            fileType: 'pdf',
+            fillable: true,
+            pages: 2
           }
         ]
       }
@@ -454,12 +509,34 @@ export const FORMS_DATABASE = {
             id: 'mb-petition',
             name: 'Petition',
             formNumber: 'Form 70A',
-            description: 'Main document to start family proceedings.',
+            description: 'Main document to start family proceedings in Manitoba.',
             required: true,
-            downloadUrl: 'https://web2.gov.mb.ca/laws/rules/forms_e.php',
+            downloadUrl: 'https://web2.gov.mb.ca/laws/rules/forms/70a.pdf',
             fileType: 'pdf',
             fillable: true,
             pages: 4
+          },
+          {
+            id: 'mb-financial-statement',
+            name: 'Financial Statement',
+            formNumber: 'Form 70D',
+            description: 'Full financial disclosure required for support claims.',
+            required: true,
+            downloadUrl: 'https://web2.gov.mb.ca/laws/rules/forms/70d.pdf',
+            fileType: 'pdf',
+            fillable: true,
+            pages: 12
+          },
+          {
+            id: 'mb-affidavit',
+            name: 'Affidavit',
+            formNumber: 'Form 70F',
+            description: 'Sworn statement of facts supporting your petition.',
+            required: true,
+            downloadUrl: 'https://web2.gov.mb.ca/laws/rules/forms/70f.pdf',
+            fileType: 'pdf',
+            fillable: false,
+            pages: 'Variable'
           }
         ]
       }
@@ -555,7 +632,7 @@ export const FORMS_DATABASE = {
             formNumber: 'Form 59.07',
             description: 'Main document to start a new family law application in Nova Scotia.',
             required: true,
-            downloadUrl: 'https://www.nsfamilylaw.ca/children/getting-or-changing-parenting-arrangements/forms-address-parenting',
+            downloadUrl: 'https://www.nsfamilylaw.ca/sites/default/files/editor-uploads/Court%20Forms/CPR%20Form%2059.07%20-%20Notice%20of%20Application%20(final)(p).pdf',
             fileType: 'pdf',
             fillable: true,
             pages: 4,
@@ -572,7 +649,7 @@ export const FORMS_DATABASE = {
             formNumber: 'Form FD2A',
             description: 'Required when applying for parenting arrangements (decision-making, parenting time).',
             required: true,
-            downloadUrl: 'https://www.nsfamilylaw.ca/court-forms/list-court-forms',
+            downloadUrl: 'https://www.nsfamilylaw.ca/sites/default/files/editor-uploads/Court%20Forms/FD2A%20-%20Parenting%20Statement%20(final)(p).pdf',
             fileType: 'pdf',
             fillable: true,
             pages: 6
@@ -583,7 +660,7 @@ export const FORMS_DATABASE = {
             formNumber: 'Form FD3',
             description: 'Financial disclosure required for child support matters.',
             required: true,
-            downloadUrl: 'https://www.nsfamilylaw.ca/court-forms/list-court-forms',
+            downloadUrl: 'https://www.nsfamilylaw.ca/sites/default/files/editor-uploads/Court%20Forms/FD3%20-%20Statement%20of%20Income%20(final)(p).pdf',
             fileType: 'pdf',
             fillable: true,
             pages: 8,
@@ -600,7 +677,7 @@ export const FORMS_DATABASE = {
             formNumber: 'Form FD7',
             description: 'Required when applying for exclusive possession of family residence.',
             required: false,
-            downloadUrl: 'https://www.nsfamilylaw.ca/court-forms/list-court-forms',
+            downloadUrl: 'https://www.nsfamilylaw.ca/sites/default/files/editor-uploads/Court%20Forms/FD7%20-%20Statement%20of%20Property%20(final)(p).pdf',
             fileType: 'pdf',
             fillable: true,
             pages: 6
@@ -617,7 +694,7 @@ export const FORMS_DATABASE = {
             formNumber: 'Form 59.12',
             description: 'To change an existing court order for parenting or support.',
             required: false,
-            downloadUrl: 'https://www.nsfamilylaw.ca/children/getting-or-changing-parenting-arrangements/forms-address-parenting',
+            downloadUrl: 'https://www.nsfamilylaw.ca/sites/default/files/editor-uploads/Court%20Forms/CPR%20Form%2059.12%20-%20Notice%20of%20Variation%20Application%20(final)(p).pdf',
             fileType: 'pdf',
             fillable: true,
             pages: 4
@@ -634,7 +711,7 @@ export const FORMS_DATABASE = {
             formNumber: 'N/A',
             description: 'Sworn affidavit required to support an uncontested divorce application.',
             required: false,
-            downloadUrl: 'https://www.nsfamilylaw.ca/court-forms/list-court-forms',
+            downloadUrl: 'https://www.nsfamilylaw.ca/sites/default/files/editor-uploads/Court%20Forms/Affidavit%20Supporting%20an%20Uncontested%20Divorce%20(final)(p).pdf',
             fileType: 'pdf',
             fillable: true,
             pages: 8
