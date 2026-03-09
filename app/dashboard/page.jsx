@@ -4,12 +4,14 @@ import { useEffect, useState } from "react";
 import { supabase } from "../../lib/supabaseClient";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import OnboardingFlow from "../components/Onboarding";
 
 export default function Dashboard() {
   const router = useRouter();
   const [user, setUser] = useState(null);
   const [userForms, setUserForms] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [showOnboarding, setShowOnboarding] = useState(false);
 
   const [newFormTitle, setNewFormTitle] = useState("");
   const [editingFormId, setEditingFormId] = useState(null);
@@ -17,11 +19,23 @@ export default function Dashboard() {
   const [creatingForm, setCreatingForm] = useState(false);
 
   useEffect(() => {
-    supabase.auth.getUser().then(({ data: { user } }) => {
+    supabase.auth.getUser().then(async ({ data: { user } }) => {
       if (!user) {
         router.push("/auth/login");
       } else {
         setUser(user);
+
+        // Check if onboarding is completed
+        const { data: profile } = await supabase
+          .from("users")
+          .select("onboarding_completed")
+          .eq("id", user.id)
+          .single();
+
+        if (profile && !profile.onboarding_completed) {
+          setShowOnboarding(true);
+        }
+
         fetchUserForms(user.id);
       }
     });
@@ -95,6 +109,10 @@ export default function Dashboard() {
   };
 
   if (!user) return null;
+
+  if (showOnboarding) {
+    return <OnboardingFlow user={user} onComplete={() => setShowOnboarding(false)} />;
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
