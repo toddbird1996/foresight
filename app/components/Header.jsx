@@ -52,6 +52,7 @@ export default function Header() {
       {/* Desktop navigation */}
       <nav className="hidden md:flex items-center space-x-6">
         <Link href="/dashboard" className="text-gray-700 hover:text-red-600">Dashboard</Link>
+        <Link href="/cases" className="text-red-600 hover:text-red-700 font-medium">My Case</Link>
         <Link href="/filing" className="text-gray-700 hover:text-red-600">Filing Guide</Link>
         <Link href="/court-forms" className="text-gray-700 hover:text-red-600">Forms</Link>
         <Link href="/community" className="text-gray-700 hover:text-red-600">Community</Link>
@@ -77,6 +78,7 @@ export default function Header() {
       {menuOpen && (
         <div className="absolute top-16 right-4 bg-white border border-gray-200 rounded-lg shadow-lg p-4 flex flex-col space-y-3 md:hidden z-50">
           <Link href="/dashboard" className="text-gray-700 hover:text-red-600" onClick={() => setMenuOpen(false)}>Dashboard</Link>
+          <Link href="/cases" className="text-red-600 hover:text-red-700 font-medium" onClick={() => setMenuOpen(false)}>📁 My Case</Link>
           <Link href="/filing" className="text-gray-700 hover:text-red-600" onClick={() => setMenuOpen(false)}>Filing Guide</Link>
           <Link href="/court-forms" className="text-gray-700 hover:text-red-600" onClick={() => setMenuOpen(false)}>Forms</Link>
           <Link href="/community" className="text-gray-700 hover:text-red-600" onClick={() => setMenuOpen(false)}>Community</Link>

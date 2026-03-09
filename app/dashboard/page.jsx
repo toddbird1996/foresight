@@ -158,12 +158,12 @@ export default function Dashboard() {
           </Link>
 
           <Link
-            href="/ai"
-            className="bg-white border border-gray-200 rounded-xl p-4 hover:border-red-500 hover:shadow-md transition-all"
+            href="/cases"
+            className="bg-white border border-red-200 rounded-xl p-4 hover:border-red-500 hover:shadow-md transition-all ring-1 ring-red-100"
           >
-            <div className="text-2xl mb-2">🤖</div>
-            <h3 className="font-semibold text-gray-900">AI Assistant</h3>
-            <p className="text-sm text-gray-500">Get instant answers</p>
+            <div className="text-2xl mb-2">📁</div>
+            <h3 className="font-semibold text-gray-900">Current Case</h3>
+            <p className="text-sm text-gray-500">Documents, AI & progress</p>
           </Link>
 
           <Link
