@@ -727,9 +727,9 @@ export function GettingStartedChecklist({ onDismiss }) {
   const [tasks, setTasks] = useState([
     { id: 'profile', label: 'Complete your profile', completed: false, link: '/profile' },
     { id: 'filing-guide', label: 'Review your filing guide', completed: false, link: '/filing' },
-    { id: 'ai-question', label: 'Ask your first AI question', completed: false, link: '/ai' },
+    { id: 'ai-question', label: 'Ask your first AI question', completed: false, link: '/cases' },
     { id: 'community', label: 'Introduce yourself in community', completed: false, link: '/community' },
-    { id: 'deadline', label: 'Add your first deadline', completed: false, link: '/calendar' }
+    { id: 'deadline', label: 'Add your first deadline', completed: false, link: '/deadlines' }
   ]);
 
   const completedCount = tasks.filter((t) => t.completed).length;

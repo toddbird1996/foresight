@@ -124,10 +124,10 @@ const DYNAMIC_CACHE = 'foresight-dynamic-v1';
 const STATIC_ASSETS = [
   '/',
   '/dashboard',
-  '/ai',
+  '/cases',
   '/filing',
   '/community',
-  '/calendar',
+  '/deadlines',
   '/offline.html',
   '/manifest.json',
   '/icons/icon-192x192.png',

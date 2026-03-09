@@ -789,10 +789,10 @@ function CTASection() {
             Get Started Free →
           </a>
           <a
-            href="/demo"
+            href="/filing"
             className="w-full sm:w-auto px-8 py-4 border border-gray-300 bg-white rounded-xl font-semibold text-lg hover:bg-gray-100 transition-colors text-gray-700"
           >
-            Watch Demo
+            See Filing Guides
           </a>
         </div>
       </div>
@@ -827,17 +827,17 @@ function Footer() {
               <li><a href="#features" className="hover:text-red-600">Features</a></li>
               <li><a href="#pricing" className="hover:text-red-600">Pricing</a></li>
               <li><a href="#faq" className="hover:text-red-600">FAQ</a></li>
-              <li><a href="/demo" className="hover:text-red-600">Demo</a></li>
+              <li><a href="/auth/signup" className="hover:text-red-600">Get Started</a></li>
             </ul>
           </div>
 
           <div>
             <h4 className="font-semibold mb-4 text-gray-900">Resources</h4>
             <ul className="space-y-2 text-sm text-gray-500">
-              <li><a href="/blog" className="hover:text-red-600">Blog</a></li>
-              <li><a href="/guides" className="hover:text-red-600">Guides</a></li>
+              <li><a href="/filing" className="hover:text-red-600">Filing Guides</a></li>
+              <li><a href="/programs" className="hover:text-red-600">Programs</a></li>
               <li><a href="/community" className="hover:text-red-600">Community</a></li>
-              <li><a href="/support" className="hover:text-red-600">Support</a></li>
+              <li><a href="/rights" className="hover:text-red-600">Know Your Rights</a></li>
             </ul>
           </div>
 

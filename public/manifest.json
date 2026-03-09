@@ -56,9 +56,9 @@
   ],
   "shortcuts": [
     {
-      "name": "Ask AI",
-      "short_name": "AI",
-      "url": "/ai",
+      "name": "My Case",
+      "short_name": "Case",
+      "url": "/cases",
       "icons": [{ "src": "/icons/icon-96x96.png", "sizes": "96x96" }]
     },
     {
