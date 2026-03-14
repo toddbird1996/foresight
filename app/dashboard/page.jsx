@@ -12,6 +12,8 @@ export default function Dashboard() {
   const [userForms, setUserForms] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showOnboarding, setShowOnboarding] = useState(false);
+  const [actionPlan, setActionPlan] = useState(null);
+  const [userProfile, setUserProfile] = useState(null);
 
   const [newFormTitle, setNewFormTitle] = useState("");
   const [editingFormId, setEditingFormId] = useState(null);
@@ -25,16 +27,17 @@ export default function Dashboard() {
       } else {
         setUser(user);
 
-        // Check if onboarding is completed
         const { data: profile } = await supabase
           .from("users")
-          .select("onboarding_completed")
+          .select("onboarding_completed, action_plan, full_name, case_status")
           .eq("id", user.id)
           .single();
 
         if (profile && !profile.onboarding_completed) {
           setShowOnboarding(true);
         }
+        if (profile?.action_plan) setActionPlan(profile.action_plan);
+        if (profile) setUserProfile(profile);
 
         fetchUserForms(user.id);
       }
@@ -144,10 +147,38 @@ export default function Dashboard() {
         <QuestionBar />
 
         {/* Welcome */}
-        <div className="mb-8">
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Welcome back!</h2>
+        <div className="mb-6">
+          <h2 className="text-2xl font-bold text-gray-900 mb-1">
+            {userProfile?.full_name ? `Welcome back, ${userProfile.full_name.split(' ')[0]}!` : 'Welcome back!'}
+          </h2>
           <p className="text-gray-600">Manage your custody case from one place.</p>
         </div>
+
+        {/* Action Plan */}
+        {actionPlan && actionPlan.length > 0 && (
+          <div className="mb-8 bg-white border border-gray-200 rounded-xl p-4">
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="font-semibold text-gray-900">🎯 Your Action Plan</h3>
+              <span className="text-xs text-gray-400">Based on your case questionnaire</span>
+            </div>
+            <div className="space-y-2">
+              {actionPlan.slice(0, 5).map((item, i) => (
+                <Link key={i} href={item.link || '/cases'}
+                  className="flex items-center gap-3 p-2.5 rounded-lg bg-gray-50 hover:bg-red-50 hover:border-red-200 border border-gray-100 transition-colors">
+                  <div className="w-7 h-7 bg-red-600 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0">{item.step}</div>
+                  <div className="flex-1 min-w-0">
+                    <div className="font-medium text-gray-900 text-sm">{item.title}</div>
+                    <div className="text-xs text-gray-500 truncate">{item.desc}</div>
+                  </div>
+                  <span className="text-gray-400 text-sm">→</span>
+                </Link>
+              ))}
+              {actionPlan.length > 5 && (
+                <p className="text-xs text-gray-400 text-center pt-1">+ {actionPlan.length - 5} more steps</p>
+              )}
+            </div>
+          </div>
+        )}
 
         {/* Navigation Cards */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
