@@ -180,124 +180,86 @@ export default function Dashboard() {
           </div>
         )}
 
-        {/* Navigation Cards */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-          <Link
-            href="/emergency"
-            className="bg-red-50 border-2 border-red-300 rounded-xl p-4 hover:border-red-500 hover:shadow-md transition-all col-span-2 md:col-span-1"
-          >
-            <div className="text-2xl mb-2">🚨</div>
-            <h3 className="font-semibold text-red-700">Emergency</h3>
-            <p className="text-sm text-red-500">Crisis contacts & urgent filings</p>
-          </Link>
+        {/* YOUR CASE */}
+        <div className="mb-6">
+          <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3 px-1">Your Case</h3>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            <Link href="/cases" className="bg-white border-2 border-red-200 rounded-xl p-4 hover:border-red-500 hover:shadow-md transition-all">
+              <div className="text-2xl mb-2">📁</div>
+              <h3 className="font-semibold text-gray-900 text-sm">Current Case</h3>
+              <p className="text-xs text-gray-500">Documents, AI & progress</p>
+            </Link>
+            <Link href="/coparent" className="bg-white border border-gray-200 rounded-xl p-4 hover:border-red-500 hover:shadow-md transition-all">
+              <div className="text-2xl mb-2">🤝</div>
+              <h3 className="font-semibold text-gray-900 text-sm">Co-Parent Chat</h3>
+              <p className="text-xs text-gray-500">Court-ready messaging</p>
+            </Link>
+            <Link href="/deadlines" className="bg-white border border-gray-200 rounded-xl p-4 hover:border-red-500 hover:shadow-md transition-all">
+              <div className="text-2xl mb-2">⏰</div>
+              <h3 className="font-semibold text-gray-900 text-sm">Deadlines</h3>
+              <p className="text-xs text-gray-500">Track important dates</p>
+            </Link>
+            <Link href="/templates" className="bg-white border border-gray-200 rounded-xl p-4 hover:border-red-500 hover:shadow-md transition-all">
+              <div className="text-2xl mb-2">📝</div>
+              <h3 className="font-semibold text-gray-900 text-sm">Doc Templates</h3>
+              <p className="text-xs text-gray-500">Guided fill-in wizards</p>
+            </Link>
+          </div>
+        </div>
 
-          <Link
-            href="/filing"
-            className="bg-white border border-gray-200 rounded-xl p-4 hover:border-red-500 hover:shadow-md transition-all"
-          >
-            <div className="text-2xl mb-2">📋</div>
-            <h3 className="font-semibold text-gray-900">Filing Guide</h3>
-            <p className="text-sm text-gray-500">Step-by-step process</p>
-          </Link>
+        {/* LEARN & PREPARE */}
+        <div className="mb-6">
+          <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3 px-1">Learn & Prepare</h3>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            <Link href="/filing" className="bg-white border border-gray-200 rounded-xl p-4 hover:border-red-500 hover:shadow-md transition-all">
+              <div className="text-2xl mb-2">📋</div>
+              <h3 className="font-semibold text-gray-900 text-sm">Filing Guide</h3>
+              <p className="text-xs text-gray-500">Step-by-step process</p>
+            </Link>
+            <Link href="/court-forms" className="bg-white border border-gray-200 rounded-xl p-4 hover:border-red-500 hover:shadow-md transition-all">
+              <div className="text-2xl mb-2">📄</div>
+              <h3 className="font-semibold text-gray-900 text-sm">Court Forms</h3>
+              <p className="text-xs text-gray-500">Download official forms</p>
+            </Link>
+            <Link href="/rights" className="bg-white border border-gray-200 rounded-xl p-4 hover:border-red-500 hover:shadow-md transition-all">
+              <div className="text-2xl mb-2">⚖️</div>
+              <h3 className="font-semibold text-gray-900 text-sm">Know Your Rights</h3>
+              <p className="text-xs text-gray-500">CPS codes & regulations</p>
+            </Link>
+            <Link href="/judge-insight" className="bg-white border border-gray-200 rounded-xl p-4 hover:border-red-500 hover:shadow-md transition-all">
+              <div className="text-2xl mb-2">🏛️</div>
+              <h3 className="font-semibold text-gray-900 text-sm">Judge Insight</h3>
+              <p className="text-xs text-gray-500">How to present in court</p>
+            </Link>
+          </div>
+        </div>
 
-          <Link
-            href="/deadlines"
-            className="bg-white border border-gray-200 rounded-xl p-4 hover:border-red-500 hover:shadow-md transition-all"
-          >
-            <div className="text-2xl mb-2">⏰</div>
-            <h3 className="font-semibold text-gray-900">Deadlines</h3>
-            <p className="text-sm text-gray-500">Track important dates</p>
-          </Link>
-
-          <Link
-            href="/court-forms"
-            className="bg-white border border-gray-200 rounded-xl p-4 hover:border-red-500 hover:shadow-md transition-all"
-          >
-            <div className="text-2xl mb-2">📄</div>
-            <h3 className="font-semibold text-gray-900">Court Forms</h3>
-            <p className="text-sm text-gray-500">Download official forms</p>
-          </Link>
-
-          <Link
-            href="/cases"
-            className="bg-white border border-red-200 rounded-xl p-4 hover:border-red-500 hover:shadow-md transition-all ring-1 ring-red-100"
-          >
-            <div className="text-2xl mb-2">📁</div>
-            <h3 className="font-semibold text-gray-900">Current Case</h3>
-            <p className="text-sm text-gray-500">Documents, AI & progress</p>
-          </Link>
-
-          <Link
-            href="/community"
-            className="bg-white border border-gray-200 rounded-xl p-4 hover:border-red-500 hover:shadow-md transition-all"
-          >
-            <div className="text-2xl mb-2">💬</div>
-            <h3 className="font-semibold text-gray-900">Community</h3>
-            <p className="text-sm text-gray-500">Connect with others</p>
-          </Link>
-
-          <Link
-            href="/coparent"
-            className="bg-white border border-green-200 rounded-xl p-4 hover:border-green-500 hover:shadow-md transition-all ring-1 ring-green-100"
-          >
-            <div className="text-2xl mb-2">🤝</div>
-            <h3 className="font-semibold text-gray-900">Co-Parent Chat</h3>
-            <p className="text-sm text-gray-500">Secure, court-ready messaging</p>
-          </Link>
-
-          <Link
-            href="/calculator"
-            className="bg-white border border-gray-200 rounded-xl p-4 hover:border-red-500 hover:shadow-md transition-all"
-          >
-            <div className="text-2xl mb-2">🧮</div>
-            <h3 className="font-semibold text-gray-900">Support Calculator</h3>
-            <p className="text-sm text-gray-500">Estimate child support</p>
-          </Link>
-
-          <Link
-            href="/templates"
-            className="bg-white border border-gray-200 rounded-xl p-4 hover:border-red-500 hover:shadow-md transition-all"
-          >
-            <div className="text-2xl mb-2">📝</div>
-            <h3 className="font-semibold text-gray-900">Doc Templates</h3>
-            <p className="text-sm text-gray-500">Guided fill-in wizards</p>
-          </Link>
-
-          <Link
-            href="/pricing"
-            className="bg-white border border-gray-200 rounded-xl p-4 hover:border-red-500 hover:shadow-md transition-all"
-          >
-            <div className="text-2xl mb-2">⭐</div>
-            <h3 className="font-semibold text-gray-900">Pricing</h3>
-            <p className="text-sm text-gray-500">Upgrade your plan</p>
-          </Link>
-
-          <Link
-            href="/programs"
-            className="bg-white border border-gray-200 rounded-xl p-4 hover:border-red-500 hover:shadow-md transition-all"
-          >
-            <div className="text-2xl mb-2">🛡️</div>
-            <h3 className="font-semibold text-gray-900">Programs</h3>
-            <p className="text-sm text-gray-500">Support & resources</p>
-          </Link>
-
-          <Link
-            href="/rights"
-            className="bg-white border border-gray-200 rounded-xl p-4 hover:border-red-500 hover:shadow-md transition-all"
-          >
-            <div className="text-2xl mb-2">⚖️</div>
-            <h3 className="font-semibold text-gray-900">Know Your Rights</h3>
-            <p className="text-sm text-gray-500">CPS codes & regulations</p>
-          </Link>
-
-          <Link
-            href="/judge-insight"
-            className="bg-white border border-gray-200 rounded-xl p-4 hover:border-red-500 hover:shadow-md transition-all"
-          >
-            <div className="text-2xl mb-2">🏛️</div>
-            <h3 className="font-semibold text-gray-900">Judge Insight</h3>
-            <p className="text-sm text-gray-500">How to present in court</p>
-          </Link>
+        {/* TOOLS & RESOURCES */}
+        <div className="mb-6">
+          <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3 px-1">Tools & Resources</h3>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            <Link href="/calculator" className="bg-white border border-gray-200 rounded-xl p-4 hover:border-red-500 hover:shadow-md transition-all">
+              <div className="text-2xl mb-2">🧮</div>
+              <h3 className="font-semibold text-gray-900 text-sm">Support Calculator</h3>
+              <p className="text-xs text-gray-500">Estimate child support</p>
+            </Link>
+            <Link href="/programs" className="bg-white border border-gray-200 rounded-xl p-4 hover:border-red-500 hover:shadow-md transition-all">
+              <div className="text-2xl mb-2">🛡️</div>
+              <h3 className="font-semibold text-gray-900 text-sm">Programs</h3>
+              <p className="text-xs text-gray-500">Support & resources</p>
+            </Link>
+            <Link href="/community" className="bg-white border border-gray-200 rounded-xl p-4 hover:border-red-500 hover:shadow-md transition-all">
+              <div className="text-2xl mb-2">💬</div>
+              <h3 className="font-semibold text-gray-900 text-sm">Community</h3>
+              <p className="text-xs text-gray-500">Connect with others</p>
+            </Link>
+            <Link href="/emergency" className="bg-red-50 border-2 border-red-300 rounded-xl p-4 hover:border-red-500 hover:shadow-md transition-all">
+              <div className="text-2xl mb-2">🚨</div>
+              <h3 className="font-semibold text-red-700 text-sm">Emergency</h3>
+              <p className="text-xs text-red-500">Crisis contacts & urgent filings</p>
+            </Link>
+          </div>
+        </div>
 
           <Link
             href="/profile"

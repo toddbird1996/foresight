@@ -1,6 +1,8 @@
 import './globals.css';
 import { Inter } from 'next/font/google';
 import PWAInstall from './components/PWAInstall';
+import BottomNav from './components/BottomNav';
+import { ToastProvider } from './components/Toast';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -39,8 +41,11 @@ export default function RootLayout({ children }) {
         <link rel="apple-touch-icon" href="/icons/icon-180x180.png" />
       </head>
       <body className={`${inter.className} bg-gray-50 text-gray-900 antialiased`}>
-        <main>{children}</main>
-        <PWAInstall />
+        <ToastProvider>
+          <main className="pb-16 sm:pb-0">{children}</main>
+          <BottomNav />
+          <PWAInstall />
+        </ToastProvider>
       </body>
     </html>
   );
