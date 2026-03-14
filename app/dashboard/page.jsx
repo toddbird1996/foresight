@@ -183,6 +183,15 @@ export default function Dashboard() {
         {/* Navigation Cards */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
           <Link
+            href="/emergency"
+            className="bg-red-50 border-2 border-red-300 rounded-xl p-4 hover:border-red-500 hover:shadow-md transition-all col-span-2 md:col-span-1"
+          >
+            <div className="text-2xl mb-2">🚨</div>
+            <h3 className="font-semibold text-red-700">Emergency</h3>
+            <p className="text-sm text-red-500">Crisis contacts & urgent filings</p>
+          </Link>
+
+          <Link
             href="/filing"
             className="bg-white border border-gray-200 rounded-xl p-4 hover:border-red-500 hover:shadow-md transition-all"
           >
@@ -234,6 +243,24 @@ export default function Dashboard() {
             <div className="text-2xl mb-2">🤝</div>
             <h3 className="font-semibold text-gray-900">Co-Parent Chat</h3>
             <p className="text-sm text-gray-500">Secure, court-ready messaging</p>
+          </Link>
+
+          <Link
+            href="/calculator"
+            className="bg-white border border-gray-200 rounded-xl p-4 hover:border-red-500 hover:shadow-md transition-all"
+          >
+            <div className="text-2xl mb-2">🧮</div>
+            <h3 className="font-semibold text-gray-900">Support Calculator</h3>
+            <p className="text-sm text-gray-500">Estimate child support</p>
+          </Link>
+
+          <Link
+            href="/templates"
+            className="bg-white border border-gray-200 rounded-xl p-4 hover:border-red-500 hover:shadow-md transition-all"
+          >
+            <div className="text-2xl mb-2">📝</div>
+            <h3 className="font-semibold text-gray-900">Doc Templates</h3>
+            <p className="text-sm text-gray-500">Guided fill-in wizards</p>
           </Link>
 
           <Link

@@ -133,16 +133,15 @@ function HeroSection() {
 
           {/* Headline */}
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight mb-6 text-gray-900">
-            Navigate Custody Battles{' '}
+            Fight for Your Kids{' '}
             <span className="text-red-600">
-              Without Breaking the Bank
+              Without a $30K Lawyer
             </span>
           </h1>
 
           {/* Subheadline */}
           <p className="text-xl sm:text-2xl text-gray-600 mb-8 max-w-3xl mx-auto">
-            Built by a parent who spent $30,000 on lawyers and lost—then figured out the system and won. 
-            Now helping thousands do the same.
+            Step-by-step custody guides, court forms, AI assistance, and a community of parents who understand. Everything you need to navigate family court — from filing to final order.
           </p>
 
           {/* CTA Buttons */}
@@ -175,7 +174,7 @@ function HeroSection() {
             </div>
             <div className="flex items-center gap-2">
               <span className="text-green-600">✓</span>
-              24/7 AI assistance
+              All 13 Canadian provinces
             </div>
           </div>
         </div>
@@ -190,12 +189,38 @@ function HeroSection() {
                 <div className="w-3 h-3 rounded-full bg-yellow-500" />
                 <div className="w-3 h-3 rounded-full bg-green-500" />
               </div>
-              <div className="flex-1 text-center text-xs text-gray-500">app.foresight.ca</div>
+              <div className="flex-1 text-center text-xs text-gray-500">foresight-eta-three.vercel.app</div>
             </div>
-            <div className="aspect-[16/9] bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center">
-              <div className="text-center text-gray-400">
-                <div className="text-6xl mb-4">📊</div>
-                <div>Dashboard Preview</div>
+            <div className="grid grid-cols-3 gap-3 p-6">
+              <div className="bg-red-50 border border-red-100 rounded-xl p-4 text-center">
+                <div className="text-2xl mb-2">📋</div>
+                <div className="text-xs font-medium text-gray-900">Filing Guides</div>
+                <div className="text-[10px] text-gray-500">Step-by-step for every province</div>
+              </div>
+              <div className="bg-blue-50 border border-blue-100 rounded-xl p-4 text-center">
+                <div className="text-2xl mb-2">📄</div>
+                <div className="text-xs font-medium text-gray-900">Court Forms</div>
+                <div className="text-[10px] text-gray-500">Direct PDF downloads</div>
+              </div>
+              <div className="bg-green-50 border border-green-100 rounded-xl p-4 text-center">
+                <div className="text-2xl mb-2">🤖</div>
+                <div className="text-xs font-medium text-gray-900">AI Assistant</div>
+                <div className="text-[10px] text-gray-500">Ask anything about your case</div>
+              </div>
+              <div className="bg-purple-50 border border-purple-100 rounded-xl p-4 text-center">
+                <div className="text-2xl mb-2">🤝</div>
+                <div className="text-xs font-medium text-gray-900">Co-Parent Chat</div>
+                <div className="text-[10px] text-gray-500">Court-ready messaging</div>
+              </div>
+              <div className="bg-amber-50 border border-amber-100 rounded-xl p-4 text-center">
+                <div className="text-2xl mb-2">⚖️</div>
+                <div className="text-xs font-medium text-gray-900">Know Your Rights</div>
+                <div className="text-[10px] text-gray-500">CPS laws by province</div>
+              </div>
+              <div className="bg-teal-50 border border-teal-100 rounded-xl p-4 text-center">
+                <div className="text-2xl mb-2">💬</div>
+                <div className="text-xs font-medium text-gray-900">Community</div>
+                <div className="text-[10px] text-gray-500">Parents helping parents</div>
               </div>
             </div>
           </div>
@@ -211,10 +236,10 @@ function HeroSection() {
 
 function SocialProofBar() {
   const stats = [
-    { value: '2,500+', label: 'Parents Helped' },
-    { value: '$4.2M', label: 'Legal Fees Saved' },
-    { value: '4.9/5', label: 'User Rating' },
-    { value: '24/7', label: 'AI Support' }
+    { value: '13', label: 'Provinces Covered' },
+    { value: '310+', label: 'Filing Steps' },
+    { value: '172', label: 'Support Programs' },
+    { value: '40+', label: 'Court Forms' }
   ];
 
   return (
@@ -789,10 +814,10 @@ function CTASection() {
             Get Started Free →
           </a>
           <a
-            href="/filing"
+            href="#how-it-works"
             className="w-full sm:w-auto px-8 py-4 border border-gray-300 bg-white rounded-xl font-semibold text-lg hover:bg-gray-100 transition-colors text-gray-700"
           >
-            See Filing Guides
+            See How It Works
           </a>
         </div>
       </div>
