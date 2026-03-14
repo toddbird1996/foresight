@@ -223,7 +223,7 @@ export const FORMS_DATABASE = {
     jurisdiction: 'Alberta',
     court: 'Court of King\'s Bench',
     website: 'https://albertacourts.ca',
-    formsUrl: 'https://www.alberta.ca/family-law-forms',
+    formsUrl: 'https://www.alberta.ca/family-law-kits',
     categories: [
       {
         id: 'initial-filing',
@@ -235,7 +235,7 @@ export const FORMS_DATABASE = {
             formNumber: 'FL-1',
             description: 'Main document to start divorce proceedings in Alberta.',
             required: true,
-            downloadUrl: 'https://cfr.forms.gov.ab.ca/Form/CTS3614.pdf',
+            downloadUrl: 'https://formsmgmt.gov.ab.ca/Public/CTS3614.xdp',
             fileType: 'pdf',
             fillable: true,
             pages: 6
@@ -246,7 +246,7 @@ export const FORMS_DATABASE = {
             formNumber: 'FL-12',
             description: 'Complete disclosure of financial situation.',
             required: true,
-            downloadUrl: 'https://cfr.forms.gov.ab.ca/Form/CTS3625.pdf',
+            downloadUrl: 'https://formsmgmt.gov.ab.ca/Public/CTS3625.xdp',
             fileType: 'pdf',
             fillable: true,
             pages: 14
@@ -257,7 +257,7 @@ export const FORMS_DATABASE = {
             formNumber: 'FL-2',
             description: 'Sworn statement about parenting arrangements and children.',
             required: true,
-            downloadUrl: 'https://cfr.forms.gov.ab.ca/Form/CTS3615.pdf',
+            downloadUrl: 'https://formsmgmt.gov.ab.ca/Public/CTS3615.xdp',
             fileType: 'pdf',
             fillable: true,
             pages: 8
@@ -274,7 +274,7 @@ export const FORMS_DATABASE = {
             formNumber: 'N/A',
             description: 'Template for detailed parenting arrangements.',
             required: false,
-            downloadUrl: 'https://www.alberta.ca/family-law-forms',
+            downloadUrl: 'https://www.alberta.ca/family-law-kits',
             fileType: 'pdf',
             fillable: true,
             pages: 10,
@@ -511,7 +511,7 @@ export const FORMS_DATABASE = {
             formNumber: 'Form 70A',
             description: 'Main document to start family proceedings in Manitoba.',
             required: true,
-            downloadUrl: 'https://web2.gov.mb.ca/laws/rules/forms/70a.pdf',
+            downloadUrl: 'https://web2.gov.mb.ca/laws/rules/70ae.pdf',
             fileType: 'pdf',
             fillable: true,
             pages: 4
@@ -522,7 +522,7 @@ export const FORMS_DATABASE = {
             formNumber: 'Form 70D',
             description: 'Full financial disclosure required for support claims.',
             required: true,
-            downloadUrl: 'https://web2.gov.mb.ca/laws/rules/forms/70d.pdf',
+            downloadUrl: 'https://web2.gov.mb.ca/laws/rules/70de.pdf',
             fileType: 'pdf',
             fillable: true,
             pages: 12
@@ -533,7 +533,7 @@ export const FORMS_DATABASE = {
             formNumber: 'Form 70F',
             description: 'Sworn statement of facts supporting your petition.',
             required: true,
-            downloadUrl: 'https://web2.gov.mb.ca/laws/rules/forms/70f.pdf',
+            downloadUrl: 'https://web2.gov.mb.ca/laws/rules/70fe.pdf',
             fileType: 'pdf',
             fillable: false,
             pages: 'Variable'
