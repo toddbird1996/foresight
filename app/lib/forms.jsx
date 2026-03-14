@@ -233,9 +233,9 @@ export const FORMS_DATABASE = {
             id: 'ab-statement-claim',
             name: 'Statement of Claim for Divorce',
             formNumber: 'FL-1',
-            description: 'Main document to start divorce proceedings in Alberta.',
+            description: 'Main document to start divorce proceedings in Alberta. Includes parenting and support claims.',
             required: true,
-            downloadUrl: 'https://formsmgmt.gov.ab.ca/Public/CTS3614.xdp',
+            downloadUrl: 'https://formsmgmt.gov.ab.ca/Public/CTS12365.xdp',
             fileType: 'pdf',
             fillable: true,
             pages: 6
@@ -357,7 +357,7 @@ export const FORMS_DATABASE = {
             formNumber: 'Form 10',
             description: 'Response to an Application. File within 30 days of being served.',
             required: true,
-            downloadUrl: 'https://ontariocourtforms.on.ca/static/media/uploads/courtforms/family/10/flr-10-may21-en.pdf',
+            downloadUrl: 'https://ontariocourtforms.on.ca/static/media/uploads/courtforms/family/10/flr-10-jun25-en.pdf',
             fileType: 'pdf',
             fillable: true,
             pages: 6
@@ -423,7 +423,7 @@ export const FORMS_DATABASE = {
             formNumber: 'Form 5',
             description: 'Required when applying for guardianship of a child.',
             required: false,
-            downloadUrl: 'https://www2.gov.bc.ca/assets/gov/law-crime-and-justice/courthouse-services/court-files-records/court-forms/family/pfa714.pdf',
+            downloadUrl: 'https://www2.gov.bc.ca/assets/gov/law-crime-and-justice/courthouse-services/court-files-records/court-forms/family/pfa733.pdf',
             fileType: 'pdf',
             fillable: true,
             pages: 4
