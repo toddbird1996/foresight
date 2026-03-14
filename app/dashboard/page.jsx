@@ -440,19 +440,17 @@ function QuestionBar() {
     setAnswer('');
 
     try {
-      const response = await fetch('https://api.anthropic.com/v1/messages', {
+      const response = await fetch('/api/ai/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          model: 'claude-sonnet-4-20250514',
-          max_tokens: 600,
-          system: `You are a helpful assistant for Foresight, a Canadian family law self-help app. Answer beginner custody and family law questions in 2-4 short paragraphs. Be warm, clear, and reassuring. Always note this is general information, not legal advice. Keep answers focused on Canadian law. If the question is not about family law, politely redirect.`,
-          messages: [{ role: 'user', content: q }],
-        }),
+        body: JSON.stringify({ message: q, userId: user?.id, jurisdiction: userProfile?.jurisdiction }),
       });
       const data = await response.json();
-      const text = data.content?.map((c) => c.text || '').join('') || 'Sorry, I couldn\'t process that. Please try again.';
-      setAnswer(text);
+      if (data.upgradeRequired) {
+        setAnswer('🔒 AI is a premium feature. Upgrade to Silver or Gold to ask unlimited questions!');
+      } else {
+        setAnswer(data.content || 'Sorry, I couldn\'t process that. Please try again.');
+      }
     } catch (err) {
       setAnswer('Sorry, the AI assistant is currently unavailable. Please try again later or visit our Filing Guide for help.');
     }

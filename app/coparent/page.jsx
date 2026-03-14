@@ -204,25 +204,15 @@ function MessageThread({ conversation, user, onBack }) {
     if (!input.trim()) return;
     setChecking(true);
     try {
-      const response = await fetch('https://api.anthropic.com/v1/messages', {
+      const response = await fetch('/api/ai/chat', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          model: 'claude-sonnet-4-20250514', max_tokens: 500,
-          system: `You are a tone analyzer for a co-parent communication tool used in custody situations. Analyze the message for tone.
-
-If the message is calm, neutral, and child-focused, respond EXACTLY: TONE: OK
-
-If it contains hostile, aggressive, accusatory, sarcastic, or emotionally charged language, respond:
-TONE: WARNING
-ISSUE: [brief explanation]
-REWRITE: [a calmer, child-focused alternative]
-
-Be strict — courts view these messages.`,
-          messages: [{ role: 'user', content: input.trim() }],
+          message: `Analyze this co-parent message for tone. If calm and child-focused respond EXACTLY: TONE: OK. If hostile/aggressive respond: TONE: WARNING\nISSUE: [explanation]\nREWRITE: [calmer version]. Be strict — courts view these. Message: "${input.trim()}"`,
+          userId: user.id
         }),
       });
       const data = await response.json();
-      const text = data.content?.map(c => c.text || '').join('') || '';
+      const text = data.content || '';
       if (text.includes('TONE: WARNING')) {
         const issue = text.match(/ISSUE:\s*(.+)/)?.[1] || 'This message may appear hostile.';
         const rewrite = text.match(/REWRITE:\s*([\s\S]+)/)?.[1]?.trim() || '';

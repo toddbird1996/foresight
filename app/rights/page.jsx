@@ -979,22 +979,14 @@ Key sections of the ${jurisdictionData?.actName || 'Act'}:
 - Section 39: Access provisions
 - Section 53: Priority of placement (family, extended family, cultural background)`;
 
-      const response = await fetch('https://api.anthropic.com/v1/messages', {
+      const response = await fetch('/api/ai/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          model: 'claude-sonnet-4-20250514',
-          max_tokens: 1000,
-          system: systemPrompt,
-          messages: [
-            ...aiMessages.map(m => ({ role: m.role, content: m.content })),
-            { role: 'user', content: userMsg }
-          ]
-        })
+        body: JSON.stringify({ message: userMsg, userId: user?.id })
       });
 
       const data = await response.json();
-      const assistantMsg = data.content?.map(c => c.text || '').join('') || 'I apologize, I was unable to process that request. Please try again.';
+      const assistantMsg = data.content || 'I apologize, I was unable to process that request. Please try again.';
       setAiMessages(prev => [...prev, { role: 'assistant', content: assistantMsg }]);
     } catch (err) {
       console.error('AI error:', err);

@@ -288,12 +288,12 @@ function CaseDocuments({ caseData, user, userTier }) {
         ? `You are a legal document analyst for Foresight. Analyze a document titled "${doc.file_name}" uploaded to a ${caseData.case_type} case in ${caseData.jurisdiction_id?.replace(/_/g, ' ') || 'Canada'}. Identify potential issues, missing information, red flags, and things a self-represented parent should verify. Note: you only have the filename. Provide guidance about what this type of document typically requires.`
         : `You are a legal document comparator for Foresight. A parent uploaded "${doc.file_name}" in a ${caseData.case_type} case in ${caseData.jurisdiction_id?.replace(/_/g, ' ') || 'Canada'}. Compare what this document likely contains against standard court requirements for this jurisdiction. Note any typical deficiencies or areas needing attention.`;
 
-      const response = await fetch('https://api.anthropic.com/v1/messages', {
+      const response = await fetch('/api/ai/chat', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 1000, messages: [{ role: 'user', content: prompt }] })
+        body: JSON.stringify({ message: prompt, userId: user.id, jurisdiction: caseData.jurisdiction_id })
       });
       const data = await response.json();
-      const result = data.content?.map(c => c.text || '').join('') || 'Unable to analyze.';
+      const result = data.content || 'Unable to analyze.';
       const updateField = action === 'compare' ? { ai_comparison: result, ai_scanned: true } : { ai_summary: result, ai_scanned: true };
       await supabase.from('case_documents').update(updateField).eq('id', doc.id);
       await fetchDocuments();
@@ -420,22 +420,12 @@ function CaseAIChat({ caseData, user, userTier }) {
 
     try {
       const history = messages.slice(-10).map(m => ({ role: m.role, content: m.content }));
-      const response = await fetch('https://api.anthropic.com/v1/messages', {
+      const response = await fetch('/api/ai/chat', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          model: 'claude-sonnet-4-20250514', max_tokens: 1000,
-          system: `You are an AI legal information assistant for Foresight, a Canadian family law platform. This conversation is about: "${caseData.name}" in ${caseData.jurisdiction_id?.replace(/_/g, ' ') || 'Canada'} (${caseData.case_type} case).
-
-IMPORTANT: You provide LEGAL INFORMATION, never legal advice. Always recommend consulting a lawyer for specific situations.
-
-You can help with: court procedures, filing requirements, legal terms, document needs, rights under family law and child welfare legislation, general strategy considerations, deadlines and timelines.
-
-Be empathetic — these users are navigating stressful custody situations. Reference specific provincial legislation when possible. If unsure, say so.`,
-          messages: [...history, { role: 'user', content: userMsg }]
-        })
+        body: JSON.stringify({ message: userMsg, userId: user.id, jurisdiction: caseData.jurisdiction_id })
       });
       const data = await response.json();
-      const aiReply = data.content?.map(c => c.text || '').join('') || 'Sorry, I was unable to process that. Please try again.';
+      const aiReply = data.content || 'Sorry, I was unable to process that. Please try again.';
       await supabase.from('case_ai_messages').insert({ case_id: caseData.id, user_id: user.id, role: 'assistant', content: aiReply });
       setMessages(prev => [...prev, { id: 'ai-' + Date.now(), role: 'assistant', content: aiReply, created_at: new Date().toISOString() }]);
     } catch (err) {

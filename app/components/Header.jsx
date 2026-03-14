@@ -59,6 +59,7 @@ export default function Header() {
         <Link href="/coparent" className="text-gray-700 hover:text-red-600">Co-Parent</Link>
         <Link href="/programs" className="text-gray-700 hover:text-red-600">Programs</Link>
         <Link href="/rights" className="text-gray-700 hover:text-red-600">Rights</Link>
+        <Link href="/emergency" className="text-red-600 hover:text-red-700">🚨 Emergency</Link>
         <button
           onClick={handleLogout}
           className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700"
@@ -86,6 +87,7 @@ export default function Header() {
           <Link href="/coparent" className="text-gray-700 hover:text-red-600" onClick={() => setMenuOpen(false)}>Co-Parent</Link>
           <Link href="/programs" className="text-gray-700 hover:text-red-600" onClick={() => setMenuOpen(false)}>Programs</Link>
           <Link href="/rights" className="text-gray-700 hover:text-red-600" onClick={() => setMenuOpen(false)}>Rights</Link>
+          <Link href="/emergency" className="text-red-600 hover:text-red-700 font-medium" onClick={() => setMenuOpen(false)}>🚨 Emergency</Link>
           <button
             onClick={() => {
               handleLogout();
