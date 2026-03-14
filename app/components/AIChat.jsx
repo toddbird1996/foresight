@@ -13,7 +13,7 @@ export function useAIChat(user, profile) {
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [queriesRemaining, setQueriesRemaining] = useState(null);
+  const [aiRemaining, setAiRemaining] = useState(null);
   const [upgradeRequired, setUpgradeRequired] = useState(false);
 
   // Check if user can use AI (paid users only)
@@ -21,12 +21,12 @@ export function useAIChat(user, profile) {
     if (profile) {
       if (profile.tier === 'bronze') {
         setUpgradeRequired(true);
-        setQueriesRemaining(0);
+        setAiRemaining(0);
       } else {
         setUpgradeRequired(false);
-        const limits = { bronze: 0, silver: 25, gold: 50 };
+        const limits = { bronze: 5, silver: 500, gold: 2000 };
         const limit = limits[profile.tier] || 25;
-        setQueriesRemaining(limit - (profile.daily_queries_used || 0));
+        setAiRemaining(limit - (profile.monthly_ai_used || 0));
       }
     }
   }, [profile]);
@@ -40,8 +40,8 @@ export function useAIChat(user, profile) {
       return;
     }
     
-    if (queriesRemaining <= 0) {
-      setError('Daily query limit reached. Upgrade your plan for more AI inquiries.');
+    if (aiRemaining <= 0) {
+      setError('Monthly AI question limit reached. Upgrade your plan for more credits.');
       return;
     }
 
@@ -91,8 +91,8 @@ export function useAIChat(user, profile) {
         tokensUsed: data.tokensUsed
       };
       setMessages(prev => [...prev, aiMessage]);
-      if (data.queriesRemaining !== undefined) {
-        setQueriesRemaining(data.queriesRemaining);
+      if (data.aiRemaining !== undefined) {
+        setAiRemaining(data.aiRemaining);
       }
       await refreshProfile();
 
@@ -116,7 +116,7 @@ export function useAIChat(user, profile) {
     messages,
     loading,
     error,
-    queriesRemaining,
+    aiRemaining,
     sendMessage,
     clearChat
   };
@@ -128,7 +128,7 @@ export function useAIChat(user, profile) {
 
 export function AIChat({ onClose }) {
   const { profile } = useAuth();
-  const { messages, loading, error, queriesRemaining, sendMessage, clearChat } = useAIChat();
+  const { messages, loading, error, aiRemaining, sendMessage, clearChat } = useAIChat();
   const [input, setInput] = useState('');
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
@@ -183,7 +183,7 @@ export function AIChat({ onClose }) {
           <div>
             <h2 className="font-semibold text-white">AI Assistant</h2>
             <p className="text-xs text-slate-400">
-              {queriesRemaining !== null ? `${queriesRemaining} queries remaining` : 'Loading...'}
+              {aiRemaining !== null ? `${aiRemaining} queries remaining` : 'Loading...'}
             </p>
           </div>
         </div>
@@ -253,12 +253,12 @@ export function AIChat({ onClose }) {
               placeholder="Ask about custody, forms, court processes..."
               className="flex-1 bg-transparent text-white placeholder-slate-500 resize-none focus:outline-none text-sm"
               rows={1}
-              disabled={loading || queriesRemaining <= 0}
+              disabled={loading || aiRemaining <= 0}
             />
           </div>
           <button
             type="submit"
-            disabled={!input.trim() || loading || queriesRemaining <= 0}
+            disabled={!input.trim() || loading || aiRemaining <= 0}
             className="p-3 bg-gradient-to-r from-orange-500 to-amber-500 rounded-xl text-white disabled:opacity-50 disabled:cursor-not-allowed hover:opacity-90 transition-opacity"
           >
             {loading ? (
@@ -269,7 +269,7 @@ export function AIChat({ onClose }) {
           </button>
         </div>
         
-        {queriesRemaining <= 0 && (
+        {aiRemaining <= 0 && (
           <p className="text-xs text-red-400 mt-2 text-center">
             Daily limit reached. <button className="text-orange-400 underline">Upgrade</button> for more queries.
           </p>

@@ -571,15 +571,15 @@ function PricingSection() {
       icon: '🥉',
       description: 'Get started with essential tools',
       features: [
-        'Filing guide access',
-        'Court forms library',
-        'Deadline tracking',
-        'Community access',
-        'Mentor access'
+        'Custody guides & filing resources',
+        'Community forum / chat rooms',
+        '2 GB document storage',
+        '5 AI questions total (trial)',
+        '1 PDF scan'
       ],
       notIncluded: [
-        'AI assistant',
-        'Document storage',
+        'Monthly AI credits',
+        'AI document summaries',
         'Priority support'
       ],
       cta: 'Start Free',
@@ -587,38 +587,38 @@ function PricingSection() {
     },
     {
       name: 'Silver',
-      price: '$9.99',
+      price: '$19.99',
       period: 'CAD/month',
       icon: '🥈',
-      description: 'Everything you need to navigate custody',
+      description: 'Full AI-powered custody guidance',
       features: [
         'Everything in Bronze',
-        'AI assistant (25 inquiries/day)',
-        '10 GB document storage',
-        'Scan PDFs to compare & summarize with AI',
-        '5 PDF uploads per month'
+        '500 AI questions per month',
+        '5 PDF scans per month',
+        'AI document summaries',
+        '10 GB document storage'
       ],
       notIncluded: [
-        'Priority 24/7 support',
-        'Unlimited document storage',
+        'Priority support',
+        'Unlimited storage',
         'Document review by mentors'
       ],
       cta: 'Get Silver',
-      popular: false
+      popular: true
     },
     {
       name: 'Gold',
-      price: '$19.99',
+      price: '$29.99',
       period: 'CAD/month',
       icon: '🥇',
       description: 'Premium support for complex cases',
       features: [
         'Everything in Silver',
-        'Priority 24/7 support',
-        'Unlimited document storage',
-        'Document review by mentors',
-        '50 AI inquiries per day',
-        '10 PDF scans per month'
+        '2,000 AI questions per month',
+        '20 PDF scans per month',
+        'Priority support',
+        'Unlimited storage',
+        'Document review by mentors'
       ],
       cta: 'Get Gold',
       popular: true

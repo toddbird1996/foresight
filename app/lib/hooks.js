@@ -638,7 +638,7 @@ export function useAIChat(conversationId = null) {
 
   const sendMessage = async (content, getAIResponse) => {
     // Check limit
-    if (profile.daily_queries_used >= tierLimits.dailyQueries) {
+    if (profile.monthly_ai_used >= tierLimits.monthlyAI) {
       throw new Error('Daily query limit reached. Please upgrade your plan.');
     }
 
@@ -674,14 +674,14 @@ export function useAIChat(conversationId = null) {
     }
   };
 
-  const queriesRemaining = tierLimits.dailyQueries - (profile?.daily_queries_used || 0);
+  const aiRemaining = tierLimits.monthlyAI - (profile?.monthly_ai_used || 0);
 
   return {
     conversation,
     messages,
     loading,
     error,
-    queriesRemaining,
+    aiRemaining,
     startNewConversation,
     sendMessage
   };

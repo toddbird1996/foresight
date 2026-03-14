@@ -281,8 +281,8 @@ export const analyticsService = {
     // For now, return most active AI users
     const { data: topAIUsers } = await supabase
       .from('users')
-      .select('id, full_name, daily_queries_used')
-      .order('daily_queries_used', { ascending: false })
+      .select('id, full_name, monthly_ai_used')
+      .order('monthly_ai_used', { ascending: false })
       .limit(5);
 
     return {
@@ -409,7 +409,7 @@ export function AnalyticsDashboard() {
                 color="#CD7F32"
               />
               <TierBar 
-                label="Silver ($9.99)" 
+                label="Silver ($19.99)" 
                 value={metrics.users?.usersByTier?.silver || 0}
                 total={metrics.users?.totalUsers || 1}
                 color="#C0C0C0"
@@ -484,7 +484,7 @@ export function AnalyticsDashboard() {
               <div className="flex justify-between items-center p-4 rounded-lg bg-slate-800/50">
                 <div>
                   <div className="font-medium">Silver Tier MRR</div>
-                  <div className="text-sm text-slate-400">{metrics.revenue?.silverUsers || 0} users × $9.99</div>
+                  <div className="text-sm text-slate-400">{metrics.revenue?.silverUsers || 0} users × $19.99</div>
                 </div>
                 <div className="text-xl font-bold text-slate-300">
                   ${metrics.revenue?.silverMRR?.toFixed(2) || '0.00'}

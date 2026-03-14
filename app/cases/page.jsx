@@ -245,7 +245,7 @@ function CaseDocuments({ caseData, user, userTier }) {
   const [scanning, setScanning] = useState(null);
   const [expandedDoc, setExpandedDoc] = useState(null);
   const fileInputRef = useRef(null);
-  const canUseAI = userTier === 'silver' || userTier === 'gold';
+  const canUseAI = true; // All tiers get some AI (Bronze: 5 trial, Silver: 500/mo, Gold: 2000/mo)
 
   useEffect(() => { fetchDocuments(); }, [caseData.id]);
 
@@ -328,7 +328,7 @@ function CaseDocuments({ caseData, user, userTier }) {
         </div>
         {!canUseAI && (
           <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 mb-3">
-            <p className="text-xs text-amber-700">🔒 <strong>AI document scanning</strong> requires Silver or Gold membership. <Link href="/pricing" className="text-red-600 underline">Upgrade</Link></p>
+            <p className="text-xs text-amber-700">🔒 <strong>AI document scanning</strong> — upgrade for more scans. Bronze includes 1 scan trial. <Link href="/pricing" className="text-red-600 underline">Upgrade</Link></p>
           </div>
         )}
         {documents.length === 0 ? (
@@ -398,7 +398,7 @@ function CaseAIChat({ caseData, user, userTier }) {
   const [input, setInput] = useState('');
   const [sending, setSending] = useState(false);
   const endRef = useRef(null);
-  const canUseAI = userTier === 'silver' || userTier === 'gold';
+  const canUseAI = true; // All tiers get some AI
 
   useEffect(() => { fetchMessages(); }, [caseData.id]);
   useEffect(() => { endRef.current?.scrollIntoView({ behavior: 'smooth' }); }, [messages]);
@@ -447,9 +447,9 @@ Be empathetic — these users are navigating stressful custody situations. Refer
   if (!canUseAI) return (
     <div className="bg-white border border-gray-200 rounded-xl p-8 text-center">
       <span className="text-4xl block mb-3">🔒</span>
-      <h3 className="font-bold text-gray-900 text-lg mb-2">AI Assistant Requires Silver or Gold</h3>
-      <p className="text-gray-500 text-sm mb-1">Silver ($9.99 CAD/month) — 25 AI inquiries/day</p>
-      <p className="text-gray-500 text-sm mb-4">Gold ($19.99 CAD/month) — 50 AI inquiries/day</p>
+      <h3 className="font-bold text-gray-900 text-lg mb-2">You've used your AI questions</h3>
+      <p className="text-gray-500 text-sm mb-1">Silver ($19.99 CAD/month) — 500 AI questions/month</p>
+      <p className="text-gray-500 text-sm mb-4">Gold ($29.99 CAD/month) — 2,000 AI questions/month</p>
       <Link href="/pricing" className="px-5 py-2.5 bg-red-600 hover:bg-red-700 text-white rounded-lg text-sm font-medium inline-block">View Plans</Link>
     </div>
   );

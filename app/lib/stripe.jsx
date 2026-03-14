@@ -11,66 +11,66 @@ export const PRICING = {
   bronze: {
     name: 'Bronze',
     price: 0,
-    priceId: null, // Free tier
+    priceId: null,
     icon: '🥉',
     color: '#CD7F32',
     features: [
-      'Filing guide access',
-      'Court forms library',
-      'Deadline tracking',
-      'Community access',
-      'Mentor access'
+      'Custody guides & filing resources',
+      'Community forum / chat rooms',
+      '2 GB document storage',
+      '5 AI questions total (trial)',
+      '1 PDF scan'
     ],
     notIncluded: [
-      'AI assistant',
-      'Document storage',
+      'Monthly AI credits',
+      'AI document summaries',
       'Priority support'
     ],
     limits: {
-      dailyQueries: 0,
-      monthlyDocs: 0,
-      jurisdictions: 'all',
+      monthlyAI: 5,
+      monthlyPdfScans: 1,
+      storageGB: 2,
       mentorAccess: true
     }
   },
   silver: {
     name: 'Silver',
-    price: 9.99,
+    price: 19.99,
     priceId: process.env.NEXT_PUBLIC_STRIPE_SILVER_PRICE_ID || 'price_silver',
     icon: '🥈',
     color: '#C0C0C0',
     features: [
       'Everything in Bronze',
-      'AI assistant (25 inquiries/day)',
-      '10 GB document storage',
-      'Scan PDFs to compare & summarize with AI',
-      '5 PDF uploads per month'
+      '500 AI questions per month',
+      '5 PDF scans per month',
+      'AI document summaries',
+      '10 GB document storage'
     ],
     limits: {
-      dailyQueries: 25,
-      monthlyDocs: 5,
-      jurisdictions: 'all',
+      monthlyAI: 500,
+      monthlyPdfScans: 5,
+      storageGB: 10,
       mentorAccess: true
     }
   },
   gold: {
     name: 'Gold',
-    price: 19.99,
+    price: 29.99,
     priceId: process.env.NEXT_PUBLIC_STRIPE_GOLD_PRICE_ID || 'price_gold',
     icon: '🥇',
     color: '#FFD700',
     features: [
       'Everything in Silver',
-      'Priority 24/7 support',
-      'Unlimited document storage',
-      'Document review by mentors',
-      '50 AI inquiries per day',
-      '10 PDF scans per month'
+      '2,000 AI questions per month',
+      '20 PDF scans per month',
+      'Priority support',
+      'Unlimited storage',
+      'Document review by mentors'
     ],
     limits: {
-      dailyQueries: 50,
-      monthlyDocs: 10,
-      jurisdictions: 'all',
+      monthlyAI: 2000,
+      monthlyPdfScans: 20,
+      storageGB: -1,
       mentorAccess: true
     },
     popular: true
@@ -743,7 +743,7 @@ In Stripe Dashboard → Products:
 
 ### Silver Plan
 - Name: Foresight Silver
-- Price: $9.99/month
+- Price: $19.99/month
 - Copy the Price ID (starts with price_)
 
 ### Gold Plan  

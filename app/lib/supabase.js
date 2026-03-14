@@ -17,9 +17,9 @@ import { supabase } from '../../lib/supabaseClient'; // import the client
  */
 
 export const TIER_LIMITS = {
-  bronze: { dailyQueries: 0, monthlyDocs: 0, jurisdictions: 'all', mentorAccess: true, price: 0 },
-  silver: { dailyQueries: 50, monthlyDocs: 5, jurisdictions: 3, mentorAccess: 'limited', price: 9.99 },
-  gold: { dailyQueries: 50, monthlyDocs: 10, jurisdictions: 'all', mentorAccess: 'full', price: 19.99 }
+  bronze: { monthlyAI: 5, monthlyPdfScans: 1, storageGB: 2, mentorAccess: true, price: 0 },
+  silver: { monthlyAI: 500, monthlyPdfScans: 5, storageGB: 10, mentorAccess: true, price: 19.99 },
+  gold: { monthlyAI: 2000, monthlyPdfScans: 20, storageGB: -1, mentorAccess: true, price: 29.99 }
 };
 
 // ============================================
@@ -118,16 +118,16 @@ export const userService = {
   },
 
   async incrementQueryCount(userId) {
-    const { data: user, error: fetchError } = await supabase.from('users').select('daily_queries_used, tier').eq('id', userId).single();
+    const { data: user, error: fetchError } = await supabase.from('users').select('monthly_ai_used, tier').eq('id', userId).single();
     if (fetchError) throw fetchError;
 
-    const limit = TIER_LIMITS[user.tier].dailyQueries;
-    if (user.daily_queries_used >= limit) throw new Error('Daily query limit reached');
+    const limit = TIER_LIMITS[user.tier].monthlyAI;
+    if (user.monthly_ai_used >= limit) throw new Error('Monthly AI question limit reached');
 
-    const { error } = await supabase.from('users').update({ daily_queries_used: user.daily_queries_used + 1 }).eq('id', userId);
+    const { error } = await supabase.from('users').update({ monthly_ai_used: user.monthly_ai_used + 1 }).eq('id', userId);
     if (error) throw error;
 
-    return { queriesUsed: user.daily_queries_used + 1, limit };
+    return { queriesUsed: user.monthly_ai_used + 1, limit };
   },
 
   async incrementDocCount(userId) {

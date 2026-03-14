@@ -668,7 +668,7 @@ export default async function handler(req, res) {
 
   // Check rate limits / tier
   const user = await getUserWithTier(session.user.id);
-  if (user.daily_queries_used >= getTierLimit(user.tier)) {
+  if (user.monthly_ai_used >= getMonthlyAILimit(user.tier)) {
     return res.status(429).json({ error: 'Daily query limit reached' });
   }
 

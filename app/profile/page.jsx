@@ -112,11 +112,11 @@ export default function ProfilePage() {
   const getTierInfo = (tier) => {
     switch (tier) {
       case 'gold':
-        return { label: 'Gold', queries: '50/day', docs: '10/month' };
+        return { label: 'Gold', queries: '2,000/month', docs: '20 scans/month' };
       case 'silver':
-        return { label: 'Silver', queries: '25/day', docs: '5/month' };
+        return { label: 'Silver', queries: '500/month', docs: '5 scans/month' };
       default:
-        return { label: 'Bronze', queries: 'None', docs: 'None' };
+        return { label: 'Bronze', queries: '5 total (trial)', docs: '1 scan' };
     }
   };
 

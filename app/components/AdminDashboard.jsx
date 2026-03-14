@@ -710,7 +710,7 @@ function UserDetailModal({ user, onClose, onUpdate }) {
           <div className="p-3 rounded-lg bg-slate-800">
             <div className="text-sm text-slate-400 mb-2">Usage This Period</div>
             <div className="grid grid-cols-2 gap-2 text-sm">
-              <div>AI Queries: {user.daily_queries_used || 0}/day</div>
+              <div>AI Used: {user.monthly_ai_used || 0}/month</div>
               <div>Docs: {user.monthly_docs_used || 0}/month</div>
             </div>
           </div>
