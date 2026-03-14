@@ -1,59 +1,39 @@
 'use client';
 import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
-import { supabase } from "../../lib/supabaseClient";
+import { supabase } from '../../lib/supabaseClient';
 import { useRouter } from 'next/navigation';
 
-// ============================================
-// CHANNEL CATEGORIES CONFIG
-// ============================================
-const CATEGORY_CONFIG = {
-  legal: { label: 'Legal Support', icon: '⚖️', color: 'text-red-600' },
-  support: { label: 'Support Groups', icon: '💚', color: 'text-emerald-600' },
-  hobbies: { label: 'Hobby Groups', icon: '🎮', color: 'text-blue-600' },
+const CATEGORIES = {
+  legal: { label: 'LEGAL SUPPORT', icon: '⚖️' },
+  support: { label: 'SUPPORT GROUPS', icon: '💚' },
+  hobbies: { label: 'HOBBY GROUPS', icon: '🎮' },
 };
 
-const EMOJI_OPTIONS = ['👍', '❤️', '🙏', '💪', '🎉', '😂', '😢', '🤔'];
-
-const POST_TYPE_CONFIG = {
-  discussion: { label: 'Discussion', color: 'bg-gray-100 text-gray-700', icon: '💬' },
-  question: { label: 'Question', color: 'bg-blue-50 text-blue-700', icon: '❓' },
-  success_story: { label: 'Success Story', color: 'bg-emerald-50 text-emerald-700', icon: '🎉' },
-  resource: { label: 'Resource', color: 'bg-amber-50 text-amber-700', icon: '📎' },
-};
-
-// ============================================
-// MAIN COMMUNITY PAGE
-// ============================================
 export default function CommunityPage() {
   const router = useRouter();
   const [user, setUser] = useState(null);
+  const [userProfile, setUserProfile] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState('chat');
   const [channels, setChannels] = useState([]);
   const [activeChannel, setActiveChannel] = useState(null);
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [showSidebar, setShowSidebar] = useState(true);
+  const [view, setView] = useState('chat'); // chat or posts
 
   useEffect(() => {
     const init = async () => {
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) { router.push("/auth/login"); return; }
+      if (!user) { router.push('/auth/login'); return; }
       setUser(user);
-      await fetchChannels();
+      const { data: profile } = await supabase.from('users').select('full_name, avatar_url').eq('id', user.id).single();
+      setUserProfile(profile);
+      const { data: ch } = await supabase.from('channels').select('*').order('display_order');
+      setChannels(ch || []);
+      if (ch?.length) setActiveChannel(ch[0]);
       setLoading(false);
     };
     init();
   }, []);
-
-  const fetchChannels = async () => {
-    const { data, error } = await supabase
-      .from("channels")
-      .select("*")
-      .order("display_order", { ascending: true });
-    if (error) { console.error("Error fetching channels:", error); return; }
-    setChannels(data || []);
-    if (data && data.length > 0) setActiveChannel(data[0]);
-  };
 
   const channelsByCategory = channels.reduce((acc, c) => {
     const cat = c.category || 'other';
@@ -62,751 +42,354 @@ export default function CommunityPage() {
     return acc;
   }, {});
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="flex items-center gap-3">
-          <div className="w-5 h-5 border-2 border-red-600 border-t-transparent rounded-full animate-spin" />
-          <p className="text-gray-600">Loading community...</p>
-        </div>
-      </div>
-    );
-  }
+  if (loading) return (
+    <div className="min-h-screen bg-[#313338] flex items-center justify-center">
+      <div className="w-6 h-6 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+    </div>
+  );
 
   return (
-    <div className="h-screen bg-gray-50 flex flex-col">
-      {/* Header */}
-      <header className="h-14 bg-white border-b border-gray-200 flex items-center px-4 gap-3 flex-shrink-0">
-        <Link href="/dashboard" className="text-gray-400 hover:text-red-600 text-lg">←</Link>
-        <div className="w-8 h-8 bg-red-600 rounded-lg flex items-center justify-center">
-          <span className="text-white font-bold text-sm">F</span>
-        </div>
-        <h1 className="font-bold text-gray-900">Community</h1>
+    <div className="h-screen flex bg-[#313338] overflow-hidden">
 
-        {/* Tab Switcher */}
-        <div className="flex items-center bg-gray-100 rounded-lg p-0.5 ml-4">
-          <button
-            onClick={() => setActiveTab('chat')}
-            className={`px-3 py-1.5 rounded-md text-sm font-medium transition-all ${
-              activeTab === 'chat' ? 'bg-white text-red-600 shadow-sm' : 'text-gray-600 hover:text-gray-900'
-            }`}
-          >
-            💬 Chat
+      {/* Server Icon Rail (far left) */}
+      <div className="w-[72px] bg-[#1e1f22] flex flex-col items-center py-3 gap-2 flex-shrink-0 hidden sm:flex">
+        <Link href="/dashboard" className="w-12 h-12 bg-[#5865f2] rounded-2xl hover:rounded-xl transition-all flex items-center justify-center group" title="Dashboard">
+          <span className="text-white font-bold text-lg">F</span>
+        </Link>
+        <div className="w-8 h-0.5 bg-[#35363c] rounded-full my-1" />
+        {Object.entries(CATEGORIES).map(([key, cat]) => (
+          <button key={key} onClick={() => {
+            const first = channelsByCategory[key]?.[0];
+            if (first) { setActiveChannel(first); setShowSidebar(true); }
+          }}
+            className="w-12 h-12 bg-[#2b2d31] rounded-full hover:rounded-xl hover:bg-[#5865f2] transition-all flex items-center justify-center group" title={cat.label}>
+            <span className="text-xl">{cat.icon}</span>
           </button>
-          <button
-            onClick={() => setActiveTab('posts')}
-            className={`px-3 py-1.5 rounded-md text-sm font-medium transition-all ${
-              activeTab === 'posts' ? 'bg-white text-red-600 shadow-sm' : 'text-gray-600 hover:text-gray-900'
-            }`}
-          >
-            📝 Posts
-          </button>
+        ))}
+        <div className="mt-auto">
+          <Link href="/coparent" className="w-12 h-12 bg-[#2b2d31] rounded-full hover:rounded-xl hover:bg-green-600 transition-all flex items-center justify-center" title="Co-Parent Chat">
+            <span className="text-xl">🤝</span>
+          </Link>
+        </div>
+      </div>
+
+      {/* Channel Sidebar */}
+      <div className={`${showSidebar ? 'flex' : 'hidden'} sm:flex w-60 bg-[#2b2d31] flex-col flex-shrink-0`}>
+        {/* Server Header */}
+        <div className="h-12 px-4 flex items-center border-b border-[#1f2023] shadow-sm">
+          <h2 className="font-semibold text-white text-sm truncate">Foresight Community</h2>
         </div>
 
-        <button
-          onClick={() => setSidebarOpen(!sidebarOpen)}
-          className="ml-auto md:hidden text-gray-600 p-2"
-        >
-          ☰
-        </button>
-      </header>
-
-      <div className="flex-1 flex overflow-hidden">
-        {/* Sidebar */}
-        {sidebarOpen && (
-          <div className="fixed inset-0 bg-black/30 z-40 md:hidden" onClick={() => setSidebarOpen(false)} />
-        )}
-        <aside className={`${sidebarOpen ? 'fixed inset-y-0 left-0 z-50' : 'hidden'} md:relative md:block w-64 bg-white border-r border-gray-200 overflow-y-auto flex-shrink-0`}>
-          <div className="p-4">
-            {/* Online count */}
-            <div className="flex items-center gap-2 mb-4 px-2">
-              <div className="w-2 h-2 bg-emerald-500 rounded-full" />
-              <span className="text-xs text-gray-500">12 members online</span>
+        {/* Channel List */}
+        <div className="flex-1 overflow-y-auto px-2 py-3 space-y-4">
+          {Object.entries(channelsByCategory).map(([catKey, catChannels]) => (
+            <div key={catKey}>
+              <div className="flex items-center gap-1 px-1 mb-1">
+                <span className="text-[11px] font-semibold text-[#949ba4] uppercase tracking-wide">
+                  {CATEGORIES[catKey]?.label || catKey}
+                </span>
+              </div>
+              {catChannels.map(ch => (
+                <button key={ch.id} onClick={() => { setActiveChannel(ch); setShowSidebar(false); }}
+                  className={`w-full text-left px-2 py-1.5 rounded-md flex items-center gap-2 group transition-colors ${
+                    activeChannel?.id === ch.id
+                      ? 'bg-[#404249] text-white'
+                      : 'text-[#949ba4] hover:text-[#dbdee1] hover:bg-[#35373c]'
+                  }`}>
+                  <span className="text-[#949ba4] text-lg">#</span>
+                  <span className="text-sm truncate">{ch.name.toLowerCase().replace(/\s+/g, '-')}</span>
+                </button>
+              ))}
             </div>
+          ))}
+        </div>
 
-            {/* Channels by category */}
-            {Object.entries(CATEGORY_CONFIG).map(([catKey, catConfig]) => {
-              const catChannels = channelsByCategory[catKey] || [];
-              if (catChannels.length === 0) return null;
-              return (
-                <div key={catKey} className="mb-4">
-                  <h3 className={`text-xs font-semibold uppercase mb-2 px-2 ${catConfig.color}`}>
-                    {catConfig.icon} {catConfig.label}
-                  </h3>
-                  {catChannels.map(channel => (
-                    <button
-                      key={channel.id}
-                      onClick={() => {
-                        setActiveChannel(channel);
-                        setSidebarOpen(false);
-                      }}
-                      className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-lg mb-0.5 text-sm transition-all ${
-                        activeChannel?.id === channel.id
-                          ? 'bg-red-50 text-red-700 font-medium'
-                          : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
-                      }`}
-                    >
-                      <span className="text-base">{channel.icon || '💬'}</span>
-                      <span className="flex-1 text-left truncate">{channel.name}</span>
-                      {channel.member_count > 0 && (
-                        <span className="text-xs text-gray-400 bg-gray-100 px-1.5 py-0.5 rounded-full">
-                          {channel.member_count}
-                        </span>
-                      )}
-                    </button>
-                  ))}
-                </div>
-              );
-            })}
+        {/* User Panel */}
+        <div className="h-[52px] bg-[#232428] px-2 flex items-center gap-2">
+          <div className="w-8 h-8 bg-[#5865f2] rounded-full flex items-center justify-center text-white text-xs font-bold">
+            {(userProfile?.full_name || user?.email || 'U')[0].toUpperCase()}
           </div>
-        </aside>
+          <div className="flex-1 min-w-0">
+            <div className="text-sm text-white font-medium truncate">{userProfile?.full_name || 'User'}</div>
+            <div className="text-[11px] text-[#949ba4] truncate">Online</div>
+          </div>
+        </div>
+      </div>
 
-        {/* Main Content */}
-        <main className="flex-1 flex flex-col min-w-0">
-          {activeTab === 'chat' ? (
-            <ChatView user={user} activeChannel={activeChannel} />
-          ) : (
-            <PostsView user={user} activeChannel={activeChannel} channels={channels} />
-          )}
-        </main>
+      {/* Main Chat Area */}
+      <div className="flex-1 flex flex-col min-w-0">
+        {/* Channel Header */}
+        <div className="h-12 px-4 flex items-center gap-3 border-b border-[#1f2023] bg-[#313338] flex-shrink-0">
+          <button onClick={() => setShowSidebar(!showSidebar)} className="sm:hidden text-[#b5bac1] hover:text-white">
+            ☰
+          </button>
+          <span className="text-[#949ba4] text-xl">#</span>
+          <div className="flex-1 min-w-0">
+            <h3 className="font-semibold text-white text-sm">{activeChannel?.name || 'Select a channel'}</h3>
+          </div>
+          <div className="hidden sm:flex items-center gap-2">
+            <span className="text-xs text-[#949ba4] max-w-[200px] truncate">{activeChannel?.description}</span>
+          </div>
+          <div className="flex items-center gap-1">
+            <button onClick={() => setView('chat')}
+              className={`px-3 py-1 rounded text-xs font-medium ${view === 'chat' ? 'bg-[#404249] text-white' : 'text-[#949ba4] hover:text-white'}`}>
+              Chat
+            </button>
+            <button onClick={() => setView('posts')}
+              className={`px-3 py-1 rounded text-xs font-medium ${view === 'posts' ? 'bg-[#404249] text-white' : 'text-[#949ba4] hover:text-white'}`}>
+              Posts
+            </button>
+          </div>
+        </div>
+
+        {/* Content */}
+        {view === 'chat' && activeChannel && <ChatView channel={activeChannel} user={user} userProfile={userProfile} />}
+        {view === 'posts' && activeChannel && <PostsView channel={activeChannel} user={user} userProfile={userProfile} />}
       </div>
     </div>
   );
 }
 
-// ============================================
-// CHAT VIEW (Discord-style)
-// ============================================
-function ChatView({ user, activeChannel }) {
+/* ============================================ */
+/* CHAT VIEW */
+/* ============================================ */
+function ChatView({ channel, user, userProfile }) {
   const [messages, setMessages] = useState([]);
-  const [newMessage, setNewMessage] = useState('');
+  const [input, setInput] = useState('');
   const [sending, setSending] = useState(false);
-  const [hoveredMsg, setHoveredMsg] = useState(null);
-  const [emojiPickerMsg, setEmojiPickerMsg] = useState(null);
-  const messagesEndRef = useRef(null);
+  const endRef = useRef(null);
+
+  useEffect(() => { fetchMessages(); }, [channel.id]);
+  useEffect(() => { endRef.current?.scrollIntoView({ behavior: 'smooth' }); }, [messages]);
 
   useEffect(() => {
-    if (!activeChannel) return;
-    fetchMessages(activeChannel.id);
-
-    const subscription = supabase
-      .channel(`messages:${activeChannel.id}`)
-      .on('postgres_changes', {
-        event: 'INSERT',
-        schema: 'public',
-        table: 'messages',
-        filter: `channel_id=eq.${activeChannel.id}`
-      }, () => {
-        fetchMessages(activeChannel.id);
-      })
+    const sub = supabase.channel(`chat-${channel.id}`)
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'chat_messages', filter: `channel_id=eq.${channel.id}` },
+        (payload) => { setMessages(prev => [...prev, payload.new]); })
       .subscribe();
+    return () => { supabase.removeChannel(sub); };
+  }, [channel.id]);
 
-    return () => { subscription.unsubscribe(); };
-  }, [activeChannel]);
-
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages]);
-
-  const fetchMessages = async (channelId) => {
-    const { data, error } = await supabase
-      .from("messages")
-      .select(`*, user:users(id, full_name, email)`)
-      .eq("channel_id", channelId)
-      .eq("is_deleted", false)
-      .order("created_at", { ascending: true })
-      .limit(100);
-    if (error) { console.error("Error:", error); return; }
+  const fetchMessages = async () => {
+    const { data } = await supabase.from('chat_messages').select('*').eq('channel_id', channel.id).order('created_at', { ascending: true }).limit(100);
     setMessages(data || []);
   };
 
-  const handleSend = async () => {
-    if (!newMessage.trim() || sending || !activeChannel) return;
+  const sendMessage = async () => {
+    if (!input.trim() || sending) return;
     setSending(true);
-    const { error } = await supabase.from("messages").insert({
-      channel_id: activeChannel.id,
-      user_id: user.id,
-      content: newMessage.trim()
+    await supabase.from('chat_messages').insert({
+      channel_id: channel.id, user_id: user.id, content: input.trim(),
+      user_name: userProfile?.full_name || user.email?.split('@')[0] || 'User',
     });
-    if (!error) {
-      setNewMessage("");
-      await fetchMessages(activeChannel.id);
-    }
+    setInput('');
     setSending(false);
   };
 
-  const addReaction = async (messageId, emoji) => {
-    const { error } = await supabase.from("message_reactions").upsert({
-      message_id: messageId,
-      user_id: user.id,
-      emoji: emoji
-    }, { onConflict: 'message_id,user_id,emoji' });
-    if (error && error.code === '23505') {
-      await supabase.from("message_reactions")
-        .delete()
-        .match({ message_id: messageId, user_id: user.id, emoji: emoji });
-    }
-    setEmojiPickerMsg(null);
-  };
-
-  const getInitial = (msg) => {
-    if (msg.user?.full_name) return msg.user.full_name[0].toUpperCase();
-    if (msg.user?.email) return msg.user.email[0].toUpperCase();
-    return "?";
-  };
-
-  const getUserName = (msg) => {
-    if (msg.user?.full_name) return msg.user.full_name;
-    if (msg.user?.email) return msg.user.email.split("@")[0];
-    return "Anonymous";
-  };
-
-  const formatTime = (timestamp) => {
-    const date = new Date(timestamp);
-    const now = new Date();
-    const diffMin = (now - date) / 1000 / 60;
-    if (diffMin < 1) return "Just now";
-    if (diffMin < 60) return `${Math.floor(diffMin)}m ago`;
-    if (diffMin < 1440) {
-      return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    }
-    return date.toLocaleDateString([], { month: 'short', day: 'numeric' });
-  };
-
+  // Group messages by date
   const groupedMessages = messages.reduce((groups, msg) => {
-    const dateKey = new Date(msg.created_at).toLocaleDateString([], { weekday: 'long', month: 'long', day: 'numeric' });
-    if (!groups[dateKey]) groups[dateKey] = [];
-    groups[dateKey].push(msg);
+    const date = new Date(msg.created_at).toLocaleDateString('en-CA', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+    if (!groups[date]) groups[date] = [];
+    groups[date].push(msg);
     return groups;
   }, {});
 
   return (
-    <>
-      {/* Channel Header */}
-      {activeChannel && (
-        <div className="h-12 bg-white border-b border-gray-200 flex items-center px-4 flex-shrink-0">
-          <span className="text-lg mr-2">{activeChannel.icon || '💬'}</span>
-          <span className="font-semibold text-gray-900">{activeChannel.name}</span>
-          {activeChannel.description && (
-            <span className="ml-3 text-sm text-gray-400 hidden sm:block">— {activeChannel.description}</span>
-          )}
-          <div className="ml-auto flex items-center gap-2">
-            <span className="text-xs text-gray-400">{messages.length} messages</span>
-          </div>
-        </div>
-      )}
-
+    <div className="flex-1 flex flex-col min-h-0">
       {/* Messages */}
       <div className="flex-1 overflow-y-auto px-4 py-2">
-        {messages.length === 0 ? (
-          <div className="flex flex-col items-center justify-center h-full text-gray-400">
-            <span className="text-4xl mb-3">💬</span>
-            <p className="text-lg font-medium text-gray-600">No messages yet</p>
-            <p className="text-sm">Be the first to start the conversation!</p>
+        {messages.length === 0 && (
+          <div className="flex flex-col items-center justify-center h-full text-center py-12">
+            <div className="w-16 h-16 bg-[#404249] rounded-full flex items-center justify-center text-3xl mb-4">#</div>
+            <h3 className="text-2xl font-bold text-white mb-2">Welcome to #{channel.name.toLowerCase().replace(/\s+/g, '-')}</h3>
+            <p className="text-[#949ba4] text-sm max-w-md">{channel.description || 'This is the start of this channel. Be the first to say something!'}</p>
           </div>
-        ) : (
-          Object.entries(groupedMessages).map(([dateKey, msgs]) => (
-            <div key={dateKey}>
-              <div className="flex items-center gap-3 my-4">
-                <div className="flex-1 h-px bg-gray-200" />
-                <span className="text-xs text-gray-400 font-medium">{dateKey}</span>
-                <div className="flex-1 h-px bg-gray-200" />
-              </div>
-              {msgs.map((msg) => (
-                <div
-                  key={msg.id}
-                  className="flex gap-3 py-1.5 px-2 -mx-2 rounded-lg hover:bg-gray-50 group relative"
-                  onMouseEnter={() => setHoveredMsg(msg.id)}
-                  onMouseLeave={() => { setHoveredMsg(null); setEmojiPickerMsg(null); }}
-                >
-                  <div className={`w-9 h-9 rounded-full flex items-center justify-center font-bold text-white flex-shrink-0 text-sm ${
-                    msg.user_id === user.id ? 'bg-red-600' : 'bg-gray-500'
-                  }`}>
-                    {getInitial(msg)}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-baseline gap-2">
-                      <span className={`font-semibold text-sm ${msg.user_id === user.id ? 'text-red-700' : 'text-gray-900'}`}>
-                        {getUserName(msg)}
-                      </span>
-                      <span className="text-xs text-gray-400">{formatTime(msg.created_at)}</span>
-                      {msg.is_pinned && <span className="text-xs bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded">📌 Pinned</span>}
-                    </div>
-                    <p className="text-gray-700 text-sm mt-0.5 break-words">{msg.content}</p>
-                  </div>
-
-                  {/* Hover actions */}
-                  {hoveredMsg === msg.id && (
-                    <div className="absolute right-2 -top-3 bg-white border border-gray-200 rounded-lg shadow-sm flex items-center overflow-hidden">
-                      <button
-                        onClick={() => setEmojiPickerMsg(emojiPickerMsg === msg.id ? null : msg.id)}
-                        className="px-2 py-1 text-gray-400 hover:text-gray-600 hover:bg-gray-50 text-sm"
-                        title="React"
-                      >
-                        😀
-                      </button>
-                      <button className="px-2 py-1 text-gray-400 hover:text-gray-600 hover:bg-gray-50 text-sm" title="Reply">
-                        ↩
-                      </button>
-                    </div>
-                  )}
-
-                  {/* Emoji picker */}
-                  {emojiPickerMsg === msg.id && (
-                    <div className="absolute right-2 top-5 bg-white border border-gray-200 rounded-lg shadow-lg p-2 flex gap-1 z-10">
-                      {EMOJI_OPTIONS.map(emoji => (
-                        <button
-                          key={emoji}
-                          onClick={() => addReaction(msg.id, emoji)}
-                          className="w-8 h-8 hover:bg-gray-100 rounded flex items-center justify-center text-lg"
-                        >
-                          {emoji}
-                        </button>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          ))
         )}
-        <div ref={messagesEndRef} />
+
+        {Object.entries(groupedMessages).map(([date, msgs]) => (
+          <div key={date}>
+            {/* Date Separator */}
+            <div className="flex items-center gap-2 my-4">
+              <div className="flex-1 h-px bg-[#3f4147]" />
+              <span className="text-[11px] text-[#949ba4] font-semibold">{date}</span>
+              <div className="flex-1 h-px bg-[#3f4147]" />
+            </div>
+
+            {/* Messages */}
+            {msgs.map((msg, i) => {
+              const prevMsg = i > 0 ? msgs[i - 1] : null;
+              const sameAuthor = prevMsg?.user_id === msg.user_id;
+              const timeDiff = prevMsg ? (new Date(msg.created_at) - new Date(prevMsg.created_at)) / 60000 : 999;
+              const compact = sameAuthor && timeDiff < 5;
+
+              return (
+                <div key={msg.id} className={`flex gap-4 px-2 py-0.5 hover:bg-[#2e3035] rounded group ${compact ? '' : 'mt-4'}`}>
+                  {compact ? (
+                    <div className="w-10 flex-shrink-0">
+                      <span className="text-[11px] text-[#949ba4] hidden group-hover:inline">
+                        {new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                      </span>
+                    </div>
+                  ) : (
+                    <div className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 text-white font-semibold text-sm"
+                      style={{ backgroundColor: stringToColor(msg.user_name || msg.user_id) }}>
+                      {(msg.user_name || 'U')[0].toUpperCase()}
+                    </div>
+                  )}
+                  <div className="flex-1 min-w-0">
+                    {!compact && (
+                      <div className="flex items-baseline gap-2">
+                        <span className="font-medium text-sm" style={{ color: stringToColor(msg.user_name || msg.user_id) }}>
+                          {msg.user_name || 'User'}
+                        </span>
+                        <span className="text-[11px] text-[#949ba4]">
+                          {new Date(msg.created_at).toLocaleString('en-CA', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                        </span>
+                      </div>
+                    )}
+                    <p className="text-[#dbdee1] text-sm leading-relaxed break-words">{msg.content}</p>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        ))}
+        <div ref={endRef} />
       </div>
 
-      {/* Message Input */}
-      <div className="p-3 bg-white border-t border-gray-200 flex-shrink-0">
-        <div className="flex gap-2 items-center bg-gray-50 border border-gray-200 rounded-xl px-3 py-1 focus-within:border-red-400 focus-within:ring-1 focus-within:ring-red-100">
-          <input
-            type="text"
-            value={newMessage}
-            onChange={(e) => setNewMessage(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && handleSend()}
-            placeholder={`Message #${activeChannel?.name || 'channel'}...`}
-            className="flex-1 bg-transparent text-gray-900 placeholder-gray-400 focus:outline-none py-2.5 text-sm"
-          />
-          <button
-            onClick={handleSend}
-            disabled={sending || !newMessage.trim()}
-            className="p-2 bg-red-600 hover:bg-red-700 text-white rounded-lg disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
-          >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-            </svg>
+      {/* Input */}
+      <div className="px-4 pb-6 pt-2 flex-shrink-0">
+        <div className="bg-[#383a40] rounded-lg flex items-center">
+          <input type="text" value={input} onChange={e => setInput(e.target.value)}
+            onKeyDown={e => e.key === 'Enter' && sendMessage()}
+            placeholder={`Message #${channel.name.toLowerCase().replace(/\s+/g, '-')}`}
+            className="flex-1 bg-transparent px-4 py-3 text-sm text-[#dbdee1] placeholder-[#6d6f78] focus:outline-none" />
+          <button onClick={sendMessage} disabled={!input.trim() || sending}
+            className="px-3 py-2 mr-1 text-[#b5bac1] hover:text-white disabled:opacity-30 transition-colors">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor"><path d="M2.94 3.19a1 1 0 0 1 1.15-.33l12 5a1 1 0 0 1 0 1.84l-12 5a1 1 0 0 1-1.37-1.15L4.08 10 2.72 6.45a1 1 0 0 1 .22-1.26Z"/></svg>
           </button>
         </div>
       </div>
-    </>
+    </div>
   );
 }
 
-// ============================================
-// POSTS VIEW (Reddit/Facebook-style)
-// ============================================
-function PostsView({ user, activeChannel, channels }) {
+/* ============================================ */
+/* POSTS VIEW */
+/* ============================================ */
+function PostsView({ channel, user, userProfile }) {
   const [posts, setPosts] = useState([]);
-  const [loadingPosts, setLoadingPosts] = useState(true);
-  const [showNewPost, setShowNewPost] = useState(false);
-  const [newPostTitle, setNewPostTitle] = useState('');
-  const [newPostContent, setNewPostContent] = useState('');
-  const [newPostType, setNewPostType] = useState('discussion');
-  const [newPostChannel, setNewPostChannel] = useState('');
-  const [submitting, setSubmitting] = useState(false);
-  const [expandedPost, setExpandedPost] = useState(null);
-  const [filterType, setFilterType] = useState('all');
-  const [filterChannel, setFilterChannel] = useState('all');
+  const [showNew, setShowNew] = useState(false);
+  const [newTitle, setNewTitle] = useState('');
+  const [newContent, setNewContent] = useState('');
+  const [newType, setNewType] = useState('discussion');
+  const [posting, setPosting] = useState(false);
 
-  useEffect(() => {
-    fetchPosts();
-  }, [filterChannel]);
+  useEffect(() => { fetchPosts(); }, [channel.id]);
 
   const fetchPosts = async () => {
-    setLoadingPosts(true);
-    let query = supabase
-      .from("community_posts")
-      .select(`*, user:users(id, full_name, email), channel:channels(id, name, icon)`)
-      .order("is_pinned", { ascending: false })
-      .order("created_at", { ascending: false })
-      .limit(50);
-
-    if (filterChannel !== 'all') {
-      query = query.eq('channel_id', filterChannel);
-    }
-
-    const { data, error } = await query;
-    if (error) { console.error("Error:", error); }
-
-    if (data && user) {
-      const postIds = data.map(p => p.id);
-      let likedPostIds = new Set();
-      if (postIds.length > 0) {
-        const { data: likes } = await supabase
-          .from("post_likes")
-          .select("post_id")
-          .eq("user_id", user.id)
-          .in("post_id", postIds);
-        likedPostIds = new Set((likes || []).map(l => l.post_id));
-      }
-      setPosts(data.map(p => ({ ...p, userLiked: likedPostIds.has(p.id) })));
-    } else {
-      setPosts(data || []);
-    }
-    setLoadingPosts(false);
+    const { data } = await supabase.from('community_posts').select('*, users(full_name)')
+      .eq('channel_id', channel.id).order('created_at', { ascending: false }).limit(50);
+    setPosts(data || []);
   };
 
-  const handleCreatePost = async () => {
-    if (!newPostTitle.trim() || !newPostContent.trim() || submitting) return;
-    setSubmitting(true);
-
-    const { error } = await supabase.from("community_posts").insert({
-      user_id: user.id,
-      channel_id: newPostChannel || activeChannel?.id || channels[0]?.id,
-      title: newPostTitle.trim(),
-      content: newPostContent.trim(),
-      post_type: newPostType
+  const createPost = async () => {
+    if (!newTitle.trim() || !newContent.trim() || posting) return;
+    setPosting(true);
+    const { error } = await supabase.from('community_posts').insert({
+      channel_id: channel.id, user_id: user.id, title: newTitle.trim(),
+      content: newContent.trim(), post_type: newType,
     });
-
     if (!error) {
-      setNewPostTitle('');
-      setNewPostContent('');
-      setNewPostType('discussion');
-      setShowNewPost(false);
+      setNewTitle(''); setNewContent(''); setShowNew(false);
       await fetchPosts();
-    } else {
-      alert("Error creating post: " + error.message);
     }
-    setSubmitting(false);
+    setPosting(false);
   };
 
-  const toggleLike = async (postId, currentlyLiked) => {
-    if (currentlyLiked) {
-      await supabase.from("post_likes").delete().match({ post_id: postId, user_id: user.id });
-      await supabase.from("community_posts").update({ like_count: Math.max(0, (posts.find(p => p.id === postId)?.like_count || 1) - 1) }).eq("id", postId);
-    } else {
-      await supabase.from("post_likes").insert({ post_id: postId, user_id: user.id });
-      await supabase.from("community_posts").update({ like_count: (posts.find(p => p.id === postId)?.like_count || 0) + 1 }).eq("id", postId);
-    }
-    setPosts(prev => prev.map(p => p.id === postId ? {
-      ...p,
-      userLiked: !currentlyLiked,
-      like_count: currentlyLiked ? Math.max(0, p.like_count - 1) : p.like_count + 1
-    } : p));
-  };
-
-  const filteredPosts = filterType === 'all' ? posts : posts.filter(p => p.post_type === filterType);
-
-  const getPostUserName = (post) => {
-    if (post.user?.full_name) return post.user.full_name;
-    if (post.user?.email) return post.user.email.split("@")[0];
-    return "Anonymous";
-  };
-
-  const formatTimeAgo = (timestamp) => {
-    const diff = (new Date() - new Date(timestamp)) / 1000;
-    if (diff < 60) return "just now";
-    if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
-    if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
-    if (diff < 604800) return `${Math.floor(diff / 86400)}d ago`;
-    return new Date(timestamp).toLocaleDateString([], { month: 'short', day: 'numeric' });
+  const typeConfig = {
+    discussion: { label: 'Discussion', color: 'bg-[#404249] text-[#dbdee1]', icon: '💬' },
+    question: { label: 'Question', color: 'bg-[#5865f2]/20 text-[#949cf7]', icon: '❓' },
+    success_story: { label: 'Success', color: 'bg-green-500/20 text-green-400', icon: '🎉' },
+    resource: { label: 'Resource', color: 'bg-amber-500/20 text-amber-400', icon: '📎' },
   };
 
   return (
-    <div className="flex-1 overflow-y-auto">
-      {/* Posts Header */}
-      <div className="bg-white border-b border-gray-200 px-4 py-3 flex items-center gap-3 flex-wrap">
-        <h2 className="font-semibold text-gray-900">Community Posts</h2>
-        <div className="flex-1" />
-
-        <select
-          value={filterChannel}
-          onChange={(e) => setFilterChannel(e.target.value)}
-          className="text-sm border border-gray-200 rounded-lg px-2 py-1.5 text-gray-700 bg-white focus:outline-none focus:border-red-400"
-        >
-          <option value="all">All Channels</option>
-          {channels.map(c => (
-            <option key={c.id} value={c.id}>{c.icon} {c.name}</option>
-          ))}
-        </select>
-
-        <select
-          value={filterType}
-          onChange={(e) => setFilterType(e.target.value)}
-          className="text-sm border border-gray-200 rounded-lg px-2 py-1.5 text-gray-700 bg-white focus:outline-none focus:border-red-400"
-        >
-          <option value="all">All Types</option>
-          {Object.entries(POST_TYPE_CONFIG).map(([key, config]) => (
-            <option key={key} value={key}>{config.icon} {config.label}</option>
-          ))}
-        </select>
-
-        <button
-          onClick={() => setShowNewPost(!showNewPost)}
-          className="px-4 py-1.5 bg-red-600 hover:bg-red-700 text-white rounded-lg text-sm font-medium transition-colors"
-        >
-          + New Post
-        </button>
-      </div>
-
-      <div className="max-w-3xl mx-auto p-4 space-y-4">
-        {/* New Post Form */}
-        {showNewPost && (
-          <div className="bg-white rounded-xl border border-gray-200 p-4 shadow-sm">
-            <h3 className="font-semibold text-gray-900 mb-3">Create a Post</h3>
-
-            <div className="flex gap-2 mb-3 flex-wrap">
-              {Object.entries(POST_TYPE_CONFIG).map(([key, config]) => (
-                <button
-                  key={key}
-                  onClick={() => setNewPostType(key)}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
-                    newPostType === key
-                      ? 'bg-red-600 text-white'
-                      : `${config.color} hover:opacity-80`
-                  }`}
-                >
-                  {config.icon} {config.label}
+    <div className="flex-1 overflow-y-auto px-4 py-4">
+      {/* New Post Button */}
+      <div className="mb-4">
+        {!showNew ? (
+          <button onClick={() => setShowNew(true)}
+            className="w-full bg-[#383a40] hover:bg-[#404249] rounded-lg px-4 py-3 text-left text-sm text-[#6d6f78] transition-colors">
+            + Create a post in #{channel.name.toLowerCase().replace(/\s+/g, '-')}...
+          </button>
+        ) : (
+          <div className="bg-[#2b2d31] border border-[#3f4147] rounded-xl p-4 space-y-3">
+            <div className="flex gap-2">
+              {Object.entries(typeConfig).map(([key, cfg]) => (
+                <button key={key} onClick={() => setNewType(key)}
+                  className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${newType === key ? cfg.color : 'bg-[#383a40] text-[#949ba4]'}`}>
+                  {cfg.icon} {cfg.label}
                 </button>
               ))}
             </div>
-
-            <select
-              value={newPostChannel || activeChannel?.id || ''}
-              onChange={(e) => setNewPostChannel(e.target.value)}
-              className="w-full mb-3 px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-700 bg-gray-50 focus:outline-none focus:border-red-400"
-            >
-              {channels.map(c => (
-                <option key={c.id} value={c.id}>{c.icon} {c.name}</option>
-              ))}
-            </select>
-
-            <input
-              type="text"
-              value={newPostTitle}
-              onChange={(e) => setNewPostTitle(e.target.value)}
-              placeholder="Post title..."
-              className="w-full mb-3 px-3 py-2.5 border border-gray-200 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:border-red-400 bg-gray-50"
-            />
-            <textarea
-              value={newPostContent}
-              onChange={(e) => setNewPostContent(e.target.value)}
-              placeholder="Share your thoughts, ask a question, or tell your story..."
-              rows={4}
-              className="w-full mb-3 px-3 py-2.5 border border-gray-200 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:border-red-400 resize-none bg-gray-50"
-            />
+            <input type="text" value={newTitle} onChange={e => setNewTitle(e.target.value)} placeholder="Post title"
+              className="w-full bg-[#1e1f22] border border-[#3f4147] rounded-lg px-4 py-2.5 text-sm text-white placeholder-[#6d6f78] focus:outline-none focus:border-[#5865f2]" />
+            <textarea value={newContent} onChange={e => setNewContent(e.target.value)} placeholder="Share your thoughts, ask a question, or post a resource..."
+              rows={4} className="w-full bg-[#1e1f22] border border-[#3f4147] rounded-lg px-4 py-2.5 text-sm text-white placeholder-[#6d6f78] focus:outline-none focus:border-[#5865f2] resize-none" />
             <div className="flex justify-end gap-2">
-              <button
-                onClick={() => setShowNewPost(false)}
-                className="px-4 py-2 text-gray-600 hover:text-gray-900 text-sm"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleCreatePost}
-                disabled={!newPostTitle.trim() || !newPostContent.trim() || submitting}
-                className="px-5 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg text-sm font-medium disabled:opacity-40 transition-colors"
-              >
-                {submitting ? 'Posting...' : 'Post'}
+              <button onClick={() => setShowNew(false)} className="px-4 py-2 text-sm text-[#949ba4]">Cancel</button>
+              <button onClick={createPost} disabled={!newTitle.trim() || !newContent.trim() || posting}
+                className="px-5 py-2 bg-[#5865f2] hover:bg-[#4752c4] text-white rounded-lg text-sm font-medium disabled:opacity-40">
+                {posting ? 'Posting...' : 'Post'}
               </button>
             </div>
           </div>
-        )}
-
-        {/* Posts Feed */}
-        {loadingPosts ? (
-          <div className="text-center py-12">
-            <div className="w-6 h-6 border-2 border-red-600 border-t-transparent rounded-full animate-spin mx-auto mb-3" />
-            <p className="text-gray-500">Loading posts...</p>
-          </div>
-        ) : filteredPosts.length === 0 ? (
-          <div className="text-center py-12 text-gray-400">
-            <span className="text-4xl mb-3 block">📝</span>
-            <p className="text-lg font-medium text-gray-600">No posts yet</p>
-            <p className="text-sm">Be the first to share something with the community!</p>
-          </div>
-        ) : (
-          filteredPosts.map(post => (
-            <PostCard
-              key={post.id}
-              post={post}
-              user={user}
-              onLike={() => toggleLike(post.id, post.userLiked)}
-              isExpanded={expandedPost === post.id}
-              onToggleExpand={() => setExpandedPost(expandedPost === post.id ? null : post.id)}
-              formatTimeAgo={formatTimeAgo}
-              getPostUserName={getPostUserName}
-            />
-          ))
         )}
       </div>
-    </div>
-  );
-}
 
-// ============================================
-// POST CARD COMPONENT
-// ============================================
-function PostCard({ post, user, onLike, isExpanded, onToggleExpand, formatTimeAgo, getPostUserName }) {
-  const [comments, setComments] = useState([]);
-  const [newComment, setNewComment] = useState('');
-  const [loadingComments, setLoadingComments] = useState(false);
-  const [submittingComment, setSubmittingComment] = useState(false);
-
-  const typeConfig = POST_TYPE_CONFIG[post.post_type] || POST_TYPE_CONFIG.discussion;
-
-  useEffect(() => {
-    if (isExpanded) fetchComments();
-  }, [isExpanded]);
-
-  const fetchComments = async () => {
-    setLoadingComments(true);
-    const { data, error } = await supabase
-      .from("post_comments")
-      .select(`*, user:users(id, full_name, email)`)
-      .eq("post_id", post.id)
-      .order("created_at", { ascending: true });
-    if (!error) setComments(data || []);
-    setLoadingComments(false);
-  };
-
-  const handleComment = async () => {
-    if (!newComment.trim() || submittingComment) return;
-    setSubmittingComment(true);
-
-    const { error } = await supabase.from("post_comments").insert({
-      post_id: post.id,
-      user_id: user.id,
-      content: newComment.trim()
-    });
-
-    if (!error) {
-      await supabase.from("community_posts")
-        .update({ comment_count: (post.comment_count || 0) + 1 })
-        .eq("id", post.id);
-      setNewComment('');
-      await fetchComments();
-    }
-    setSubmittingComment(false);
-  };
-
-  const getCommentUserName = (comment) => {
-    if (comment.user?.full_name) return comment.user.full_name;
-    if (comment.user?.email) return comment.user.email.split("@")[0];
-    return "Anonymous";
-  };
-
-  return (
-    <div className="bg-white rounded-xl border border-gray-200 overflow-hidden hover:border-gray-300 transition-colors">
-      {/* Post Header */}
-      <div className="px-4 pt-4 pb-2">
-        <div className="flex items-center gap-2 mb-2">
-          <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-white text-xs ${
-            post.user_id === user.id ? 'bg-red-600' : 'bg-gray-500'
-          }`}>
-            {post.user?.full_name?.[0]?.toUpperCase() || post.user?.email?.[0]?.toUpperCase() || '?'}
-          </div>
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2">
-              <span className="font-medium text-sm text-gray-900">{getPostUserName(post)}</span>
-              <span className="text-xs text-gray-400">•</span>
-              <span className="text-xs text-gray-400">{formatTimeAgo(post.created_at)}</span>
-            </div>
-            <div className="flex items-center gap-2 mt-0.5">
-              {post.channel && (
-                <span className="text-xs text-gray-500">
-                  {post.channel.icon} {post.channel.name}
-                </span>
-              )}
-              <span className={`text-xs px-1.5 py-0.5 rounded ${typeConfig.color}`}>
-                {typeConfig.icon} {typeConfig.label}
-              </span>
-            </div>
-          </div>
-          {post.is_pinned && (
-            <span className="text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full">📌 Pinned</span>
-          )}
+      {/* Posts List */}
+      {posts.length === 0 ? (
+        <div className="text-center py-12">
+          <span className="text-3xl block mb-3">📝</span>
+          <p className="text-[#949ba4] text-sm">No posts in this channel yet. Be the first!</p>
         </div>
-
-        <h3 className="font-semibold text-gray-900 mb-1">{post.title}</h3>
-        <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">
-          {post.content.length > 300 && !isExpanded
-            ? post.content.slice(0, 300) + '...'
-            : post.content
-          }
-        </p>
-        {post.content.length > 300 && !isExpanded && (
-          <button onClick={onToggleExpand} className="text-red-600 text-sm font-medium mt-1 hover:text-red-700">
-            Read more
-          </button>
-        )}
-      </div>
-
-      {/* Post Actions */}
-      <div className="px-4 py-2.5 border-t border-gray-100 flex items-center gap-4">
-        <button
-          onClick={onLike}
-          className={`flex items-center gap-1.5 text-sm transition-colors ${
-            post.userLiked ? 'text-red-600 font-medium' : 'text-gray-500 hover:text-red-600'
-          }`}
-        >
-          <span>{post.userLiked ? '❤️' : '🤍'}</span>
-          <span>{post.like_count || 0}</span>
-        </button>
-
-        <button
-          onClick={onToggleExpand}
-          className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-700 transition-colors"
-        >
-          <span>💬</span>
-          <span>{post.comment_count || 0} comments</span>
-        </button>
-      </div>
-
-      {/* Comments Section */}
-      {isExpanded && (
-        <div className="border-t border-gray-100 bg-gray-50">
-          <div className="px-4 py-3 flex gap-2">
-            <input
-              type="text"
-              value={newComment}
-              onChange={(e) => setNewComment(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && handleComment()}
-              placeholder="Write a comment..."
-              className="flex-1 px-3 py-2 bg-white border border-gray-200 rounded-lg text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:border-red-400"
-            />
-            <button
-              onClick={handleComment}
-              disabled={!newComment.trim() || submittingComment}
-              className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg text-sm font-medium disabled:opacity-40 transition-colors"
-            >
-              {submittingComment ? '...' : 'Reply'}
-            </button>
-          </div>
-
-          <div className="px-4 pb-3 space-y-3">
-            {loadingComments ? (
-              <p className="text-sm text-gray-400 text-center py-2">Loading comments...</p>
-            ) : comments.length === 0 ? (
-              <p className="text-sm text-gray-400 text-center py-2">No comments yet. Be the first!</p>
-            ) : (
-              comments.map(comment => (
-                <div key={comment.id} className="flex gap-2.5">
-                  <div className={`w-7 h-7 rounded-full flex items-center justify-center font-bold text-white text-xs flex-shrink-0 ${
-                    comment.user_id === user.id ? 'bg-red-500' : 'bg-gray-400'
-                  }`}>
-                    {comment.user?.full_name?.[0]?.toUpperCase() || comment.user?.email?.[0]?.toUpperCase() || '?'}
+      ) : (
+        <div className="space-y-3">
+          {posts.map(post => {
+            const cfg = typeConfig[post.post_type] || typeConfig.discussion;
+            return (
+              <div key={post.id} className="bg-[#2b2d31] border border-[#3f4147] rounded-xl p-4 hover:border-[#4f5159] transition-colors">
+                <div className="flex items-start gap-3">
+                  <div className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 text-white font-semibold text-sm"
+                    style={{ backgroundColor: stringToColor(post.users?.full_name || post.user_id) }}>
+                    {(post.users?.full_name || 'U')[0].toUpperCase()}
                   </div>
-                  <div className="flex-1 bg-white rounded-lg px-3 py-2 border border-gray-200">
-                    <div className="flex items-center gap-2 mb-0.5">
-                      <span className="font-medium text-xs text-gray-900">{getCommentUserName(comment)}</span>
-                      <span className="text-xs text-gray-400">{formatTimeAgo(comment.created_at)}</span>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="font-semibold text-sm text-white">{post.users?.full_name || 'User'}</span>
+                      <span className={`px-2 py-0.5 rounded-full text-[10px] font-medium ${cfg.color}`}>{cfg.icon} {cfg.label}</span>
+                      <span className="text-[11px] text-[#949ba4]">{new Date(post.created_at).toLocaleDateString('en-CA', { month: 'short', day: 'numeric' })}</span>
                     </div>
-                    <p className="text-sm text-gray-700">{comment.content}</p>
+                    <h4 className="font-semibold text-white text-sm mb-1">{post.title}</h4>
+                    <p className="text-[#b5bac1] text-sm leading-relaxed">{post.content}</p>
                   </div>
                 </div>
-              ))
-            )}
-          </div>
+              </div>
+            );
+          })}
         </div>
       )}
     </div>
   );
+}
+
+/* ============================================ */
+/* HELPERS */
+/* ============================================ */
+function stringToColor(str) {
+  const colors = ['#5865f2', '#57f287', '#fee75c', '#eb459e', '#ed4245', '#3ba55c', '#faa61a', '#e67e22', '#9b59b6', '#1abc9c'];
+  let hash = 0;
+  for (let i = 0; i < (str || '').length; i++) hash = str.charCodeAt(i) + ((hash << 5) - hash);
+  return colors[Math.abs(hash) % colors.length];
 }
