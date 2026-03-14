@@ -43,41 +43,41 @@ export default function CommunityPage() {
   }, {});
 
   if (loading) return (
-    <div className="min-h-screen bg-[#313338] flex items-center justify-center">
-      <div className="w-6 h-6 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="w-6 h-6 border-2 border-red-200 border-t-red-600 rounded-full animate-spin" />
     </div>
   );
 
   return (
-    <div className="h-screen flex bg-[#313338] overflow-hidden">
+    <div className="h-screen flex bg-gray-50 overflow-hidden">
 
       {/* Server Icon Rail (far left) */}
-      <div className="w-[72px] bg-[#1e1f22] flex flex-col items-center py-3 gap-2 flex-shrink-0 hidden sm:flex">
-        <Link href="/dashboard" className="w-12 h-12 bg-[#5865f2] rounded-2xl hover:rounded-xl transition-all flex items-center justify-center group" title="Dashboard">
+      <div className="w-[72px] bg-white border-r border-gray-200 flex flex-col items-center py-3 gap-2 flex-shrink-0 hidden sm:flex">
+        <Link href="/dashboard" className="w-12 h-12 bg-red-600 rounded-2xl hover:rounded-xl transition-all flex items-center justify-center group" title="Dashboard">
           <span className="text-white font-bold text-lg">F</span>
         </Link>
-        <div className="w-8 h-0.5 bg-[#35363c] rounded-full my-1" />
+        <div className="w-8 h-0.5 bg-gray-200 rounded-full my-1" />
         {Object.entries(CATEGORIES).map(([key, cat]) => (
           <button key={key} onClick={() => {
             const first = channelsByCategory[key]?.[0];
             if (first) { setActiveChannel(first); setShowSidebar(true); }
           }}
-            className="w-12 h-12 bg-[#2b2d31] rounded-full hover:rounded-xl hover:bg-[#5865f2] transition-all flex items-center justify-center group" title={cat.label}>
+            className="w-12 h-12 bg-white rounded-full hover:rounded-xl hover:bg-red-600 transition-all flex items-center justify-center group" title={cat.label}>
             <span className="text-xl">{cat.icon}</span>
           </button>
         ))}
         <div className="mt-auto">
-          <Link href="/coparent" className="w-12 h-12 bg-[#2b2d31] rounded-full hover:rounded-xl hover:bg-green-600 transition-all flex items-center justify-center" title="Co-Parent Chat">
+          <Link href="/coparent" className="w-12 h-12 bg-white rounded-full hover:rounded-xl hover:bg-red-600 transition-all flex items-center justify-center" title="Co-Parent Chat">
             <span className="text-xl">🤝</span>
           </Link>
         </div>
       </div>
 
       {/* Channel Sidebar */}
-      <div className={`${showSidebar ? 'flex' : 'hidden'} sm:flex w-60 bg-[#2b2d31] flex-col flex-shrink-0`}>
+      <div className={`${showSidebar ? 'flex' : 'hidden'} sm:flex w-60 bg-gray-50 border-r border-gray-200 flex-col flex-shrink-0`}>
         {/* Server Header */}
-        <div className="h-12 px-4 flex items-center border-b border-[#1f2023] shadow-sm">
-          <h2 className="font-semibold text-white text-sm truncate">Foresight Community</h2>
+        <div className="h-12 px-4 flex items-center border-b border-gray-200 shadow-sm">
+          <h2 className="font-semibold text-gray-900 text-sm truncate">Foresight Community</h2>
         </div>
 
         {/* Channel List */}
@@ -85,7 +85,7 @@ export default function CommunityPage() {
           {Object.entries(channelsByCategory).map(([catKey, catChannels]) => (
             <div key={catKey}>
               <div className="flex items-center gap-1 px-1 mb-1">
-                <span className="text-[11px] font-semibold text-[#949ba4] uppercase tracking-wide">
+                <span className="text-[11px] font-semibold text-gray-500 uppercase tracking-wide">
                   {CATEGORIES[catKey]?.label || catKey}
                 </span>
               </div>
@@ -93,10 +93,10 @@ export default function CommunityPage() {
                 <button key={ch.id} onClick={() => { setActiveChannel(ch); setShowSidebar(false); }}
                   className={`w-full text-left px-2 py-1.5 rounded-md flex items-center gap-2 group transition-colors ${
                     activeChannel?.id === ch.id
-                      ? 'bg-[#404249] text-white'
-                      : 'text-[#949ba4] hover:text-[#dbdee1] hover:bg-[#35373c]'
+                      ? 'bg-red-50 text-white'
+                      : 'text-gray-500 hover:text-gray-800 hover:bg-gray-100'
                   }`}>
-                  <span className="text-[#949ba4] text-lg">#</span>
+                  <span className="text-gray-500 text-lg">#</span>
                   <span className="text-sm truncate">{ch.name.toLowerCase().replace(/\s+/g, '-')}</span>
                 </button>
               ))}
@@ -105,13 +105,13 @@ export default function CommunityPage() {
         </div>
 
         {/* User Panel */}
-        <div className="h-[52px] bg-[#232428] px-2 flex items-center gap-2">
-          <div className="w-8 h-8 bg-[#5865f2] rounded-full flex items-center justify-center text-white text-xs font-bold">
+        <div className="h-[52px] bg-gray-100 px-2 flex items-center gap-2">
+          <div className="w-8 h-8 bg-red-600 rounded-full flex items-center justify-center text-white text-xs font-bold">
             {(userProfile?.full_name || user?.email || 'U')[0].toUpperCase()}
           </div>
           <div className="flex-1 min-w-0">
-            <div className="text-sm text-white font-medium truncate">{userProfile?.full_name || 'User'}</div>
-            <div className="text-[11px] text-[#949ba4] truncate">Online</div>
+            <div className="text-sm text-gray-900 font-medium truncate">{userProfile?.full_name || 'User'}</div>
+            <div className="text-[11px] text-gray-500 truncate">Online</div>
           </div>
         </div>
       </div>
@@ -119,24 +119,24 @@ export default function CommunityPage() {
       {/* Main Chat Area */}
       <div className="flex-1 flex flex-col min-w-0">
         {/* Channel Header */}
-        <div className="h-12 px-4 flex items-center gap-3 border-b border-[#1f2023] bg-[#313338] flex-shrink-0">
-          <button onClick={() => setShowSidebar(!showSidebar)} className="sm:hidden text-[#b5bac1] hover:text-white">
+        <div className="h-12 px-4 flex items-center gap-3 border-b border-gray-200 bg-white flex-shrink-0 border-b border-gray-200">
+          <button onClick={() => setShowSidebar(!showSidebar)} className="sm:hidden text-gray-600 hover:text-white">
             ☰
           </button>
-          <span className="text-[#949ba4] text-xl">#</span>
+          <span className="text-gray-500 text-xl">#</span>
           <div className="flex-1 min-w-0">
-            <h3 className="font-semibold text-white text-sm">{activeChannel?.name || 'Select a channel'}</h3>
+            <h3 className="font-semibold text-gray-900 text-sm">{activeChannel?.name || 'Select a channel'}</h3>
           </div>
           <div className="hidden sm:flex items-center gap-2">
-            <span className="text-xs text-[#949ba4] max-w-[200px] truncate">{activeChannel?.description}</span>
+            <span className="text-xs text-gray-500 max-w-[200px] truncate">{activeChannel?.description}</span>
           </div>
           <div className="flex items-center gap-1">
             <button onClick={() => setView('chat')}
-              className={`px-3 py-1 rounded text-xs font-medium ${view === 'chat' ? 'bg-[#404249] text-white' : 'text-[#949ba4] hover:text-white'}`}>
+              className={`px-3 py-1 rounded text-xs font-medium ${view === 'chat' ? 'bg-red-50 text-white' : 'text-gray-500 hover:text-white'}`}>
               Chat
             </button>
             <button onClick={() => setView('posts')}
-              className={`px-3 py-1 rounded text-xs font-medium ${view === 'posts' ? 'bg-[#404249] text-white' : 'text-[#949ba4] hover:text-white'}`}>
+              className={`px-3 py-1 rounded text-xs font-medium ${view === 'posts' ? 'bg-red-50 text-white' : 'text-gray-500 hover:text-white'}`}>
               Posts
             </button>
           </div>
@@ -200,9 +200,9 @@ function ChatView({ channel, user, userProfile }) {
       <div className="flex-1 overflow-y-auto px-4 py-2">
         {messages.length === 0 && (
           <div className="flex flex-col items-center justify-center h-full text-center py-12">
-            <div className="w-16 h-16 bg-[#404249] rounded-full flex items-center justify-center text-3xl mb-4">#</div>
-            <h3 className="text-2xl font-bold text-white mb-2">Welcome to #{channel.name.toLowerCase().replace(/\s+/g, '-')}</h3>
-            <p className="text-[#949ba4] text-sm max-w-md">{channel.description || 'This is the start of this channel. Be the first to say something!'}</p>
+            <div className="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center text-3xl mb-4">#</div>
+            <h3 className="text-2xl font-bold text-gray-900 mb-2">Welcome to #{channel.name.toLowerCase().replace(/\s+/g, '-')}</h3>
+            <p className="text-gray-500 text-sm max-w-md">{channel.description || 'This is the start of this channel. Be the first to say something!'}</p>
           </div>
         )}
 
@@ -210,9 +210,9 @@ function ChatView({ channel, user, userProfile }) {
           <div key={date}>
             {/* Date Separator */}
             <div className="flex items-center gap-2 my-4">
-              <div className="flex-1 h-px bg-[#3f4147]" />
-              <span className="text-[11px] text-[#949ba4] font-semibold">{date}</span>
-              <div className="flex-1 h-px bg-[#3f4147]" />
+              <div className="flex-1 h-px bg-gray-200" />
+              <span className="text-[11px] text-gray-500 font-semibold">{date}</span>
+              <div className="flex-1 h-px bg-gray-200" />
             </div>
 
             {/* Messages */}
@@ -223,10 +223,10 @@ function ChatView({ channel, user, userProfile }) {
               const compact = sameAuthor && timeDiff < 5;
 
               return (
-                <div key={msg.id} className={`flex gap-4 px-2 py-0.5 hover:bg-[#2e3035] rounded group ${compact ? '' : 'mt-4'}`}>
+                <div key={msg.id} className={`flex gap-4 px-2 py-0.5 hover:bg-gray-50 rounded group ${compact ? '' : 'mt-4'}`}>
                   {compact ? (
                     <div className="w-10 flex-shrink-0">
-                      <span className="text-[11px] text-[#949ba4] hidden group-hover:inline">
+                      <span className="text-[11px] text-gray-500 hidden group-hover:inline">
                         {new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                       </span>
                     </div>
@@ -242,12 +242,12 @@ function ChatView({ channel, user, userProfile }) {
                         <span className="font-medium text-sm" style={{ color: stringToColor(msg.user_name || msg.user_id) }}>
                           {msg.user_name || 'User'}
                         </span>
-                        <span className="text-[11px] text-[#949ba4]">
+                        <span className="text-[11px] text-gray-500">
                           {new Date(msg.created_at).toLocaleString('en-CA', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
                         </span>
                       </div>
                     )}
-                    <p className="text-[#dbdee1] text-sm leading-relaxed break-words">{msg.content}</p>
+                    <p className="text-gray-800 text-sm leading-relaxed break-words">{msg.content}</p>
                   </div>
                 </div>
               );
@@ -259,13 +259,13 @@ function ChatView({ channel, user, userProfile }) {
 
       {/* Input */}
       <div className="px-4 pb-6 pt-2 flex-shrink-0">
-        <div className="bg-[#383a40] rounded-lg flex items-center">
+        <div className="bg-white border border-gray-200 rounded-xl flex items-center">
           <input type="text" value={input} onChange={e => setInput(e.target.value)}
             onKeyDown={e => e.key === 'Enter' && sendMessage()}
             placeholder={`Message #${channel.name.toLowerCase().replace(/\s+/g, '-')}`}
-            className="flex-1 bg-transparent px-4 py-3 text-sm text-[#dbdee1] placeholder-[#6d6f78] focus:outline-none" />
+            className="flex-1 bg-transparent px-4 py-3 text-sm text-gray-900 placeholder-gray-400 focus:outline-none" />
           <button onClick={sendMessage} disabled={!input.trim() || sending}
-            className="px-3 py-2 mr-1 text-[#b5bac1] hover:text-white disabled:opacity-30 transition-colors">
+            className="px-3 py-2 mr-1 text-gray-600 hover:text-white disabled:opacity-30 transition-colors">
             <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor"><path d="M2.94 3.19a1 1 0 0 1 1.15-.33l12 5a1 1 0 0 1 0 1.84l-12 5a1 1 0 0 1-1.37-1.15L4.08 10 2.72 6.45a1 1 0 0 1 .22-1.26Z"/></svg>
           </button>
         </div>
@@ -308,10 +308,10 @@ function PostsView({ channel, user, userProfile }) {
   };
 
   const typeConfig = {
-    discussion: { label: 'Discussion', color: 'bg-[#404249] text-[#dbdee1]', icon: '💬' },
-    question: { label: 'Question', color: 'bg-[#5865f2]/20 text-[#949cf7]', icon: '❓' },
-    success_story: { label: 'Success', color: 'bg-green-500/20 text-green-400', icon: '🎉' },
-    resource: { label: 'Resource', color: 'bg-amber-500/20 text-amber-400', icon: '📎' },
+    discussion: { label: 'Discussion', color: 'bg-red-50 text-gray-800', icon: '💬' },
+    question: { label: 'Question', color: 'bg-red-600/20 text-red-600', icon: '❓' },
+    success_story: { label: 'Success', color: 'bg-green-50 text-green-700', icon: '🎉' },
+    resource: { label: 'Resource', color: 'bg-amber-50 text-amber-700', icon: '📎' },
   };
 
   return (
@@ -320,27 +320,27 @@ function PostsView({ channel, user, userProfile }) {
       <div className="mb-4">
         {!showNew ? (
           <button onClick={() => setShowNew(true)}
-            className="w-full bg-[#383a40] hover:bg-[#404249] rounded-lg px-4 py-3 text-left text-sm text-[#6d6f78] transition-colors">
+            className="w-full bg-gray-100 hover:bg-red-50 rounded-lg px-4 py-3 text-left text-sm text-gray-400 transition-colors">
             + Create a post in #{channel.name.toLowerCase().replace(/\s+/g, '-')}...
           </button>
         ) : (
-          <div className="bg-[#2b2d31] border border-[#3f4147] rounded-xl p-4 space-y-3">
+          <div className="bg-gray-50 border border-gray-200 rounded-xl p-4 space-y-3">
             <div className="flex gap-2">
               {Object.entries(typeConfig).map(([key, cfg]) => (
                 <button key={key} onClick={() => setNewType(key)}
-                  className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${newType === key ? cfg.color : 'bg-[#383a40] text-[#949ba4]'}`}>
+                  className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${newType === key ? cfg.color : 'bg-gray-100 text-gray-500'}`}>
                   {cfg.icon} {cfg.label}
                 </button>
               ))}
             </div>
             <input type="text" value={newTitle} onChange={e => setNewTitle(e.target.value)} placeholder="Post title"
-              className="w-full bg-[#1e1f22] border border-[#3f4147] rounded-lg px-4 py-2.5 text-sm text-white placeholder-[#6d6f78] focus:outline-none focus:border-[#5865f2]" />
+              className="w-full bg-white border border-gray-200 rounded-lg px-4 py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:border-red-400" />
             <textarea value={newContent} onChange={e => setNewContent(e.target.value)} placeholder="Share your thoughts, ask a question, or post a resource..."
-              rows={4} className="w-full bg-[#1e1f22] border border-[#3f4147] rounded-lg px-4 py-2.5 text-sm text-white placeholder-[#6d6f78] focus:outline-none focus:border-[#5865f2] resize-none" />
+              rows={4} className="w-full bg-white border border-gray-200 rounded-lg px-4 py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:border-red-400 resize-none" />
             <div className="flex justify-end gap-2">
-              <button onClick={() => setShowNew(false)} className="px-4 py-2 text-sm text-[#949ba4]">Cancel</button>
+              <button onClick={() => setShowNew(false)} className="px-4 py-2 text-sm text-gray-500">Cancel</button>
               <button onClick={createPost} disabled={!newTitle.trim() || !newContent.trim() || posting}
-                className="px-5 py-2 bg-[#5865f2] hover:bg-[#4752c4] text-white rounded-lg text-sm font-medium disabled:opacity-40">
+                className="px-5 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg text-sm font-medium disabled:opacity-40">
                 {posting ? 'Posting...' : 'Post'}
               </button>
             </div>
@@ -352,14 +352,14 @@ function PostsView({ channel, user, userProfile }) {
       {posts.length === 0 ? (
         <div className="text-center py-12">
           <span className="text-3xl block mb-3">📝</span>
-          <p className="text-[#949ba4] text-sm">No posts in this channel yet. Be the first!</p>
+          <p className="text-gray-500 text-sm">No posts in this channel yet. Be the first!</p>
         </div>
       ) : (
         <div className="space-y-3">
           {posts.map(post => {
             const cfg = typeConfig[post.post_type] || typeConfig.discussion;
             return (
-              <div key={post.id} className="bg-[#2b2d31] border border-[#3f4147] rounded-xl p-4 hover:border-[#4f5159] transition-colors">
+              <div key={post.id} className="bg-white border border-gray-200 rounded-xl p-4 hover:border-gray-300 transition-colors">
                 <div className="flex items-start gap-3">
                   <div className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 text-white font-semibold text-sm"
                     style={{ backgroundColor: stringToColor(post.users?.full_name || post.user_id) }}>
@@ -367,12 +367,12 @@ function PostsView({ channel, user, userProfile }) {
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1">
-                      <span className="font-semibold text-sm text-white">{post.users?.full_name || 'User'}</span>
+                      <span className="font-semibold text-sm text-gray-900">{post.users?.full_name || 'User'}</span>
                       <span className={`px-2 py-0.5 rounded-full text-[10px] font-medium ${cfg.color}`}>{cfg.icon} {cfg.label}</span>
-                      <span className="text-[11px] text-[#949ba4]">{new Date(post.created_at).toLocaleDateString('en-CA', { month: 'short', day: 'numeric' })}</span>
+                      <span className="text-[11px] text-gray-500">{new Date(post.created_at).toLocaleDateString('en-CA', { month: 'short', day: 'numeric' })}</span>
                     </div>
-                    <h4 className="font-semibold text-white text-sm mb-1">{post.title}</h4>
-                    <p className="text-[#b5bac1] text-sm leading-relaxed">{post.content}</p>
+                    <h4 className="font-semibold text-gray-900 text-sm mb-1">{post.title}</h4>
+                    <p className="text-gray-600 text-sm leading-relaxed">{post.content}</p>
                   </div>
                 </div>
               </div>
