@@ -90,7 +90,37 @@ const LEGISLATION_DB = {
           { right: 'Request a review of decisions', section: 'General', detail: 'You can request a review of any decision made by the Ministry of Social Services regarding your child.' },
           { right: 'File a complaint with the Ministry', section: 'General', detail: 'Contact the Ministry of Social Services directly to file a formal complaint about a caseworker or agency.' },
         ]
-      }
+      },
+      {
+        id: 'custody', title: 'Your Custody Rights', icon: '👨‍👩‍👧‍👦',
+        rights: [
+          { right: 'Both parents have equal rights to custody', section: "Children's Law Act, s.3", detail: 'Unless a court order says otherwise, both parents have equal rights to custody and decision-making for their children.' },
+          { right: 'The child\'s best interests are paramount', section: "Children's Law Act, s.6", detail: 'Courts must consider the best interests of the child as the paramount consideration in all custody decisions. This includes the child\'s physical, emotional, and psychological needs.' },
+          { right: 'You can apply for custody without a lawyer', section: 'Court of King\'s Bench Rules', detail: 'You have the right to represent yourself in custody proceedings. The court must treat self-represented litigants fairly.' },
+          { right: 'Maximum contact principle', section: "Children's Law Act, s.6(2)", detail: 'Courts must consider the benefit of maximizing contact between the child and both parents when making custody orders.' },
+          { right: 'You can request a custody evaluation', section: 'Court Practice', detail: 'Either parent can request the court order a custody and access assessment by a qualified professional.' },
+          { right: 'Parenting after separation course is required', section: 'King\'s Bench Practice Directive', detail: 'Both parents must complete the "For the Sake of the Children" parenting program before a custody hearing.' },
+        ]
+      },
+      {
+        id: 'support', title: 'Your Child Support Rights', icon: '💰',
+        rights: [
+          { right: 'Both parents must support their children', section: 'Family Maintenance Act, s.4', detail: 'Both parents have a legal obligation to support their children. Support is the right of the child, not the parent.' },
+          { right: 'Support follows Federal Guidelines', section: 'Federal Child Support Guidelines', detail: 'Child support in Saskatchewan is calculated using the Federal Child Support Guidelines tables based on the paying parent\'s gross income.' },
+          { right: 'You can request financial disclosure', section: 'Family Maintenance Act, s.8.2', detail: 'You have the right to request complete financial disclosure from the other parent, including tax returns, pay stubs, and financial statements.' },
+          { right: 'Support can be varied if circumstances change', section: 'Family Maintenance Act, s.10', detail: 'Either parent can apply to vary child support if there has been a material change in circumstances (job loss, income change, child aging out).' },
+          { right: 'MEP enforces support orders', section: 'Enforcement of Maintenance Orders Act', detail: 'The Maintenance Enforcement Program (MEP) can enforce support orders by garnishing wages, seizing assets, suspending licenses, and more.' },
+        ]
+      },
+      {
+        id: 'relocation', title: 'Relocation & Travel Rights', icon: '✈️',
+        rights: [
+          { right: 'You must give notice before relocating', section: "Children's Law Act, s.6.1", detail: 'A parent planning to relocate must provide reasonable written notice to the other parent. Relocation can be contested in court.' },
+          { right: 'Both parents must consent to international travel', section: 'General', detail: 'A child cannot be taken outside Canada without the consent of both parents or a court order. A consent letter is strongly recommended for any travel.' },
+          { right: 'The court considers the impact on the child', section: "Children's Law Act, s.6", detail: 'When deciding relocation disputes, the court considers the impact on the child\'s relationship with the non-relocating parent.' },
+          { right: 'You can apply for a travel restraining order', section: 'Court of King\'s Bench Rules', detail: 'If you believe the other parent may take your child out of the jurisdiction, you can apply for an urgent restraining order to prevent removal.' },
+        ]
+      },
     ]
   },
   alberta: {
@@ -164,7 +194,37 @@ const LEGISLATION_DB = {
           { right: 'Request your child welfare records', section: 'Section 126', detail: 'You have the right to request access to your child welfare file. If denied, you can apply to the court under Section 126.11.' },
           { right: 'Contact the Alberta Ombudsman', section: 'Ombudsman Act', detail: 'The Ombudsman can investigate complaints about government services. Call 780-427-2756.' },
         ]
-      }
+      },
+      {
+        id: 'custody', title: 'Your Custody Rights', icon: '👨‍👩‍👧‍👦',
+        rights: [
+          { right: 'Guardianship is the default for both parents', section: 'Family Law Act, s.20', detail: 'Both parents are guardians of their children by default, with equal rights to make decisions about health, education, and welfare.' },
+          { right: 'Best interests of the child test', section: 'Family Law Act, s.18', detail: 'All parenting and contact orders must be in the best interests of the child, considering safety, relationships, and the child\'s views.' },
+          { right: 'Parenting plans are encouraged', section: 'Family Law Act, s.39', detail: 'Courts encourage parents to develop parenting plans that address decision-making, living arrangements, and dispute resolution.' },
+          { right: 'Children\'s views must be considered', section: 'Family Law Act, s.18(2)(f)', detail: 'The court must consider the child\'s views and preferences when making custody decisions, depending on the child\'s age and maturity.' },
+          { right: 'You can request a parenting assessment', section: 'Family Law Act, s.47', detail: 'Either parent can request the court order a custody evaluation by a qualified assessor to help determine the best arrangement.' },
+          { right: 'Mandatory parenting course', section: 'Court Practice', detail: 'Alberta requires both parents to complete the "Parenting After Separation" course before a custody hearing.' },
+        ]
+      },
+      {
+        id: 'support', title: 'Your Child Support Rights', icon: '💰',
+        rights: [
+          { right: 'Parents must provide for their children', section: 'Family Law Act, s.49', detail: 'Both parents have a duty to provide support for their children until age 18, or longer if the child is in full-time education.' },
+          { right: 'Federal Guidelines apply', section: 'Family Law Act, s.51', detail: 'Child support is calculated using the Federal Child Support Guidelines based on gross annual income.' },
+          { right: 'Full financial disclosure is required', section: 'Family Law Act, s.57', detail: 'Both parents must provide complete financial information including income, assets, and debts.' },
+          { right: 'Special expenses are shared proportionally', section: 'Federal Guidelines, s.7', detail: 'Extraordinary expenses (childcare, medical, extracurricular, education) are shared between parents in proportion to their incomes.' },
+          { right: 'MEP enforces orders automatically', section: 'Maintenance Enforcement Act', detail: 'All support orders are automatically filed with MEP for enforcement. MEP can garnish wages, intercept tax refunds, and suspend licenses.' },
+        ]
+      },
+      {
+        id: 'relocation', title: 'Relocation & Travel Rights', icon: '✈️',
+        rights: [
+          { right: '60 days notice required for relocation', section: 'Family Law Act, s.45', detail: 'A guardian must give at least 60 days written notice before relocating with a child, including the proposed new location and reasons.' },
+          { right: 'The other parent can object', section: 'Family Law Act, s.45(4)', detail: 'The non-relocating parent has 30 days to file an objection with the court after receiving notice of relocation.' },
+          { right: 'Court considers multiple factors', section: 'Family Law Act, s.46', detail: 'The court considers the reason for relocation, impact on the child, quality of relationships, and whether a revised parenting plan is feasible.' },
+          { right: 'Travel restrictions can be ordered', section: 'Family Law Act, s.34', detail: 'The court can order that a child\'s passport be held by the court or that a parent not remove the child from a specified area.' },
+        ]
+      },
     ]
   },
   ontario: {
@@ -237,7 +297,37 @@ const LEGISLATION_DB = {
           { right: 'Contact your MPP', section: 'General', detail: 'Your Member of Provincial Parliament can raise concerns about CAS conduct on your behalf.' },
           { right: 'Request your CAS file', section: 'Section 283', detail: 'You have the right to request access to your own CAS records, subject to certain exceptions.' },
         ]
-      }
+      },
+      {
+        id: 'custody', title: 'Your Custody Rights', icon: '👨‍👩‍👧‍👦',
+        rights: [
+          { right: 'Both parents have equal entitlement to custody', section: 'Children\'s Law Reform Act, s.20', detail: 'Unless a court order exists, both parents are equally entitled to custody of their children.' },
+          { right: 'Best interests of the child is the only consideration', section: 'Children\'s Law Reform Act, s.24', detail: 'The court must consider only the best interests of the child, including the child\'s needs, relationships, views, and each parent\'s ability to care for the child.' },
+          { right: 'The friendly parent principle', section: 'Children\'s Law Reform Act, s.24(2)(g)', detail: 'Courts consider which parent is more likely to encourage and support the child\'s relationship with the other parent.' },
+          { right: 'Children\'s views matter', section: 'Children\'s Law Reform Act, s.24(2)(b)', detail: 'The court must consider the child\'s views and preferences if they can be reasonably determined.' },
+          { right: 'You can represent yourself', section: 'Family Law Rules', detail: 'You have the right to represent yourself in all family court proceedings. The court must ensure self-represented litigants understand the process.' },
+          { right: 'Mandatory Information Program', section: 'Family Law Rules, Rule 8.1', detail: 'Both parties must attend the Mandatory Information Program (MIP) within 45 days of filing. This covers mediation, the impact on children, and court procedures.' },
+        ]
+      },
+      {
+        id: 'support', title: 'Your Child Support Rights', icon: '💰',
+        rights: [
+          { right: 'Every parent must support their child', section: 'Family Law Act, s.31', detail: 'Every parent has an obligation to provide support for his or her unmarried child who is a minor or enrolled in full-time education.' },
+          { right: 'Guidelines determine the amount', section: 'Child Support Guidelines', detail: 'Ontario uses the Federal Child Support Guidelines tables based on the paying parent\'s income and number of children.' },
+          { right: 'Financial disclosure is mandatory', section: 'Family Law Rules, Rule 13', detail: 'Both parties must serve and file a financial statement (Form 13 or 13.1) sworn under oath with complete financial information.' },
+          { right: 'FRO enforces support orders', section: 'Family Responsibility Office Act', detail: 'The Family Responsibility Office (FRO) enforces support orders and can garnish wages, suspend licenses, and report to credit bureaus.' },
+          { right: 'Retroactive support can be ordered', section: 'Case Law', detail: 'Courts can order child support retroactively to the date it should have been paid, not just from the date of application.' },
+        ]
+      },
+      {
+        id: 'relocation', title: 'Relocation & Travel Rights', icon: '✈️',
+        rights: [
+          { right: 'Notice required for relocation', section: 'Children\'s Law Reform Act, s.39.1', detail: 'A parent who intends to relocate must provide at least 60 days written notice to the other parent with the proposed new location.' },
+          { right: 'The relocating parent bears the burden', section: 'Case Law (Gordon v Goertz)', detail: 'The parent seeking to relocate bears the burden of proving the move is in the child\'s best interests.' },
+          { right: 'Mobility rights are considered', section: 'Charter of Rights, s.6', detail: 'Parents have a constitutional right to mobility, but this must be balanced against the child\'s best interests.' },
+          { right: 'Passport and travel orders', section: 'Children\'s Law Reform Act, s.36', detail: 'Courts can order that a child\'s passport be deposited with the court or that specific travel restrictions be put in place.' },
+        ]
+      },
     ]
   },
   bc: {
@@ -309,7 +399,36 @@ const LEGISLATION_DB = {
           { right: 'Contact the BC Ombudsperson', section: 'Ombudsperson Act', detail: 'The BC Ombudsperson can investigate complaints about provincial government services. Call 1-800-567-3247.' },
           { right: 'Request your MCFD file', section: 'Freedom of Information and Protection of Privacy Act', detail: 'You can request access to your MCFD records through an FOI request.' },
         ]
-      }
+      },
+      {
+        id: 'custody', title: 'Your Custody Rights', icon: '👨‍👩‍👧‍👦',
+        rights: [
+          { right: 'Both parents have equal rights unless ordered otherwise', section: 'Provincial Family Law', detail: 'Unless a court order exists, both parents generally have equal rights to custody and decision-making for their children.' },
+          { right: 'Best interests of the child is the primary consideration', section: 'Provincial Family Law', detail: 'All custody decisions must be based on the best interests of the child, considering safety, stability, relationships, and the child\'s views.' },
+          { right: 'You can represent yourself in court', section: 'Court Rules', detail: 'You have the right to represent yourself in family court proceedings. Many courts have self-help centres to assist unrepresented litigants.' },
+          { right: 'Children\'s views are considered', section: 'Provincial Family Law', detail: 'Courts consider the child\'s views and preferences depending on age and maturity when making custody decisions.' },
+          { right: 'Mediation may be available or required', section: 'Provincial Family Law', detail: 'Many jurisdictions offer or require mediation before proceeding to a contested custody hearing.' },
+        ]
+      },
+      {
+        id: 'support', title: 'Your Child Support Rights', icon: '💰',
+        rights: [
+          { right: 'Both parents must support their children', section: 'Provincial Family Law', detail: 'Both parents have a legal obligation to financially support their children regardless of custody arrangements.' },
+          { right: 'Federal Child Support Guidelines apply', section: 'Federal Guidelines', detail: 'Child support amounts are determined by the Federal Child Support Guidelines tables based on income and number of children.' },
+          { right: 'You can request financial disclosure', section: 'Provincial Family Law', detail: 'You have the right to request complete financial disclosure from the other parent to ensure accurate support calculations.' },
+          { right: 'Support orders can be enforced', section: 'Provincial Enforcement Program', detail: 'Each province has a maintenance enforcement program that can garnish wages, seize assets, and suspend licenses to enforce support orders.' },
+          { right: 'Support can be varied on material change', section: 'Provincial Family Law', detail: 'Either parent can apply to change the support amount if there has been a significant change in circumstances.' },
+        ]
+      },
+      {
+        id: 'relocation', title: 'Relocation & Travel Rights', icon: '✈️',
+        rights: [
+          { right: 'Notice is required before relocating with a child', section: 'Provincial Family Law', detail: 'A parent planning to move with a child must give written notice to the other parent. The required notice period varies by province.' },
+          { right: 'Both parents must consent to international travel', section: 'General', detail: 'Taking a child outside Canada typically requires consent of both parents or a court order. Carry a notarized consent letter.' },
+          { right: 'Courts can restrict travel', section: 'Provincial Family Law', detail: 'Courts can order that a child\'s passport be held by the court or restrict a parent from removing a child from the province or country.' },
+          { right: 'Relocation disputes focus on best interests', section: 'Provincial Family Law', detail: 'When parents disagree about relocation, the court considers the child\'s best interests, the reason for the move, and the impact on relationships.' },
+        ]
+      },
     ]
   },
   manitoba: {
@@ -377,7 +496,36 @@ const LEGISLATION_DB = {
           { right: 'File a complaint with the agency', section: 'General', detail: 'Each CFS agency must have a complaint process. Request their formal complaints procedure.' },
           { right: 'Contact the Manitoba Ombudsman', section: 'Ombudsman Act', detail: 'The Ombudsman can investigate complaints about government services. Call 1-800-665-0531.' },
         ]
-      }
+      },
+      {
+        id: 'custody', title: 'Your Custody Rights', icon: '👨‍👩‍👧‍👦',
+        rights: [
+          { right: 'Both parents have equal rights unless ordered otherwise', section: 'Provincial Family Law', detail: 'Unless a court order exists, both parents generally have equal rights to custody and decision-making for their children.' },
+          { right: 'Best interests of the child is the primary consideration', section: 'Provincial Family Law', detail: 'All custody decisions must be based on the best interests of the child, considering safety, stability, relationships, and the child\'s views.' },
+          { right: 'You can represent yourself in court', section: 'Court Rules', detail: 'You have the right to represent yourself in family court proceedings. Many courts have self-help centres to assist unrepresented litigants.' },
+          { right: 'Children\'s views are considered', section: 'Provincial Family Law', detail: 'Courts consider the child\'s views and preferences depending on age and maturity when making custody decisions.' },
+          { right: 'Mediation may be available or required', section: 'Provincial Family Law', detail: 'Many jurisdictions offer or require mediation before proceeding to a contested custody hearing.' },
+        ]
+      },
+      {
+        id: 'support', title: 'Your Child Support Rights', icon: '💰',
+        rights: [
+          { right: 'Both parents must support their children', section: 'Provincial Family Law', detail: 'Both parents have a legal obligation to financially support their children regardless of custody arrangements.' },
+          { right: 'Federal Child Support Guidelines apply', section: 'Federal Guidelines', detail: 'Child support amounts are determined by the Federal Child Support Guidelines tables based on income and number of children.' },
+          { right: 'You can request financial disclosure', section: 'Provincial Family Law', detail: 'You have the right to request complete financial disclosure from the other parent to ensure accurate support calculations.' },
+          { right: 'Support orders can be enforced', section: 'Provincial Enforcement Program', detail: 'Each province has a maintenance enforcement program that can garnish wages, seize assets, and suspend licenses to enforce support orders.' },
+          { right: 'Support can be varied on material change', section: 'Provincial Family Law', detail: 'Either parent can apply to change the support amount if there has been a significant change in circumstances.' },
+        ]
+      },
+      {
+        id: 'relocation', title: 'Relocation & Travel Rights', icon: '✈️',
+        rights: [
+          { right: 'Notice is required before relocating with a child', section: 'Provincial Family Law', detail: 'A parent planning to move with a child must give written notice to the other parent. The required notice period varies by province.' },
+          { right: 'Both parents must consent to international travel', section: 'General', detail: 'Taking a child outside Canada typically requires consent of both parents or a court order. Carry a notarized consent letter.' },
+          { right: 'Courts can restrict travel', section: 'Provincial Family Law', detail: 'Courts can order that a child\'s passport be held by the court or restrict a parent from removing a child from the province or country.' },
+          { right: 'Relocation disputes focus on best interests', section: 'Provincial Family Law', detail: 'When parents disagree about relocation, the court considers the child\'s best interests, the reason for the move, and the impact on relationships.' },
+        ]
+      },
     ]
   },
   quebec: {
@@ -449,7 +597,36 @@ const LEGISLATION_DB = {
           { right: 'File a complaint with the institution\'s complaints commissioner', section: 'General', detail: 'Each health and social services institution has a complaints commissioner who can handle complaints about DPJ services.' },
           { right: 'Contact the Quebec Ombudsman (Protecteur du citoyen)', section: 'General', detail: 'The Protecteur du citoyen can investigate complaints about public services. Call 1-800-463-5070.' },
         ]
-      }
+      },
+      {
+        id: 'custody', title: 'Your Custody Rights', icon: '👨‍👩‍👧‍👦',
+        rights: [
+          { right: 'Both parents have equal rights unless ordered otherwise', section: 'Provincial Family Law', detail: 'Unless a court order exists, both parents generally have equal rights to custody and decision-making for their children.' },
+          { right: 'Best interests of the child is the primary consideration', section: 'Provincial Family Law', detail: 'All custody decisions must be based on the best interests of the child, considering safety, stability, relationships, and the child\'s views.' },
+          { right: 'You can represent yourself in court', section: 'Court Rules', detail: 'You have the right to represent yourself in family court proceedings. Many courts have self-help centres to assist unrepresented litigants.' },
+          { right: 'Children\'s views are considered', section: 'Provincial Family Law', detail: 'Courts consider the child\'s views and preferences depending on age and maturity when making custody decisions.' },
+          { right: 'Mediation may be available or required', section: 'Provincial Family Law', detail: 'Many jurisdictions offer or require mediation before proceeding to a contested custody hearing.' },
+        ]
+      },
+      {
+        id: 'support', title: 'Your Child Support Rights', icon: '💰',
+        rights: [
+          { right: 'Both parents must support their children', section: 'Provincial Family Law', detail: 'Both parents have a legal obligation to financially support their children regardless of custody arrangements.' },
+          { right: 'Federal Child Support Guidelines apply', section: 'Federal Guidelines', detail: 'Child support amounts are determined by the Federal Child Support Guidelines tables based on income and number of children.' },
+          { right: 'You can request financial disclosure', section: 'Provincial Family Law', detail: 'You have the right to request complete financial disclosure from the other parent to ensure accurate support calculations.' },
+          { right: 'Support orders can be enforced', section: 'Provincial Enforcement Program', detail: 'Each province has a maintenance enforcement program that can garnish wages, seize assets, and suspend licenses to enforce support orders.' },
+          { right: 'Support can be varied on material change', section: 'Provincial Family Law', detail: 'Either parent can apply to change the support amount if there has been a significant change in circumstances.' },
+        ]
+      },
+      {
+        id: 'relocation', title: 'Relocation & Travel Rights', icon: '✈️',
+        rights: [
+          { right: 'Notice is required before relocating with a child', section: 'Provincial Family Law', detail: 'A parent planning to move with a child must give written notice to the other parent. The required notice period varies by province.' },
+          { right: 'Both parents must consent to international travel', section: 'General', detail: 'Taking a child outside Canada typically requires consent of both parents or a court order. Carry a notarized consent letter.' },
+          { right: 'Courts can restrict travel', section: 'Provincial Family Law', detail: 'Courts can order that a child\'s passport be held by the court or restrict a parent from removing a child from the province or country.' },
+          { right: 'Relocation disputes focus on best interests', section: 'Provincial Family Law', detail: 'When parents disagree about relocation, the court considers the child\'s best interests, the reason for the move, and the impact on relationships.' },
+        ]
+      },
     ]
   },
   nova_scotia: {
@@ -514,7 +691,36 @@ const LEGISLATION_DB = {
           { right: 'File a complaint with the Department', section: 'General', detail: 'Contact the Department of Community Services directly to file a formal complaint.' },
           { right: 'Contact your MLA', section: 'General', detail: 'Your Member of the Legislative Assembly can raise concerns on your behalf.' },
         ]
-      }
+      },
+      {
+        id: 'custody', title: 'Your Custody Rights', icon: '👨‍👩‍👧‍👦',
+        rights: [
+          { right: 'Both parents have equal rights unless ordered otherwise', section: 'Provincial Family Law', detail: 'Unless a court order exists, both parents generally have equal rights to custody and decision-making for their children.' },
+          { right: 'Best interests of the child is the primary consideration', section: 'Provincial Family Law', detail: 'All custody decisions must be based on the best interests of the child, considering safety, stability, relationships, and the child\'s views.' },
+          { right: 'You can represent yourself in court', section: 'Court Rules', detail: 'You have the right to represent yourself in family court proceedings. Many courts have self-help centres to assist unrepresented litigants.' },
+          { right: 'Children\'s views are considered', section: 'Provincial Family Law', detail: 'Courts consider the child\'s views and preferences depending on age and maturity when making custody decisions.' },
+          { right: 'Mediation may be available or required', section: 'Provincial Family Law', detail: 'Many jurisdictions offer or require mediation before proceeding to a contested custody hearing.' },
+        ]
+      },
+      {
+        id: 'support', title: 'Your Child Support Rights', icon: '💰',
+        rights: [
+          { right: 'Both parents must support their children', section: 'Provincial Family Law', detail: 'Both parents have a legal obligation to financially support their children regardless of custody arrangements.' },
+          { right: 'Federal Child Support Guidelines apply', section: 'Federal Guidelines', detail: 'Child support amounts are determined by the Federal Child Support Guidelines tables based on income and number of children.' },
+          { right: 'You can request financial disclosure', section: 'Provincial Family Law', detail: 'You have the right to request complete financial disclosure from the other parent to ensure accurate support calculations.' },
+          { right: 'Support orders can be enforced', section: 'Provincial Enforcement Program', detail: 'Each province has a maintenance enforcement program that can garnish wages, seize assets, and suspend licenses to enforce support orders.' },
+          { right: 'Support can be varied on material change', section: 'Provincial Family Law', detail: 'Either parent can apply to change the support amount if there has been a significant change in circumstances.' },
+        ]
+      },
+      {
+        id: 'relocation', title: 'Relocation & Travel Rights', icon: '✈️',
+        rights: [
+          { right: 'Notice is required before relocating with a child', section: 'Provincial Family Law', detail: 'A parent planning to move with a child must give written notice to the other parent. The required notice period varies by province.' },
+          { right: 'Both parents must consent to international travel', section: 'General', detail: 'Taking a child outside Canada typically requires consent of both parents or a court order. Carry a notarized consent letter.' },
+          { right: 'Courts can restrict travel', section: 'Provincial Family Law', detail: 'Courts can order that a child\'s passport be held by the court or restrict a parent from removing a child from the province or country.' },
+          { right: 'Relocation disputes focus on best interests', section: 'Provincial Family Law', detail: 'When parents disagree about relocation, the court considers the child\'s best interests, the reason for the move, and the impact on relationships.' },
+        ]
+      },
     ]
   },
   new_brunswick: {
@@ -580,7 +786,36 @@ const LEGISLATION_DB = {
           { right: 'File a complaint with the Department', section: 'General', detail: 'Contact the Department of Social Development to file a formal complaint.' },
           { right: 'Contact the NB Ombudsman', section: 'Ombudsman Act', detail: 'The Ombudsman can investigate complaints about government services. Call 1-888-465-1100.' },
         ]
-      }
+      },
+      {
+        id: 'custody', title: 'Your Custody Rights', icon: '👨‍👩‍👧‍👦',
+        rights: [
+          { right: 'Both parents have equal rights unless ordered otherwise', section: 'Provincial Family Law', detail: 'Unless a court order exists, both parents generally have equal rights to custody and decision-making for their children.' },
+          { right: 'Best interests of the child is the primary consideration', section: 'Provincial Family Law', detail: 'All custody decisions must be based on the best interests of the child, considering safety, stability, relationships, and the child\'s views.' },
+          { right: 'You can represent yourself in court', section: 'Court Rules', detail: 'You have the right to represent yourself in family court proceedings. Many courts have self-help centres to assist unrepresented litigants.' },
+          { right: 'Children\'s views are considered', section: 'Provincial Family Law', detail: 'Courts consider the child\'s views and preferences depending on age and maturity when making custody decisions.' },
+          { right: 'Mediation may be available or required', section: 'Provincial Family Law', detail: 'Many jurisdictions offer or require mediation before proceeding to a contested custody hearing.' },
+        ]
+      },
+      {
+        id: 'support', title: 'Your Child Support Rights', icon: '💰',
+        rights: [
+          { right: 'Both parents must support their children', section: 'Provincial Family Law', detail: 'Both parents have a legal obligation to financially support their children regardless of custody arrangements.' },
+          { right: 'Federal Child Support Guidelines apply', section: 'Federal Guidelines', detail: 'Child support amounts are determined by the Federal Child Support Guidelines tables based on income and number of children.' },
+          { right: 'You can request financial disclosure', section: 'Provincial Family Law', detail: 'You have the right to request complete financial disclosure from the other parent to ensure accurate support calculations.' },
+          { right: 'Support orders can be enforced', section: 'Provincial Enforcement Program', detail: 'Each province has a maintenance enforcement program that can garnish wages, seize assets, and suspend licenses to enforce support orders.' },
+          { right: 'Support can be varied on material change', section: 'Provincial Family Law', detail: 'Either parent can apply to change the support amount if there has been a significant change in circumstances.' },
+        ]
+      },
+      {
+        id: 'relocation', title: 'Relocation & Travel Rights', icon: '✈️',
+        rights: [
+          { right: 'Notice is required before relocating with a child', section: 'Provincial Family Law', detail: 'A parent planning to move with a child must give written notice to the other parent. The required notice period varies by province.' },
+          { right: 'Both parents must consent to international travel', section: 'General', detail: 'Taking a child outside Canada typically requires consent of both parents or a court order. Carry a notarized consent letter.' },
+          { right: 'Courts can restrict travel', section: 'Provincial Family Law', detail: 'Courts can order that a child\'s passport be held by the court or restrict a parent from removing a child from the province or country.' },
+          { right: 'Relocation disputes focus on best interests', section: 'Provincial Family Law', detail: 'When parents disagree about relocation, the court considers the child\'s best interests, the reason for the move, and the impact on relationships.' },
+        ]
+      },
     ]
   },
   newfoundland: {
@@ -645,7 +880,36 @@ const LEGISLATION_DB = {
           { right: 'File a complaint with the Department', section: 'General', detail: 'Contact the Department of Children, Seniors and Social Development directly.' },
           { right: 'Contact the NL Citizens\' Representative', section: 'Citizens\' Representative Act', detail: 'The Citizens\' Representative (Ombudsman) can investigate complaints about government services. Call 1-800-559-0079.' },
         ]
-      }
+      },
+      {
+        id: 'custody', title: 'Your Custody Rights', icon: '👨‍👩‍👧‍👦',
+        rights: [
+          { right: 'Both parents have equal rights unless ordered otherwise', section: 'Provincial Family Law', detail: 'Unless a court order exists, both parents generally have equal rights to custody and decision-making for their children.' },
+          { right: 'Best interests of the child is the primary consideration', section: 'Provincial Family Law', detail: 'All custody decisions must be based on the best interests of the child, considering safety, stability, relationships, and the child\'s views.' },
+          { right: 'You can represent yourself in court', section: 'Court Rules', detail: 'You have the right to represent yourself in family court proceedings. Many courts have self-help centres to assist unrepresented litigants.' },
+          { right: 'Children\'s views are considered', section: 'Provincial Family Law', detail: 'Courts consider the child\'s views and preferences depending on age and maturity when making custody decisions.' },
+          { right: 'Mediation may be available or required', section: 'Provincial Family Law', detail: 'Many jurisdictions offer or require mediation before proceeding to a contested custody hearing.' },
+        ]
+      },
+      {
+        id: 'support', title: 'Your Child Support Rights', icon: '💰',
+        rights: [
+          { right: 'Both parents must support their children', section: 'Provincial Family Law', detail: 'Both parents have a legal obligation to financially support their children regardless of custody arrangements.' },
+          { right: 'Federal Child Support Guidelines apply', section: 'Federal Guidelines', detail: 'Child support amounts are determined by the Federal Child Support Guidelines tables based on income and number of children.' },
+          { right: 'You can request financial disclosure', section: 'Provincial Family Law', detail: 'You have the right to request complete financial disclosure from the other parent to ensure accurate support calculations.' },
+          { right: 'Support orders can be enforced', section: 'Provincial Enforcement Program', detail: 'Each province has a maintenance enforcement program that can garnish wages, seize assets, and suspend licenses to enforce support orders.' },
+          { right: 'Support can be varied on material change', section: 'Provincial Family Law', detail: 'Either parent can apply to change the support amount if there has been a significant change in circumstances.' },
+        ]
+      },
+      {
+        id: 'relocation', title: 'Relocation & Travel Rights', icon: '✈️',
+        rights: [
+          { right: 'Notice is required before relocating with a child', section: 'Provincial Family Law', detail: 'A parent planning to move with a child must give written notice to the other parent. The required notice period varies by province.' },
+          { right: 'Both parents must consent to international travel', section: 'General', detail: 'Taking a child outside Canada typically requires consent of both parents or a court order. Carry a notarized consent letter.' },
+          { right: 'Courts can restrict travel', section: 'Provincial Family Law', detail: 'Courts can order that a child\'s passport be held by the court or restrict a parent from removing a child from the province or country.' },
+          { right: 'Relocation disputes focus on best interests', section: 'Provincial Family Law', detail: 'When parents disagree about relocation, the court considers the child\'s best interests, the reason for the move, and the impact on relationships.' },
+        ]
+      },
     ]
   },
   pei: {
@@ -709,7 +973,36 @@ const LEGISLATION_DB = {
           { right: 'File a complaint with the Department', section: 'General', detail: 'Contact the Department of Social Development and Seniors directly.' },
           { right: 'Contact CLIA for legal information', section: 'General', detail: 'The Community Legal Information Association of PEI provides free legal information. Call 902-892-0853.' },
         ]
-      }
+      },
+      {
+        id: 'custody', title: 'Your Custody Rights', icon: '👨‍👩‍👧‍👦',
+        rights: [
+          { right: 'Both parents have equal rights unless ordered otherwise', section: 'Provincial Family Law', detail: 'Unless a court order exists, both parents generally have equal rights to custody and decision-making for their children.' },
+          { right: 'Best interests of the child is the primary consideration', section: 'Provincial Family Law', detail: 'All custody decisions must be based on the best interests of the child, considering safety, stability, relationships, and the child\'s views.' },
+          { right: 'You can represent yourself in court', section: 'Court Rules', detail: 'You have the right to represent yourself in family court proceedings. Many courts have self-help centres to assist unrepresented litigants.' },
+          { right: 'Children\'s views are considered', section: 'Provincial Family Law', detail: 'Courts consider the child\'s views and preferences depending on age and maturity when making custody decisions.' },
+          { right: 'Mediation may be available or required', section: 'Provincial Family Law', detail: 'Many jurisdictions offer or require mediation before proceeding to a contested custody hearing.' },
+        ]
+      },
+      {
+        id: 'support', title: 'Your Child Support Rights', icon: '💰',
+        rights: [
+          { right: 'Both parents must support their children', section: 'Provincial Family Law', detail: 'Both parents have a legal obligation to financially support their children regardless of custody arrangements.' },
+          { right: 'Federal Child Support Guidelines apply', section: 'Federal Guidelines', detail: 'Child support amounts are determined by the Federal Child Support Guidelines tables based on income and number of children.' },
+          { right: 'You can request financial disclosure', section: 'Provincial Family Law', detail: 'You have the right to request complete financial disclosure from the other parent to ensure accurate support calculations.' },
+          { right: 'Support orders can be enforced', section: 'Provincial Enforcement Program', detail: 'Each province has a maintenance enforcement program that can garnish wages, seize assets, and suspend licenses to enforce support orders.' },
+          { right: 'Support can be varied on material change', section: 'Provincial Family Law', detail: 'Either parent can apply to change the support amount if there has been a significant change in circumstances.' },
+        ]
+      },
+      {
+        id: 'relocation', title: 'Relocation & Travel Rights', icon: '✈️',
+        rights: [
+          { right: 'Notice is required before relocating with a child', section: 'Provincial Family Law', detail: 'A parent planning to move with a child must give written notice to the other parent. The required notice period varies by province.' },
+          { right: 'Both parents must consent to international travel', section: 'General', detail: 'Taking a child outside Canada typically requires consent of both parents or a court order. Carry a notarized consent letter.' },
+          { right: 'Courts can restrict travel', section: 'Provincial Family Law', detail: 'Courts can order that a child\'s passport be held by the court or restrict a parent from removing a child from the province or country.' },
+          { right: 'Relocation disputes focus on best interests', section: 'Provincial Family Law', detail: 'When parents disagree about relocation, the court considers the child\'s best interests, the reason for the move, and the impact on relationships.' },
+        ]
+      },
     ]
   },
   northwest_territories: {
@@ -772,7 +1065,36 @@ const LEGISLATION_DB = {
           { right: 'File a complaint with the Department', section: 'General', detail: 'Contact the Department of Health and Social Services to file a formal complaint.' },
           { right: 'Contact the NWT Information and Privacy Commissioner', section: 'General', detail: 'For issues related to access to your records. Call 867-920-8049.' },
         ]
-      }
+      },
+      {
+        id: 'custody', title: 'Your Custody Rights', icon: '👨‍👩‍👧‍👦',
+        rights: [
+          { right: 'Both parents have equal rights unless ordered otherwise', section: 'Provincial Family Law', detail: 'Unless a court order exists, both parents generally have equal rights to custody and decision-making for their children.' },
+          { right: 'Best interests of the child is the primary consideration', section: 'Provincial Family Law', detail: 'All custody decisions must be based on the best interests of the child, considering safety, stability, relationships, and the child\'s views.' },
+          { right: 'You can represent yourself in court', section: 'Court Rules', detail: 'You have the right to represent yourself in family court proceedings. Many courts have self-help centres to assist unrepresented litigants.' },
+          { right: 'Children\'s views are considered', section: 'Provincial Family Law', detail: 'Courts consider the child\'s views and preferences depending on age and maturity when making custody decisions.' },
+          { right: 'Mediation may be available or required', section: 'Provincial Family Law', detail: 'Many jurisdictions offer or require mediation before proceeding to a contested custody hearing.' },
+        ]
+      },
+      {
+        id: 'support', title: 'Your Child Support Rights', icon: '💰',
+        rights: [
+          { right: 'Both parents must support their children', section: 'Provincial Family Law', detail: 'Both parents have a legal obligation to financially support their children regardless of custody arrangements.' },
+          { right: 'Federal Child Support Guidelines apply', section: 'Federal Guidelines', detail: 'Child support amounts are determined by the Federal Child Support Guidelines tables based on income and number of children.' },
+          { right: 'You can request financial disclosure', section: 'Provincial Family Law', detail: 'You have the right to request complete financial disclosure from the other parent to ensure accurate support calculations.' },
+          { right: 'Support orders can be enforced', section: 'Provincial Enforcement Program', detail: 'Each province has a maintenance enforcement program that can garnish wages, seize assets, and suspend licenses to enforce support orders.' },
+          { right: 'Support can be varied on material change', section: 'Provincial Family Law', detail: 'Either parent can apply to change the support amount if there has been a significant change in circumstances.' },
+        ]
+      },
+      {
+        id: 'relocation', title: 'Relocation & Travel Rights', icon: '✈️',
+        rights: [
+          { right: 'Notice is required before relocating with a child', section: 'Provincial Family Law', detail: 'A parent planning to move with a child must give written notice to the other parent. The required notice period varies by province.' },
+          { right: 'Both parents must consent to international travel', section: 'General', detail: 'Taking a child outside Canada typically requires consent of both parents or a court order. Carry a notarized consent letter.' },
+          { right: 'Courts can restrict travel', section: 'Provincial Family Law', detail: 'Courts can order that a child\'s passport be held by the court or restrict a parent from removing a child from the province or country.' },
+          { right: 'Relocation disputes focus on best interests', section: 'Provincial Family Law', detail: 'When parents disagree about relocation, the court considers the child\'s best interests, the reason for the move, and the impact on relationships.' },
+        ]
+      },
     ]
   },
   yukon: {
@@ -838,7 +1160,36 @@ const LEGISLATION_DB = {
           { right: 'File a complaint with the Department', section: 'General', detail: 'Contact the Department of Health and Social Services directly.' },
           { right: 'Contact the Yukon Ombudsman', section: 'Ombudsman Act', detail: 'The Ombudsman can investigate complaints about government services. Call 867-667-8468.' },
         ]
-      }
+      },
+      {
+        id: 'custody', title: 'Your Custody Rights', icon: '👨‍👩‍👧‍👦',
+        rights: [
+          { right: 'Both parents have equal rights unless ordered otherwise', section: 'Provincial Family Law', detail: 'Unless a court order exists, both parents generally have equal rights to custody and decision-making for their children.' },
+          { right: 'Best interests of the child is the primary consideration', section: 'Provincial Family Law', detail: 'All custody decisions must be based on the best interests of the child, considering safety, stability, relationships, and the child\'s views.' },
+          { right: 'You can represent yourself in court', section: 'Court Rules', detail: 'You have the right to represent yourself in family court proceedings. Many courts have self-help centres to assist unrepresented litigants.' },
+          { right: 'Children\'s views are considered', section: 'Provincial Family Law', detail: 'Courts consider the child\'s views and preferences depending on age and maturity when making custody decisions.' },
+          { right: 'Mediation may be available or required', section: 'Provincial Family Law', detail: 'Many jurisdictions offer or require mediation before proceeding to a contested custody hearing.' },
+        ]
+      },
+      {
+        id: 'support', title: 'Your Child Support Rights', icon: '💰',
+        rights: [
+          { right: 'Both parents must support their children', section: 'Provincial Family Law', detail: 'Both parents have a legal obligation to financially support their children regardless of custody arrangements.' },
+          { right: 'Federal Child Support Guidelines apply', section: 'Federal Guidelines', detail: 'Child support amounts are determined by the Federal Child Support Guidelines tables based on income and number of children.' },
+          { right: 'You can request financial disclosure', section: 'Provincial Family Law', detail: 'You have the right to request complete financial disclosure from the other parent to ensure accurate support calculations.' },
+          { right: 'Support orders can be enforced', section: 'Provincial Enforcement Program', detail: 'Each province has a maintenance enforcement program that can garnish wages, seize assets, and suspend licenses to enforce support orders.' },
+          { right: 'Support can be varied on material change', section: 'Provincial Family Law', detail: 'Either parent can apply to change the support amount if there has been a significant change in circumstances.' },
+        ]
+      },
+      {
+        id: 'relocation', title: 'Relocation & Travel Rights', icon: '✈️',
+        rights: [
+          { right: 'Notice is required before relocating with a child', section: 'Provincial Family Law', detail: 'A parent planning to move with a child must give written notice to the other parent. The required notice period varies by province.' },
+          { right: 'Both parents must consent to international travel', section: 'General', detail: 'Taking a child outside Canada typically requires consent of both parents or a court order. Carry a notarized consent letter.' },
+          { right: 'Courts can restrict travel', section: 'Provincial Family Law', detail: 'Courts can order that a child\'s passport be held by the court or restrict a parent from removing a child from the province or country.' },
+          { right: 'Relocation disputes focus on best interests', section: 'Provincial Family Law', detail: 'When parents disagree about relocation, the court considers the child\'s best interests, the reason for the move, and the impact on relationships.' },
+        ]
+      },
     ]
   },
   nunavut: {
@@ -906,7 +1257,36 @@ const LEGISLATION_DB = {
           { right: 'File a complaint with the Department of Family Services', section: 'General', detail: 'Contact the Department directly to raise concerns about a worker or services.' },
           { right: 'Contact Nunavut Legal Aid', section: 'General', detail: 'Maliiganik Tukisiiniakvik (867-979-5377) or Kivalliq Legal Aid (867-645-2536) can provide legal advice in Inuktitut and English.' },
         ]
-      }
+      },
+      {
+        id: 'custody', title: 'Your Custody Rights', icon: '👨‍👩‍👧‍👦',
+        rights: [
+          { right: 'Both parents have equal rights unless ordered otherwise', section: 'Provincial Family Law', detail: 'Unless a court order exists, both parents generally have equal rights to custody and decision-making for their children.' },
+          { right: 'Best interests of the child is the primary consideration', section: 'Provincial Family Law', detail: 'All custody decisions must be based on the best interests of the child, considering safety, stability, relationships, and the child\'s views.' },
+          { right: 'You can represent yourself in court', section: 'Court Rules', detail: 'You have the right to represent yourself in family court proceedings. Many courts have self-help centres to assist unrepresented litigants.' },
+          { right: 'Children\'s views are considered', section: 'Provincial Family Law', detail: 'Courts consider the child\'s views and preferences depending on age and maturity when making custody decisions.' },
+          { right: 'Mediation may be available or required', section: 'Provincial Family Law', detail: 'Many jurisdictions offer or require mediation before proceeding to a contested custody hearing.' },
+        ]
+      },
+      {
+        id: 'support', title: 'Your Child Support Rights', icon: '💰',
+        rights: [
+          { right: 'Both parents must support their children', section: 'Provincial Family Law', detail: 'Both parents have a legal obligation to financially support their children regardless of custody arrangements.' },
+          { right: 'Federal Child Support Guidelines apply', section: 'Federal Guidelines', detail: 'Child support amounts are determined by the Federal Child Support Guidelines tables based on income and number of children.' },
+          { right: 'You can request financial disclosure', section: 'Provincial Family Law', detail: 'You have the right to request complete financial disclosure from the other parent to ensure accurate support calculations.' },
+          { right: 'Support orders can be enforced', section: 'Provincial Enforcement Program', detail: 'Each province has a maintenance enforcement program that can garnish wages, seize assets, and suspend licenses to enforce support orders.' },
+          { right: 'Support can be varied on material change', section: 'Provincial Family Law', detail: 'Either parent can apply to change the support amount if there has been a significant change in circumstances.' },
+        ]
+      },
+      {
+        id: 'relocation', title: 'Relocation & Travel Rights', icon: '✈️',
+        rights: [
+          { right: 'Notice is required before relocating with a child', section: 'Provincial Family Law', detail: 'A parent planning to move with a child must give written notice to the other parent. The required notice period varies by province.' },
+          { right: 'Both parents must consent to international travel', section: 'General', detail: 'Taking a child outside Canada typically requires consent of both parents or a court order. Carry a notarized consent letter.' },
+          { right: 'Courts can restrict travel', section: 'Provincial Family Law', detail: 'Courts can order that a child\'s passport be held by the court or restrict a parent from removing a child from the province or country.' },
+          { right: 'Relocation disputes focus on best interests', section: 'Provincial Family Law', detail: 'When parents disagree about relocation, the court considers the child\'s best interests, the reason for the move, and the impact on relationships.' },
+        ]
+      },
     ]
   },};
 
