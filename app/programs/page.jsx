@@ -363,7 +363,36 @@ export default function ProgramsPage() {
         <PageTitle title="Programs & Resources" subtitle="Support services across Canada" icon="🛡️" />
 
       {/* Content */}
-      <main className="max-w-5xl mx-auto px-4 py-6 space-y-6">
+      <main className="max-w-5xl mx-auto px-4 py-6 space-y-4">
+        {/* Province Selector */}
+        <div className="flex gap-1.5 overflow-x-auto pb-1">
+          {allProvinceKeys.map(key => {
+            const p = PROGRAMS[key];
+            return (
+              <button key={key} onClick={() => setSelectedProvince(key)}
+                className={`px-3 py-2 rounded-xl text-xs font-medium whitespace-nowrap transition-colors ${selectedProvince === key ? 'bg-red-600 text-white' : 'bg-white border border-gray-200 text-gray-600 hover:border-red-300'}`}>
+                {p.flag} {p.name}
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Category Filter */}
+        <div className="flex gap-1.5 overflow-x-auto pb-1">
+          <button onClick={() => setSelectedCategory('all')}
+            className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap ${selectedCategory === 'all' ? 'bg-gray-900 text-white' : 'bg-white border border-gray-200 text-gray-500'}`}>All</button>
+          {Object.entries(CATEGORIES).map(([key, cat]) => (
+            <button key={key} onClick={() => setSelectedCategory(key)}
+              className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap ${selectedCategory === key ? 'bg-gray-900 text-white' : 'bg-white border border-gray-200 text-gray-500'}`}>
+              {cat.icon} {cat.label}
+            </button>
+          ))}
+        </div>
+
+        {/* Search */}
+        <input type="text" value={searchQuery} onChange={e => setSearchQuery(e.target.value)}
+          placeholder="Search programs..." className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:border-red-400" />
+
         {/* Province Header */}
         <div className="bg-white border border-gray-200 rounded-xl p-4 flex items-center gap-3">
           <span className="text-2xl">{provinceData?.flag}</span>
