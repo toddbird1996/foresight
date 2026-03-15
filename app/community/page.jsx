@@ -139,12 +139,17 @@ export default function CommunityPage() {
               className={`px-3 py-1 rounded text-xs font-medium ${view === 'posts' ? 'bg-red-600 text-white' : 'text-gray-500 hover:text-red-600 hover:bg-red-50'}`}>
               Posts
             </button>
+            <button onClick={() => setView('mentors')}
+              className={`px-3 py-1 rounded text-xs font-medium ${view === 'mentors' ? 'bg-red-600 text-white' : 'text-gray-500 hover:text-red-600 hover:bg-red-50'}`}>
+              Mentors
+            </button>
           </div>
         </div>
 
         {/* Content */}
         {view === 'chat' && activeChannel && <ChatView channel={activeChannel} user={user} userProfile={userProfile} />}
         {view === 'posts' && activeChannel && <PostsView channel={activeChannel} user={user} userProfile={userProfile} />}
+        {view === 'mentors' && <MentorsView user={user} userProfile={userProfile} />}
       </div>
     </div>
   );
@@ -557,6 +562,244 @@ function PostsView({ channel, user, userProfile }) {
           </div>
         )}
       </div>
+    </div>
+  );
+}
+
+/* ============================================ */
+/* MENTORS VIEW */
+/* ============================================ */
+const SPECIALTIES = [
+  { id: 'custody', label: 'Custody', icon: '👶' }, { id: 'divorce', label: 'Divorce', icon: '💔' },
+  { id: 'support', label: 'Child Support', icon: '💰' }, { id: 'cps', label: 'CPS', icon: '🛡️' },
+  { id: 'mediation', label: 'Mediation', icon: '🤝' }, { id: 'self_rep', label: 'Self-Rep', icon: '⚖️' },
+  { id: 'high_conflict', label: 'High Conflict', icon: '🔥' }, { id: 'relocation', label: 'Relocation', icon: '✈️' },
+];
+const JURIS_NAMES = { saskatchewan: 'SK', alberta: 'AB', ontario: 'ON', british_columbia: 'BC', manitoba: 'MB', quebec: 'QC', nova_scotia: 'NS', new_brunswick: 'NB', newfoundland: 'NL', pei: 'PEI', northwest_territories: 'NWT', yukon: 'YK', nunavut: 'NU' };
+
+function MentorsView({ user, userProfile }) {
+  const [mentors, setMentors] = useState([]);
+  const [myProfile, setMyProfile] = useState(null);
+  const [subTab, setSubTab] = useState('browse');
+  const [filter, setFilter] = useState('all');
+  const [convos, setConvos] = useState([]);
+  const [activeConvo, setActiveConvo] = useState(null);
+  const [messages, setMessages] = useState([]);
+  const [msgInput, setMsgInput] = useState('');
+  const [applyForm, setApplyForm] = useState({ bio: '', specialty: 'custody', experience: '', jurisdiction_id: userProfile?.jurisdiction || '', response_time: 'Within 24 hours' });
+  const [applying, setApplying] = useState(false);
+  const endRef = useRef(null);
+
+  useEffect(() => { fetchAll(); }, []);
+
+  const fetchAll = async () => {
+    const { data: m } = await supabase.from('mentors').select('*, users(full_name)').eq('status', 'approved').eq('is_available', true).order('rating', { ascending: false });
+    setMentors(m || []);
+    const { data: mp } = await supabase.from('mentors').select('*').eq('user_id', user.id).single();
+    if (mp) setMyProfile(mp);
+    // Fetch conversations
+    const { data: asUser } = await supabase.from('mentor_conversations').select('*, mentors(*, users(full_name))').eq('user_id', user.id);
+    let asMentor = [];
+    if (mp) {
+      const { data } = await supabase.from('mentor_conversations').select('*, users!mentor_conversations_user_id_fkey(full_name)').eq('mentor_id', mp.id);
+      asMentor = (data || []).map(c => ({ ...c, _role: 'mentor' }));
+    }
+    setConvos([...(asUser || []).map(c => ({ ...c, _role: 'mentee' })), ...asMentor].sort((a, b) => new Date(b.last_message_at || b.started_at) - new Date(a.last_message_at || a.started_at)));
+  };
+
+  const startConvo = async (mentor) => {
+    const { data: existing } = await supabase.from('mentor_conversations').select('*').eq('user_id', user.id).eq('mentor_id', mentor.id).single();
+    if (existing) { openConvo(existing); return; }
+    const { data: nc } = await supabase.from('mentor_conversations').insert({ mentor_id: mentor.id, user_id: user.id, is_active: true, message_count: 0 }).select().single();
+    if (nc) { await fetchAll(); openConvo(nc); }
+  };
+
+  const openConvo = async (c) => {
+    setActiveConvo(c); setSubTab('chat');
+    const { data } = await supabase.from('mentor_messages').select('*').eq('conversation_id', c.id).order('created_at');
+    setMessages(data || []);
+    setTimeout(() => endRef.current?.scrollIntoView({ behavior: 'smooth' }), 100);
+  };
+
+  const sendMsg = async () => {
+    if (!msgInput.trim() || !activeConvo) return;
+    await supabase.from('mentor_messages').insert({ conversation_id: activeConvo.id, sender_id: user.id, content: msgInput.trim() });
+    await supabase.from('mentor_conversations').update({ last_message_at: new Date().toISOString(), message_count: (activeConvo.message_count || 0) + 1 }).eq('id', activeConvo.id);
+    setMsgInput('');
+    const { data } = await supabase.from('mentor_messages').select('*').eq('conversation_id', activeConvo.id).order('created_at');
+    setMessages(data || []);
+  };
+
+  const submitApp = async () => {
+    if (!applyForm.bio.trim() || !applyForm.experience.trim() || !applyForm.jurisdiction_id) return;
+    setApplying(true);
+    await supabase.from('mentors').insert({ user_id: user.id, bio: applyForm.bio.trim(), specialty: applyForm.specialty, experience: applyForm.experience.trim(), jurisdiction_id: applyForm.jurisdiction_id, response_time: applyForm.response_time, status: 'approved', is_available: true, rating: 5.0, review_count: 0, total_sessions: 0 });
+    await fetchAll(); setSubTab('browse'); setApplying(false);
+  };
+
+  const filtered = filter === 'all' ? mentors : mentors.filter(m => m.specialty === filter);
+  const spec = (id) => SPECIALTIES.find(s => s.id === id);
+
+  // Chat view for active conversation
+  if (subTab === 'chat' && activeConvo) {
+    const otherName = activeConvo._role === 'mentee' ? (activeConvo.mentors?.users?.full_name || 'Mentor') : (activeConvo.users?.full_name || 'User');
+    return (
+      <div className="flex-1 flex flex-col">
+        <div className="px-4 py-3 border-b border-gray-100 flex items-center gap-3 bg-white">
+          <button onClick={() => { setActiveConvo(null); setSubTab('messages'); }} className="text-gray-400 hover:text-gray-600">←</button>
+          <div className="w-8 h-8 bg-red-600 rounded-full flex items-center justify-center text-white font-bold text-sm">{otherName[0].toUpperCase()}</div>
+          <div><div className="font-semibold text-sm text-gray-900">{otherName}</div><div className="text-[10px] text-gray-400">{activeConvo._role === 'mentee' ? 'Your mentor' : 'Your mentee'}</div></div>
+        </div>
+        <div className="flex-1 overflow-y-auto px-4 py-3 space-y-3">
+          {messages.length === 0 && <div className="text-center py-8"><span className="text-3xl block mb-2">👋</span><p className="text-sm text-gray-500">Start the conversation!</p></div>}
+          {messages.map(msg => {
+            const isMe = msg.sender_id === user.id;
+            return (
+              <div key={msg.id} className={`flex ${isMe ? 'justify-end' : 'justify-start'}`}>
+                <div className={`max-w-[80%] px-4 py-2.5 rounded-2xl text-sm ${isMe ? 'bg-red-600 text-white rounded-br-md' : 'bg-gray-100 text-gray-900 rounded-bl-md'}`}>
+                  <p>{msg.content}</p>
+                  <div className={`text-[10px] mt-1 ${isMe ? 'text-red-200' : 'text-gray-400'}`}>{new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
+                </div>
+              </div>
+            );
+          })}
+          <div ref={endRef} />
+        </div>
+        <div className="px-4 py-3 border-t border-gray-100 bg-white">
+          <div className="flex items-center gap-2">
+            <input type="text" value={msgInput} onChange={e => setMsgInput(e.target.value)} onKeyDown={e => e.key === 'Enter' && sendMsg()}
+              placeholder="Type a message..." className="flex-1 px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-full text-sm focus:outline-none focus:border-red-400" />
+            <button onClick={sendMsg} disabled={!msgInput.trim()} className="w-10 h-10 bg-red-600 hover:bg-red-700 text-white rounded-full flex items-center justify-center disabled:opacity-30">
+              <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor"><path d="M2.94 3.19a1 1 0 0 1 1.15-.33l12 5a1 1 0 0 1 0 1.84l-12 5a1 1 0 0 1-1.37-1.15L4.08 10 2.72 6.45a1 1 0 0 1 .22-1.26Z"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex-1 overflow-y-auto">
+      {/* Sub-tabs */}
+      <div className="flex gap-1 p-3 bg-white border-b border-gray-100">
+        {[
+          { id: 'browse', label: 'Find Mentors' },
+          { id: 'messages', label: `Messages${convos.length > 0 ? ` (${convos.length})` : ''}` },
+          { id: 'apply', label: myProfile ? 'My Profile' : 'Become a Mentor' },
+        ].map(t => (
+          <button key={t.id} onClick={() => setSubTab(t.id)}
+            className={`flex-1 py-2 rounded-lg text-xs font-medium ${subTab === t.id ? 'bg-gray-900 text-white' : 'text-gray-500 hover:bg-gray-100'}`}>{t.label}</button>
+        ))}
+      </div>
+
+      {/* Browse */}
+      {subTab === 'browse' && (
+        <div className="p-3">
+          <div className="flex gap-1.5 mb-3 overflow-x-auto pb-1">
+            <button onClick={() => setFilter('all')} className={`px-2.5 py-1 rounded-full text-[10px] font-medium whitespace-nowrap ${filter === 'all' ? 'bg-red-600 text-white' : 'bg-white border border-gray-200 text-gray-500'}`}>All</button>
+            {SPECIALTIES.map(s => (
+              <button key={s.id} onClick={() => setFilter(s.id)} className={`px-2.5 py-1 rounded-full text-[10px] font-medium whitespace-nowrap ${filter === s.id ? 'bg-red-600 text-white' : 'bg-white border border-gray-200 text-gray-500'}`}>{s.icon} {s.label}</button>
+            ))}
+          </div>
+          {filtered.length === 0 ? (
+            <div className="text-center py-12"><span className="text-3xl block mb-2">🧭</span><p className="text-sm text-gray-500 mb-3">No mentors yet</p>
+              <button onClick={() => setSubTab('apply')} className="px-5 py-2 bg-red-600 text-white rounded-xl text-sm font-medium">Become the first</button></div>
+          ) : (
+            <div className="space-y-2">
+              {filtered.map(m => {
+                const s = spec(m.specialty); const name = m.users?.full_name || 'Mentor';
+                return (
+                  <div key={m.id} className="bg-white border border-gray-200 rounded-xl p-3">
+                    <div className="flex items-start gap-3">
+                      <div className="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-sm flex-shrink-0" style={{ backgroundColor: stringToColor(name) }}>{name[0].toUpperCase()}</div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-1.5">
+                          <span className="font-semibold text-sm text-gray-900">{name}</span>
+                          <span className="w-1.5 h-1.5 bg-green-500 rounded-full" />
+                        </div>
+                        <div className="flex items-center gap-1.5 mt-0.5 text-[10px] text-gray-500">
+                          {s && <span className="px-1.5 py-0.5 bg-red-50 text-red-600 rounded font-medium">{s.icon} {s.label}</span>}
+                          <span>{JURIS_NAMES[m.jurisdiction_id] || m.jurisdiction_id}</span>
+                          <span>⭐{m.rating?.toFixed(1)}</span>
+                          <span>{m.total_sessions || 0} sessions</span>
+                        </div>
+                        <p className="text-xs text-gray-600 mt-1.5 line-clamp-2">{m.bio}</p>
+                      </div>
+                    </div>
+                    <button onClick={() => startConvo(m)} className="w-full mt-2 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg text-xs font-medium">Message</button>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Messages */}
+      {subTab === 'messages' && (
+        <div className="p-3">
+          {convos.length === 0 ? (
+            <div className="text-center py-12"><span className="text-3xl block mb-2">💬</span><p className="text-sm text-gray-500">No conversations yet</p></div>
+          ) : (
+            <div className="space-y-1.5">
+              {convos.map(c => {
+                const other = c._role === 'mentee' ? (c.mentors?.users?.full_name || 'Mentor') : (c.users?.full_name || 'User');
+                return (
+                  <button key={c.id} onClick={() => openConvo(c)} className="w-full bg-white border border-gray-200 rounded-xl p-3 flex items-center gap-3 hover:border-red-300 text-left">
+                    <div className="w-9 h-9 rounded-full flex items-center justify-center text-white font-bold text-sm flex-shrink-0" style={{ backgroundColor: stringToColor(other) }}>{other[0].toUpperCase()}</div>
+                    <div className="flex-1 min-w-0">
+                      <div className="font-semibold text-sm text-gray-900">{other}</div>
+                      <div className="text-[10px] text-gray-500">{c.message_count || 0} messages · <span className={c._role === 'mentor' ? 'text-amber-600' : 'text-blue-600'}>{c._role === 'mentor' ? 'Mentoring' : 'Mentee'}</span></div>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Apply */}
+      {subTab === 'apply' && !myProfile && (
+        <div className="p-4 space-y-3">
+          <div className="text-center mb-4"><span className="text-3xl block mb-2">🧭</span><h3 className="font-bold text-gray-900">Become a Mentor</h3><p className="text-xs text-gray-500">Share your experience to help others. It's voluntary and free.</p></div>
+          <div className="flex flex-wrap gap-1.5">
+            {SPECIALTIES.map(s => (
+              <button key={s.id} onClick={() => setApplyForm(p => ({ ...p, specialty: s.id }))} className={`px-3 py-1.5 rounded-full text-xs font-medium ${applyForm.specialty === s.id ? 'bg-red-600 text-white' : 'bg-gray-100 text-gray-600'}`}>{s.icon} {s.label}</button>
+            ))}
+          </div>
+          <select value={applyForm.jurisdiction_id} onChange={e => setApplyForm(p => ({ ...p, jurisdiction_id: e.target.value }))} className="w-full px-4 py-2.5 border border-gray-200 rounded-xl bg-gray-50 text-sm focus:outline-none focus:border-red-400">
+            <option value="">Select province...</option>
+            {Object.entries(JURIS_NAMES).map(([id, name]) => <option key={id} value={id}>{name}</option>)}
+          </select>
+          <textarea value={applyForm.bio} onChange={e => setApplyForm(p => ({ ...p, bio: e.target.value }))} placeholder="About you — what you went through and how you can help" rows={3} className="w-full px-4 py-3 border border-gray-200 rounded-xl bg-gray-50 text-sm focus:outline-none focus:border-red-400 resize-none" />
+          <textarea value={applyForm.experience} onChange={e => setApplyForm(p => ({ ...p, experience: e.target.value }))} placeholder="Your custody experience — timeline, outcome, lessons learned" rows={3} className="w-full px-4 py-3 border border-gray-200 rounded-xl bg-gray-50 text-sm focus:outline-none focus:border-red-400 resize-none" />
+          <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 text-[10px] text-amber-800"><strong>Note:</strong> Mentors share personal experience, not legal advice.</div>
+          <button onClick={submitApp} disabled={!applyForm.bio.trim() || !applyForm.experience.trim() || !applyForm.jurisdiction_id || applying}
+            className="w-full py-3 bg-red-600 hover:bg-red-700 text-white rounded-xl text-sm font-medium disabled:opacity-40">{applying ? 'Submitting...' : 'Submit'}</button>
+        </div>
+      )}
+
+      {/* My Profile */}
+      {subTab === 'apply' && myProfile && (
+        <div className="p-4">
+          <div className="bg-white border border-gray-200 rounded-xl p-4">
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="font-bold text-gray-900 text-sm">Your Mentor Profile</h3>
+              <button onClick={async () => { await supabase.from('mentors').update({ is_available: !myProfile.is_available }).eq('id', myProfile.id); setMyProfile(p => ({ ...p, is_available: !p.is_available })); }}
+                className={`text-xs font-medium flex items-center gap-1.5 ${myProfile.is_available ? 'text-green-600' : 'text-gray-400'}`}>
+                <span className={`w-2 h-2 rounded-full ${myProfile.is_available ? 'bg-green-500' : 'bg-gray-300'}`} />{myProfile.is_available ? 'Available' : 'Unavailable'}
+              </button>
+            </div>
+            <div className="grid grid-cols-3 gap-2 mb-3">
+              <div className="bg-gray-50 rounded-lg p-2 text-center"><div className="font-bold text-gray-900">⭐{myProfile.rating?.toFixed(1)}</div><div className="text-[10px] text-gray-500">Rating</div></div>
+              <div className="bg-gray-50 rounded-lg p-2 text-center"><div className="font-bold text-gray-900">{myProfile.review_count || 0}</div><div className="text-[10px] text-gray-500">Reviews</div></div>
+              <div className="bg-gray-50 rounded-lg p-2 text-center"><div className="font-bold text-gray-900">{myProfile.total_sessions || 0}</div><div className="text-[10px] text-gray-500">Sessions</div></div>
+            </div>
+            <p className="text-xs text-gray-600">{myProfile.bio}</p>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
