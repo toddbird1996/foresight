@@ -238,7 +238,7 @@ function SocialProofBar() {
   const stats = [
     { value: '13', label: 'Provinces Covered' },
     { value: '310+', label: 'Filing Steps' },
-    { value: '172', label: 'Support Programs' },
+    { value: '213', label: 'Support Programs' },
     { value: '40+', label: 'Court Forms' }
   ];
 
