@@ -261,23 +261,26 @@ export default function Dashboard() {
           </div>
         </div>
 
-          <Link
-            href="/profile"
-            className="bg-white border border-gray-200 rounded-xl p-4 hover:border-red-500 hover:shadow-md transition-all"
-          >
-            <div className="text-2xl mb-2">👤</div>
-            <h3 className="font-semibold text-gray-900">Profile</h3>
-            <p className="text-sm text-gray-500">Account settings</p>
-          </Link>
-
-          <button
-            onClick={handleLogout}
-            className="bg-white border border-gray-200 rounded-xl p-4 hover:border-red-500 hover:shadow-md transition-all text-left"
-          >
-            <div className="text-2xl mb-2">🚪</div>
-            <h3 className="font-semibold text-gray-900">Logout</h3>
-            <p className="text-sm text-gray-500">Sign out of account</p>
-          </button>
+        {/* ACCOUNT */}
+        <div className="mb-6">
+          <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3 px-1">Account</h3>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            <Link href="/profile" className="bg-white border border-gray-200 rounded-xl p-4 hover:border-red-500 hover:shadow-md transition-all">
+              <div className="text-2xl mb-2">👤</div>
+              <h3 className="font-semibold text-gray-900 text-sm">Profile</h3>
+              <p className="text-xs text-gray-500">Account settings</p>
+            </Link>
+            <Link href="/pricing" className="bg-white border border-gray-200 rounded-xl p-4 hover:border-red-500 hover:shadow-md transition-all">
+              <div className="text-2xl mb-2">⭐</div>
+              <h3 className="font-semibold text-gray-900 text-sm">Pricing</h3>
+              <p className="text-xs text-gray-500">Upgrade your plan</p>
+            </Link>
+            <button onClick={handleLogout} className="bg-white border border-gray-200 rounded-xl p-4 hover:border-red-500 hover:shadow-md transition-all text-left">
+              <div className="text-2xl mb-2">🚪</div>
+              <h3 className="font-semibold text-gray-900 text-sm">Logout</h3>
+              <p className="text-xs text-gray-500">Sign out</p>
+            </button>
+          </div>
         </div>
 
         {/* My Documents Section */}
