@@ -131,6 +131,7 @@ export default function Header() {
                 { href: '/judge-insight', label: 'Court Tips', icon: '🏛️' },
                 { href: '/calculator', label: 'Calculator', icon: '🧮' },
                 { href: '/programs', label: 'Programs', icon: '🛡️' },
+                { href: '/mentors', label: 'Mentors', icon: '🧭' },
               ].map(link => (
                 <Link key={link.href} href={link.href} onClick={() => setMenuOpen(false)}
                   className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-gray-700 hover:bg-gray-50">

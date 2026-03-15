@@ -281,6 +281,11 @@ export default function Dashboard() {
               <h3 className="font-semibold text-gray-900 text-sm">Community</h3>
               <p className="text-xs text-gray-500">Connect with others</p>
             </Link>
+            <Link href="/mentors" className="bg-white border border-gray-200 rounded-xl p-4 hover:border-red-500 hover:shadow-md transition-all">
+              <div className="text-2xl mb-2">🧭</div>
+              <h3 className="font-semibold text-gray-900 text-sm">Mentors</h3>
+              <p className="text-xs text-gray-500">Get guidance from peers</p>
+            </Link>
             <Link href="/emergency" className="bg-red-50 border-2 border-red-300 rounded-xl p-4 hover:border-red-500 hover:shadow-md transition-all">
               <div className="text-2xl mb-2">🚨</div>
               <h3 className="font-semibold text-red-700 text-sm">Emergency</h3>
