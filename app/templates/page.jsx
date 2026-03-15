@@ -1,6 +1,8 @@
 'use client';
 import React, { useState } from 'react';
 import Link from 'next/link';
+import Header from '../../components/Header';
+import PageTitle from '../../components/PageTitle';
 
 const TEMPLATES = [
   {
@@ -62,8 +64,6 @@ const TEMPLATES = [
       ]},
       { id: 'concerns', title: 'Concerns About the Other Party', fields: [
         { id: 'concerns', label: 'List specific concerns (with dates and evidence)', type: 'textarea', placeholder: 'e.g., On March 1, 2025, the respondent failed to pick up the children from school (text message evidence attached as Exhibit A).' },
-import Header from '../../components/Header';
-import PageTitle from '../../components/PageTitle';
         { id: 'impact', label: 'How do these concerns affect the children?', type: 'textarea', placeholder: 'e.g., Emma has expressed anxiety about overnight visits. Her school counselor has noted changes in behavior (report attached as Exhibit B).' },
       ]},
       { id: 'orders', title: 'Orders Requested', fields: [

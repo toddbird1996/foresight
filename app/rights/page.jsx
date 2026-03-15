@@ -3,6 +3,9 @@ import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { supabase } from '../../lib/supabaseClient';
 import { useRouter } from 'next/navigation';
+import Header from '../../components/Header';
+import PageTitle from '../../components/PageTitle';
+import Footer from '../../components/Footer';
 
 // ============================================
 // CPS / CHILD WELFARE LEGISLATION DATABASE
@@ -1284,9 +1287,6 @@ const LEGISLATION_DB = {
           { right: 'Notice is required before relocating with a child', section: 'Provincial Family Law', detail: 'A parent planning to move with a child must give written notice to the other parent. The required notice period varies by province.' },
           { right: 'Both parents must consent to international travel', section: 'General', detail: 'Taking a child outside Canada typically requires consent of both parents or a court order. Carry a notarized consent letter.' },
           { right: 'Courts can restrict travel', section: 'Provincial Family Law', detail: 'Courts can order that a child\'s passport be held by the court or restrict a parent from removing a child from the province or country.' },
-import Header from '../../components/Header';
-import Footer from '../../components/Footer';
-import PageTitle from '../../components/PageTitle';
           { right: 'Relocation disputes focus on best interests', section: 'Provincial Family Law', detail: 'When parents disagree about relocation, the court considers the child\'s best interests, the reason for the move, and the impact on relationships.' },
         ]
       },

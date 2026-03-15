@@ -1,6 +1,9 @@
 'use client';
 import React, { useState } from 'react';
 import Link from 'next/link';
+import Header from '../../components/Header';
+import PageTitle from '../../components/PageTitle';
+import Footer from '../../components/Footer';
 
 const EMERGENCY_CONTACTS = [
   { name: 'Emergency Services', number: '911', desc: 'Police, Fire, Ambulance — immediate danger', icon: '🚨', color: 'bg-red-600' },
@@ -413,9 +416,6 @@ export default function EmergencyPage() {
           <div className="space-y-3 text-sm text-gray-600">
             <p><strong>Without-notice orders are temporary.</strong> The court will schedule a with-notice hearing where the other party can respond. You must attend this hearing or the order may be cancelled.</p>
             <p><strong>You must show urgency.</strong> Courts only grant without-notice orders when there is an immediate risk of harm to the child, removal of the child from the jurisdiction, or destruction of evidence.</p>
-import Header from '../../components/Header';
-import Footer from '../../components/Footer';
-import PageTitle from '../../components/PageTitle';
             <p><strong>Document everything.</strong> Take photos, save text messages, keep police report numbers, and get medical records. The more evidence you have, the stronger your emergency application.</p>
             <p><strong>Get legal help if possible.</strong> Many Legal Aid offices prioritize emergency family matters. Call them before filing if you can.</p>
           </div>

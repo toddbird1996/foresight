@@ -1,6 +1,9 @@
 'use client';
 import React, { useState } from 'react';
 import Link from 'next/link';
+import Header from '../../components/Header';
+import PageTitle from '../../components/PageTitle';
+import Footer from '../../components/Footer';
 
 const SECTIONS = [
   {
@@ -304,9 +307,6 @@ export default function JudgeInsightPage() {
               <div className="font-semibold text-red-800 text-sm">The #1 Rule</div>
               <p className="text-sm text-red-700 mt-1">
                 You are being judged from the moment you walk into the courthouse — not just when you speak. 
-import Header from '../../components/Header';
-import Footer from '../../components/Footer';
-import PageTitle from '../../components/PageTitle';
                 The judge, court staff, and even the security guard are forming impressions. 
                 Be respectful to everyone, at all times.
               </p>

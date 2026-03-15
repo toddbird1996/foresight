@@ -1,6 +1,9 @@
 'use client';
 import React, { useState } from 'react';
 import Link from 'next/link';
+import Header from '../../components/Header';
+import PageTitle from '../../components/PageTitle';
+import Footer from '../../components/Footer';
 
 // ============================================
 // PROGRAM CATEGORIES
@@ -113,9 +116,6 @@ const PROGRAMS = {
       { category: 'legal_aid', name: 'Legal Aid BC', description: 'Free legal representation, duty counsel, and family law advice.', url: 'https://legalaid.bc.ca/', phone: '1-866-577-2525' },
       { category: 'legal_aid', name: 'Family Law in BC', description: 'Comprehensive family law information including a free online tool to fill out court forms.', url: 'https://family.legalaid.bc.ca/', phone: '1-855-875-8867' },
       { category: 'legal_aid', name: 'Clicklaw', description: 'Free BC-focused legal information from trusted agencies and organizations.', url: 'https://www.clicklaw.bc.ca/', phone: '' },
-import Header from '../../components/Header';
-import Footer from '../../components/Footer';
-import PageTitle from '../../components/PageTitle';
       { category: 'mediation', name: 'BC Family Justice Counsellors', description: 'Free dispute resolution services at Family Justice Centres across BC.', url: 'https://www2.gov.bc.ca/gov/content/life-events/divorce/family-justice/who-can-help/family-justice-counsellors', phone: '' },
       { category: 'parenting', name: 'Parenting After Separation Program', description: 'Free online course for parents going through separation.', url: 'https://www2.gov.bc.ca/gov/content/life-events/divorce/family-justice/parenting-after-separation', phone: '' },
       { category: 'funding', name: 'BC Employment and Assistance', description: 'Income and disability assistance for individuals and families in need.', url: 'https://www2.gov.bc.ca/gov/content/family-social-supports/income-assistance', phone: '' },
