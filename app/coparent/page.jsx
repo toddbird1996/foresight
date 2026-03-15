@@ -262,7 +262,7 @@ function MessageThread({ conversation, user, onBack }) {
   const isMe = (id) => id === user.id;
 
   return (
-    <div className="flex flex-col" style={{ height: 'calc(100vh - 160px)' }}>
+    <div className="flex flex-col" style={{ height: 'calc(100vh - 160px - 4rem)' }}>
       {/* Thread Header */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">

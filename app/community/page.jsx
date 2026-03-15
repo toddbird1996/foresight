@@ -49,7 +49,7 @@ export default function CommunityPage() {
   );
 
   return (
-    <div className="h-screen flex bg-gray-50 overflow-hidden">
+    <div className="h-[calc(100vh-3.5rem)] sm:h-[calc(100vh-3.5rem)] flex bg-gray-50 overflow-hidden">
 
       {/* Server Icon Rail (far left) */}
       <div className="w-[72px] bg-white border-r border-gray-200 flex flex-col items-center py-3 gap-2 flex-shrink-0 hidden sm:flex">
