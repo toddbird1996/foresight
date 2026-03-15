@@ -86,6 +86,9 @@ export default function Header() {
         <div className="md:hidden border-t border-gray-100 bg-white px-4 py-3 space-y-1">
           {[
             { href: '/court-forms', label: '📄 Court Forms' },
+            { href: '/calendar-custody', label: '📅 Custody Calendar' },
+            { href: '/expenses', label: '💰 Expenses' },
+            { href: '/children', label: '👧 Children\'s Info' },
             { href: '/coparent', label: '🤝 Co-Parent Chat' },
             { href: '/programs', label: '🛡️ Programs' },
             { href: '/rights', label: '⚖️ Know Your Rights' },

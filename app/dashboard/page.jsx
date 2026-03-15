@@ -202,6 +202,21 @@ export default function Dashboard() {
               <h3 className="font-semibold text-gray-900 text-sm">Current Case</h3>
               <p className="text-xs text-gray-500">Documents, AI & progress</p>
             </Link>
+            <Link href="/calendar-custody" className="bg-white border border-gray-200 rounded-xl p-4 hover:border-red-500 hover:shadow-md transition-all">
+              <div className="text-2xl mb-2">📅</div>
+              <h3 className="font-semibold text-gray-900 text-sm">Custody Calendar</h3>
+              <p className="text-xs text-gray-500">Parenting schedule</p>
+            </Link>
+            <Link href="/expenses" className="bg-white border border-gray-200 rounded-xl p-4 hover:border-red-500 hover:shadow-md transition-all">
+              <div className="text-2xl mb-2">💰</div>
+              <h3 className="font-semibold text-gray-900 text-sm">Expenses</h3>
+              <p className="text-xs text-gray-500">Track & split costs</p>
+            </Link>
+            <Link href="/children" className="bg-white border border-gray-200 rounded-xl p-4 hover:border-red-500 hover:shadow-md transition-all">
+              <div className="text-2xl mb-2">👧</div>
+              <h3 className="font-semibold text-gray-900 text-sm">Children's Info</h3>
+              <p className="text-xs text-gray-500">Medical, school, contacts</p>
+            </Link>
             <Link href="/coparent" className="bg-white border border-gray-200 rounded-xl p-4 hover:border-red-500 hover:shadow-md transition-all">
               <div className="text-2xl mb-2">🤝</div>
               <h3 className="font-semibold text-gray-900 text-sm">Co-Parent Chat</h3>
