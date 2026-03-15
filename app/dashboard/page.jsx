@@ -7,6 +7,7 @@ import Link from "next/link";
 import OnboardingFlow from "../components/Onboarding";
 import Header from "../components/Header";
 import Footer from '../components/Footer';
+import CaseGuide from '../components/CaseGuide';
 
 export default function Dashboard() {
   const router = useRouter();
@@ -27,7 +28,7 @@ export default function Dashboard() {
 
         const { data: profile } = await supabase
           .from("users")
-          .select("onboarding_completed, action_plan, full_name, case_status")
+          .select("onboarding_completed, action_plan, full_name, case_status, case_guide_step, guide_dismissed")
           .eq("id", user.id)
           .single();
 
@@ -74,6 +75,9 @@ export default function Dashboard() {
       <main className="max-w-6xl mx-auto px-4 py-6">
         {/* AI Question Bar */}
         <QuestionBar />
+
+        {/* Case Guide - Step by Step Walkthrough */}
+        {user && <CaseGuide userId={user.id} currentStep={userProfile?.case_guide_step || 0} dismissed={userProfile?.guide_dismissed || false} />}
 
         {/* Welcome */}
         <div className="flex items-center justify-between mb-6">
