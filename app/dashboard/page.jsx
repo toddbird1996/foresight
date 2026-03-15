@@ -93,6 +93,24 @@ export default function Dashboard() {
           </div>
         )}
 
+        {/* QUICK LINKS */}
+        <div className="grid grid-cols-2 gap-3 mb-6">
+          <Link href="/progress" className="bg-white border border-gray-200 rounded-xl p-4 hover:border-red-500 hover:shadow-md transition-all flex items-center gap-3">
+            <div className="w-10 h-10 bg-green-50 rounded-xl flex items-center justify-center text-xl">📊</div>
+            <div>
+              <h3 className="font-semibold text-gray-900 text-sm">My Progress</h3>
+              <p className="text-xs text-gray-500">Track your journey</p>
+            </div>
+          </Link>
+          <Link href="/refer" className="bg-white border border-gray-200 rounded-xl p-4 hover:border-red-500 hover:shadow-md transition-all flex items-center gap-3">
+            <div className="w-10 h-10 bg-red-50 rounded-xl flex items-center justify-center text-xl">🤝</div>
+            <div>
+              <h3 className="font-semibold text-gray-900 text-sm">Invite a Parent</h3>
+              <p className="text-xs text-gray-500">Help someone else</p>
+            </div>
+          </Link>
+        </div>
+
         {/* YOUR CASE */}
         <div className="mb-6">
           <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3 px-1">Your Case</h3>

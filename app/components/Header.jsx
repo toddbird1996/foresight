@@ -76,6 +76,8 @@ export default function Header() {
             { href: '/calculator', label: '🧮 Support Calculator' },
             { href: '/templates', label: '📝 Doc Templates' },
             { href: '/deadlines', label: '⏰ Deadlines' },
+            { href: '/progress', label: '📊 My Progress' },
+            { href: '/refer', label: '🤝 Invite a Parent' },
             { href: '/profile', label: '👤 Profile' },
             { href: '/pricing', label: '⭐ Pricing' },
           ].map(link => (
