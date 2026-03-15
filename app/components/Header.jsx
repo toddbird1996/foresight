@@ -81,36 +81,85 @@ export default function Header() {
         </div>
       </div>
 
-      {/* Mobile dropdown - only secondary pages */}
+      {/* Mobile dropdown - directory-style menu */}
       {menuOpen && (
-        <div className="md:hidden border-t border-gray-100 bg-white px-4 py-3 space-y-1">
-          {[
-            { href: '/court-forms', label: '📄 Court Forms' },
-            { href: '/calendar-custody', label: '📅 Custody Calendar' },
-            { href: '/expenses', label: '💰 Expenses' },
-            { href: '/children', label: '👧 Children\'s Info' },
-            { href: '/coparent', label: '🤝 Co-Parent Chat' },
-            { href: '/programs', label: '🛡️ Programs' },
-            { href: '/rights', label: '⚖️ Know Your Rights' },
-            { href: '/judge-insight', label: '🏛️ Judge Insight' },
-            { href: '/calculator', label: '🧮 Support Calculator' },
-            { href: '/templates', label: '📝 Doc Templates' },
-            { href: '/deadlines', label: '⏰ Deadlines' },
-            { href: '/progress', label: '📊 My Progress' },
-            { href: '/refer', label: '🤝 Invite a Parent' },
-            { href: '/profile', label: '👤 Profile' },
-            { href: '/settings', label: '⚙️ Settings' },
-            { href: '/pricing', label: '⭐ Pricing' },
-          ].map(link => (
-            <Link key={link.href} href={link.href} onClick={() => setMenuOpen(false)}
-              className="block px-3 py-2.5 rounded-lg text-sm text-gray-700 hover:bg-gray-50">
-              {link.label}
+        <div className="md:hidden border-t border-gray-100 bg-white px-4 py-3">
+          {/* Quick Nav */}
+          <div className="grid grid-cols-4 gap-2 mb-3 pb-3 border-b border-gray-100">
+            <Link href="/dashboard" onClick={() => setMenuOpen(false)} className="flex flex-col items-center gap-1 py-2 rounded-xl hover:bg-gray-50">
+              <span className="text-lg">🏠</span><span className="text-[10px] text-gray-600">Home</span>
             </Link>
-          ))}
-          <button onClick={() => { handleLogout(); setMenuOpen(false); }}
-            className="w-full text-left px-3 py-2.5 rounded-lg text-sm text-red-600 hover:bg-red-50">
-            🚪 Logout
-          </button>
+            <Link href="/cases" onClick={() => setMenuOpen(false)} className="flex flex-col items-center gap-1 py-2 rounded-xl hover:bg-gray-50">
+              <span className="text-lg">📁</span><span className="text-[10px] text-gray-600">My Case</span>
+            </Link>
+            <Link href="/profile" onClick={() => setMenuOpen(false)} className="flex flex-col items-center gap-1 py-2 rounded-xl hover:bg-gray-50">
+              <span className="text-lg">👤</span><span className="text-[10px] text-gray-600">Profile</span>
+            </Link>
+            <Link href="/settings" onClick={() => setMenuOpen(false)} className="flex flex-col items-center gap-1 py-2 rounded-xl hover:bg-gray-50">
+              <span className="text-lg">⚙️</span><span className="text-[10px] text-gray-600">Settings</span>
+            </Link>
+          </div>
+
+          {/* Case Tools */}
+          <div className="mb-3">
+            <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider px-1 mb-1">Case Tools</div>
+            <div className="grid grid-cols-2 gap-1">
+              {[
+                { href: '/calendar-custody', label: 'Custody Calendar', icon: '📅' },
+                { href: '/expenses', label: 'Expenses', icon: '💰' },
+                { href: '/children', label: 'Children\'s Info', icon: '👧' },
+                { href: '/coparent', label: 'Co-Parent Chat', icon: '🤝' },
+                { href: '/deadlines', label: 'Deadlines', icon: '⏰' },
+                { href: '/templates', label: 'Templates', icon: '📝' },
+              ].map(link => (
+                <Link key={link.href} href={link.href} onClick={() => setMenuOpen(false)}
+                  className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-gray-700 hover:bg-gray-50">
+                  <span>{link.icon}</span>{link.label}
+                </Link>
+              ))}
+            </div>
+          </div>
+
+          {/* Learn */}
+          <div className="mb-3">
+            <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider px-1 mb-1">Learn & Prepare</div>
+            <div className="grid grid-cols-2 gap-1">
+              {[
+                { href: '/filing', label: 'Filing Guide', icon: '📋' },
+                { href: '/court-forms', label: 'Court Forms', icon: '📄' },
+                { href: '/rights', label: 'Your Rights', icon: '⚖️' },
+                { href: '/judge-insight', label: 'Court Tips', icon: '🏛️' },
+                { href: '/calculator', label: 'Calculator', icon: '🧮' },
+                { href: '/programs', label: 'Programs', icon: '🛡️' },
+              ].map(link => (
+                <Link key={link.href} href={link.href} onClick={() => setMenuOpen(false)}
+                  className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-gray-700 hover:bg-gray-50">
+                  <span>{link.icon}</span>{link.label}
+                </Link>
+              ))}
+            </div>
+          </div>
+
+          {/* Account & Legal */}
+          <div className="border-t border-gray-100 pt-2 space-y-0.5">
+            {[
+              { href: '/progress', label: 'My Progress', icon: '📊' },
+              { href: '/refer', label: 'Invite a Parent', icon: '🤝' },
+              { href: '/pricing', label: 'Pricing & Plans', icon: '⭐' },
+              { href: '/disclaimer', label: 'Legal Disclaimer', icon: '⚠️' },
+              { href: '/privacy', label: 'Privacy Policy', icon: '🔒' },
+              { href: '/terms', label: 'Terms of Service', icon: '📃' },
+            ].map(link => (
+              <Link key={link.href} href={link.href} onClick={() => setMenuOpen(false)}
+                className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-gray-500 hover:bg-gray-50 hover:text-gray-700">
+                <span>{link.icon}</span>{link.label}
+              </Link>
+            ))}
+            <button onClick={() => { handleLogout(); setMenuOpen(false); }}
+              className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-red-600 hover:bg-red-50">
+              <span>🚪</span>Logout
+            </button>
+          </div>
         </div>
       )}
     </header>
