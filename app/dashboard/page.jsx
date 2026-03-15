@@ -312,6 +312,7 @@ export default function Dashboard() {
         </div>
 
       </main>
+      <Footer />
     </div>
   );
       }
@@ -441,7 +442,6 @@ function QuestionBar() {
               </div>
             </div>
           )}
-        <Footer />
       </div>
       )}
     </div>
