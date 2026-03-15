@@ -77,7 +77,7 @@ export default function Dashboard() {
         <QuestionBar />
 
         {/* Case Guide - Step by Step Walkthrough */}
-        {user && <CaseGuide userId={user.id} currentStep={userProfile?.case_guide_step || 0} dismissed={userProfile?.guide_dismissed || false} />}
+        {user && <CaseGuide userId={user.id} currentStep={userProfile?.case_guide_step || 0} dismissed={userProfile?.guide_dismissed || false} caseStatus={userProfile?.case_status} />}
 
         {/* Welcome */}
         <div className="flex items-center justify-between mb-6">
