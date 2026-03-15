@@ -284,6 +284,8 @@ function PostsView({ channel, user, userProfile }) {
   const [newContent, setNewContent] = useState('');
   const [newType, setNewType] = useState('discussion');
   const [posting, setPosting] = useState(false);
+  const [expandedPost, setExpandedPost] = useState(null);
+  const [commentText, setCommentText] = useState('');
 
   useEffect(() => { fetchPosts(); }, [channel.id]);
 
@@ -301,46 +303,81 @@ function PostsView({ channel, user, userProfile }) {
       content: newContent.trim(), post_type: newType,
     });
     if (!error) {
-      setNewTitle(''); setNewContent(''); setShowNew(false);
+      setNewTitle(''); setNewContent(''); setShowNew(false); setNewType('discussion');
       await fetchPosts();
     }
     setPosting(false);
   };
 
+  const likePost = async (postId) => {
+    const post = posts.find(p => p.id === postId);
+    if (!post) return;
+    await supabase.from('community_posts').update({ like_count: (post.like_count || 0) + 1 }).eq('id', postId);
+    setPosts(prev => prev.map(p => p.id === postId ? { ...p, like_count: (p.like_count || 0) + 1 } : p));
+  };
+
   const typeConfig = {
-    discussion: { label: 'Discussion', color: 'bg-red-50 text-gray-800', icon: '💬' },
-    question: { label: 'Question', color: 'bg-red-600/20 text-red-600', icon: '❓' },
-    success_story: { label: 'Success', color: 'bg-green-50 text-green-700', icon: '🎉' },
-    resource: { label: 'Resource', color: 'bg-amber-50 text-amber-700', icon: '📎' },
+    discussion: { label: 'Discussion', color: 'bg-gray-100 text-gray-600', icon: '💬' },
+    question: { label: 'Question', color: 'bg-blue-50 text-blue-600', icon: '❓' },
+    success_story: { label: 'Success Story', color: 'bg-green-50 text-green-600', icon: '🎉' },
+    resource: { label: 'Resource', color: 'bg-amber-50 text-amber-600', icon: '📎' },
+  };
+
+  const timeAgo = (date) => {
+    const seconds = Math.floor((new Date() - new Date(date)) / 1000);
+    if (seconds < 60) return 'just now';
+    const minutes = Math.floor(seconds / 60);
+    if (minutes < 60) return `${minutes}m ago`;
+    const hours = Math.floor(minutes / 60);
+    if (hours < 24) return `${hours}h ago`;
+    const days = Math.floor(hours / 24);
+    if (days < 7) return `${days}d ago`;
+    return new Date(date).toLocaleDateString('en-CA', { month: 'short', day: 'numeric' });
   };
 
   return (
-    <div className="flex-1 overflow-y-auto px-4 py-4">
-      {/* New Post Button */}
-      <div className="mb-4">
+    <div className="flex-1 overflow-y-auto">
+      {/* Facebook-style Composer */}
+      <div className="bg-white border-b border-gray-200 p-4">
         {!showNew ? (
-          <button onClick={() => setShowNew(true)}
-            className="w-full bg-gray-100 hover:bg-red-50 rounded-lg px-4 py-3 text-left text-sm text-gray-400 transition-colors">
-            + Create a post in #{channel.name.toLowerCase().replace(/\s+/g, '-')}...
-          </button>
-        ) : (
-          <div className="bg-gray-50 border border-gray-200 rounded-xl p-4 space-y-3">
-            <div className="flex gap-2">
-              {Object.entries(typeConfig).map(([key, cfg]) => (
-                <button key={key} onClick={() => setNewType(key)}
-                  className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${newType === key ? cfg.color : 'bg-gray-100 text-gray-500'}`}>
-                  {cfg.icon} {cfg.label}
-                </button>
-              ))}
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 text-white font-semibold text-sm"
+              style={{ backgroundColor: stringToColor(userProfile?.full_name || user?.email) }}>
+              {(userProfile?.full_name || 'U')[0].toUpperCase()}
             </div>
-            <input type="text" value={newTitle} onChange={e => setNewTitle(e.target.value)} placeholder="Post title"
-              className="w-full bg-white border border-gray-200 rounded-lg px-4 py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:border-red-400" />
-            <textarea value={newContent} onChange={e => setNewContent(e.target.value)} placeholder="Share your thoughts, ask a question, or post a resource..."
-              rows={4} className="w-full bg-white border border-gray-200 rounded-lg px-4 py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:border-red-400 resize-none" />
-            <div className="flex justify-end gap-2">
-              <button onClick={() => setShowNew(false)} className="px-4 py-2 text-sm text-gray-500">Cancel</button>
+            <button onClick={() => setShowNew(true)}
+              className="flex-1 bg-gray-100 hover:bg-gray-200 rounded-full px-4 py-2.5 text-left text-sm text-gray-500 transition-colors">
+              What's on your mind?
+            </button>
+          </div>
+        ) : (
+          <div className="space-y-3">
+            <div className="flex items-center gap-3 mb-2">
+              <div className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 text-white font-semibold text-sm"
+                style={{ backgroundColor: stringToColor(userProfile?.full_name || user?.email) }}>
+                {(userProfile?.full_name || 'U')[0].toUpperCase()}
+              </div>
+              <div>
+                <div className="font-semibold text-sm text-gray-900">{userProfile?.full_name || 'You'}</div>
+                <div className="flex gap-1.5">
+                  {Object.entries(typeConfig).map(([key, cfg]) => (
+                    <button key={key} onClick={() => setNewType(key)}
+                      className={`px-2 py-0.5 rounded-full text-[10px] font-medium transition-colors ${newType === key ? cfg.color : 'bg-gray-50 text-gray-400'}`}>
+                      {cfg.icon} {cfg.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+            <input type="text" value={newTitle} onChange={e => setNewTitle(e.target.value)} placeholder="Title"
+              className="w-full px-0 py-1 text-lg font-semibold text-gray-900 placeholder-gray-300 focus:outline-none border-0" />
+            <textarea value={newContent} onChange={e => setNewContent(e.target.value)}
+              placeholder="Share your thoughts, ask a question, or share a resource..."
+              rows={4} className="w-full px-0 py-1 text-sm text-gray-700 placeholder-gray-400 focus:outline-none border-0 resize-none" />
+            <div className="flex items-center justify-between pt-2 border-t border-gray-100">
+              <button onClick={() => { setShowNew(false); setNewTitle(''); setNewContent(''); }} className="text-sm text-gray-500">Cancel</button>
               <button onClick={createPost} disabled={!newTitle.trim() || !newContent.trim() || posting}
-                className="px-5 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg text-sm font-medium disabled:opacity-40">
+                className="px-6 py-2 bg-red-600 hover:bg-red-700 text-white rounded-full text-sm font-semibold disabled:opacity-40">
                 {posting ? 'Posting...' : 'Post'}
               </button>
             </div>
@@ -348,38 +385,87 @@ function PostsView({ channel, user, userProfile }) {
         )}
       </div>
 
-      {/* Posts List */}
-      {posts.length === 0 ? (
-        <div className="text-center py-12">
-          <span className="text-3xl block mb-3">📝</span>
-          <p className="text-gray-500 text-sm">No posts in this channel yet. Be the first!</p>
-        </div>
-      ) : (
-        <div className="space-y-3">
-          {posts.map(post => {
-            const cfg = typeConfig[post.post_type] || typeConfig.discussion;
-            return (
-              <div key={post.id} className="bg-white border border-gray-200 rounded-xl p-4 hover:border-gray-300 transition-colors">
-                <div className="flex items-start gap-3">
-                  <div className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 text-white font-semibold text-sm"
-                    style={{ backgroundColor: stringToColor(post.users?.full_name || post.user_id) }}>
-                    {(post.users?.full_name || 'U')[0].toUpperCase()}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className="font-semibold text-sm text-gray-900">{post.users?.full_name || 'User'}</span>
-                      <span className={`px-2 py-0.5 rounded-full text-[10px] font-medium ${cfg.color}`}>{cfg.icon} {cfg.label}</span>
-                      <span className="text-[11px] text-gray-500">{new Date(post.created_at).toLocaleDateString('en-CA', { month: 'short', day: 'numeric' })}</span>
+      {/* Feed */}
+      <div className="bg-gray-100 min-h-full">
+        {posts.length === 0 ? (
+          <div className="text-center py-16 px-4">
+            <span className="text-4xl block mb-3">📝</span>
+            <p className="text-gray-500 text-sm">No posts yet. Be the first to share something!</p>
+          </div>
+        ) : (
+          <div className="space-y-3 p-3 sm:p-4">
+            {posts.map(post => {
+              const cfg = typeConfig[post.post_type] || typeConfig.discussion;
+              const authorName = post.users?.full_name || 'User';
+              const isExpanded = expandedPost === post.id;
+
+              return (
+                <div key={post.id} className="bg-white rounded-xl shadow-sm overflow-hidden">
+                  {/* Post Header */}
+                  <div className="flex items-center gap-3 px-4 pt-4 pb-2">
+                    <div className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 text-white font-semibold text-sm"
+                      style={{ backgroundColor: stringToColor(authorName) }}>
+                      {authorName[0].toUpperCase()}
                     </div>
-                    <h4 className="font-semibold text-gray-900 text-sm mb-1">{post.title}</h4>
-                    <p className="text-gray-600 text-sm leading-relaxed">{post.content}</p>
+                    <div className="flex-1">
+                      <div className="font-semibold text-sm text-gray-900">{authorName}</div>
+                      <div className="flex items-center gap-2 text-xs text-gray-500">
+                        <span>{timeAgo(post.created_at)}</span>
+                        <span>·</span>
+                        <span className={`px-1.5 py-0.5 rounded text-[10px] font-medium ${cfg.color}`}>{cfg.icon} {cfg.label}</span>
+                      </div>
+                    </div>
                   </div>
+
+                  {/* Post Content */}
+                  <div className="px-4 pb-3">
+                    <h4 className="font-semibold text-gray-900 text-[15px] mb-1">{post.title}</h4>
+                    <p className="text-gray-700 text-sm leading-relaxed whitespace-pre-wrap">{post.content}</p>
+                  </div>
+
+                  {/* Like Count */}
+                  {(post.like_count > 0 || post.comment_count > 0) && (
+                    <div className="px-4 pb-2 flex items-center justify-between text-xs text-gray-500">
+                      <div className="flex items-center gap-1">
+                        {post.like_count > 0 && <><span className="text-red-500">❤️</span> {post.like_count}</>}
+                      </div>
+                      {post.comment_count > 0 && <span>{post.comment_count} comment{post.comment_count !== 1 ? 's' : ''}</span>}
+                    </div>
+                  )}
+
+                  {/* Action Buttons */}
+                  <div className="border-t border-gray-100 flex">
+                    <button onClick={() => likePost(post.id)}
+                      className="flex-1 flex items-center justify-center gap-2 py-2.5 text-sm text-gray-500 hover:bg-gray-50 hover:text-red-500 transition-colors">
+                      <span>❤️</span> Like
+                    </button>
+                    <button onClick={() => setExpandedPost(isExpanded ? null : post.id)}
+                      className="flex-1 flex items-center justify-center gap-2 py-2.5 text-sm text-gray-500 hover:bg-gray-50 hover:text-blue-500 transition-colors">
+                      <span>💬</span> Comment
+                    </button>
+                  </div>
+
+                  {/* Comment Section (expandable) */}
+                  {isExpanded && (
+                    <div className="border-t border-gray-100 px-4 py-3 bg-gray-50">
+                      <div className="flex items-center gap-2">
+                        <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 text-white font-semibold text-xs"
+                          style={{ backgroundColor: stringToColor(userProfile?.full_name || user?.email) }}>
+                          {(userProfile?.full_name || 'U')[0].toUpperCase()}
+                        </div>
+                        <input type="text" value={commentText} onChange={e => setCommentText(e.target.value)}
+                          placeholder="Write a comment..."
+                          className="flex-1 bg-white border border-gray-200 rounded-full px-4 py-2 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:border-red-400" />
+                      </div>
+                      <p className="text-[10px] text-gray-400 mt-2 text-center">Comments coming soon</p>
+                    </div>
+                  )}
                 </div>
-              </div>
-            );
-          })}
-        </div>
-      )}
+              );
+            })}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
