@@ -202,9 +202,9 @@ export default function Dashboard() {
               <h3 className="font-semibold text-gray-900 text-sm">Current Case</h3>
               <p className="text-xs text-gray-500">Documents, AI & progress</p>
             </Link>
-            <Link href="/calendar-custody" className="bg-white border border-gray-200 rounded-xl p-4 hover:border-red-500 hover:shadow-md transition-all">
+            <Link href="/deadlines" className="bg-white border border-gray-200 rounded-xl p-4 hover:border-red-500 hover:shadow-md transition-all">
               <div className="text-2xl mb-2">📅</div>
-              <h3 className="font-semibold text-gray-900 text-sm">Custody Calendar</h3>
+              <h3 className="font-semibold text-gray-900 text-sm">Calendar Custody Calendar Deadlines</h3>
               <p className="text-xs text-gray-500">Parenting schedule</p>
             </Link>
             <Link href="/expenses" className="bg-white border border-gray-200 rounded-xl p-4 hover:border-red-500 hover:shadow-md transition-all">

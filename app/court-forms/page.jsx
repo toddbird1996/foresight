@@ -99,7 +99,20 @@ export default function CourtFormsPage() {
       <Header />
         <PageTitle title="Court Forms" subtitle="Download official forms by province" icon="📄" />
 
-      <main className="max-w-4xl mx-auto px-4 py-6">
+      <main className="max-w-4xl mx-auto px-4 py-6 space-y-4">
+        {/* Jurisdiction Selector */}
+        <select value={selectedJurisdiction?.id || ''} onChange={e => {
+          const j = jurisdictions.find(j => j.id === e.target.value);
+          if (j) setSelectedJurisdiction(j);
+        }} className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm text-gray-900 focus:outline-none focus:border-red-400">
+          <optgroup label="🇨🇦 Canada">
+            {canadianJurisdictions.map(j => <option key={j.id} value={j.id}>{j.name}</option>)}
+          </optgroup>
+          {usJurisdictions.length > 0 && <optgroup label="🇺🇸 United States">
+            {usJurisdictions.map(j => <option key={j.id} value={j.id}>{j.name}</option>)}
+          </optgroup>}
+        </select>
+
         {forms.length === 0 ? (
           <div className="bg-white border border-gray-200 rounded-xl p-6 text-center">
             <p className="text-gray-600 mb-4">

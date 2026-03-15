@@ -66,6 +66,10 @@ const SECTIONS = [
         title: 'Bring a notepad and pen to take notes during proceedings',
         detail: 'When the other party is speaking, write down things you want to address rather than reacting. This keeps you calm and ensures you don\'t forget important points when it\'s your turn.',
       },
+      {
+        title: 'Never make accusations you cannot prove — they will be dismissed and damage your credibility',
+        detail: 'If you accuse the other parent of something and they deny it, the judge will look for evidence. If you have none, the accusation gets dismissed on the spot and you lose credibility for future claims. Worse, you may appear vindictive or dishonest. Every allegation you make in court must be backed by documentation — text messages, photos, police reports, witness statements, or professional records. An unproven accusation wastes the court\'s time and yours.',
+      },
     ],
   },
   {

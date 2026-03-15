@@ -106,7 +106,7 @@ export default function Header() {
             <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider px-1 mb-1">Case Tools</div>
             <div className="grid grid-cols-2 gap-1">
               {[
-                { href: '/calendar-custody', label: 'Custody Calendar', icon: '📅' },
+                { href: '/deadlines', label: 'Calendar Custody Calendar Deadlines', icon: '📅' },
                 { href: '/expenses', label: 'Expenses', icon: '💰' },
                 { href: '/children', label: 'Children\'s Info', icon: '👧' },
                 { href: '/coparent', label: 'Co-Parent Chat', icon: '🤝' },

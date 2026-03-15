@@ -17,7 +17,7 @@ export default function CommunityPage() {
   const [loading, setLoading] = useState(true);
   const [channels, setChannels] = useState([]);
   const [activeChannel, setActiveChannel] = useState(null);
-  const [showSidebar, setShowSidebar] = useState(true);
+  const [showSidebar, setShowSidebar] = useState(false);
   const [view, setView] = useState('chat'); // chat or posts
 
   useEffect(() => {

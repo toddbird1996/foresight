@@ -12,6 +12,17 @@ const PRIORITIES = [
   { id: 'medium', label: 'Medium', color: 'bg-amber-500', dot: 'bg-amber-400' },
   { id: 'low', label: 'Low', color: 'bg-blue-500', dot: 'bg-blue-400' },
 ];
+const EVENT_TYPES = [
+  { id: 'deadline', label: 'Deadline', dot: 'bg-red-500' },
+  { id: 'parent_a', label: 'With Me', dot: 'bg-green-500' },
+  { id: 'parent_b', label: 'With Other Parent', dot: 'bg-blue-500' },
+  { id: 'exchange', label: 'Exchange', dot: 'bg-purple-500' },
+  { id: 'hearing', label: 'Court Hearing', dot: 'bg-red-600' },
+  { id: 'school', label: 'School', dot: 'bg-teal-500' },
+  { id: 'medical', label: 'Medical', dot: 'bg-cyan-500' },
+  { id: 'activity', label: 'Activity', dot: 'bg-pink-500' },
+  { id: 'holiday', label: 'Holiday', dot: 'bg-amber-500' },
+];
 
 export default function DeadlinesPage() {
   const router = useRouter();
@@ -21,7 +32,7 @@ export default function DeadlinesPage() {
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
   const [showAdd, setShowAdd] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [form, setForm] = useState({ title: '', description: '', due_date: '', due_time: '', priority: 'medium', reminder_days: [1, 3] });
+  const [form, setForm] = useState({ title: '', description: '', due_date: '', due_time: '', priority: 'medium', event_type: 'deadline', reminder_days: [1, 3] });
   const [editing, setEditing] = useState(null);
 
   useEffect(() => {
@@ -52,7 +63,7 @@ export default function DeadlinesPage() {
     const payload = {
       user_id: user.id, title: form.title.trim(), description: form.description.trim(),
       due_date: form.due_date, due_time: form.due_time || null, priority: form.priority,
-      reminder_days: form.reminder_days, completed: false,
+      event_type: form.event_type || 'deadline', reminder_days: form.reminder_days, completed: false,
     };
     if (editing) {
       await supabase.from('deadlines').update(payload).eq('id', editing);
@@ -74,13 +85,13 @@ export default function DeadlinesPage() {
   };
 
   const startEdit = (d) => {
-    setForm({ title: d.title, description: d.description || '', due_date: d.due_date, due_time: d.due_time || '', priority: d.priority || 'medium', reminder_days: d.reminder_days || [1, 3] });
+    setForm({ title: d.title, description: d.description || '', due_date: d.due_date, due_time: d.due_time || '', priority: d.priority || 'medium', event_type: d.event_type || 'deadline', reminder_days: d.reminder_days || [1, 3] });
     setEditing(d.id);
     setShowAdd(true);
   };
 
   const resetForm = () => {
-    setForm({ title: '', description: '', due_date: selectedDate, due_time: '', priority: 'medium', reminder_days: [1, 3] });
+    setForm({ title: '', description: '', due_date: selectedDate, due_time: '', priority: 'medium', event_type: 'deadline', reminder_days: [1, 3] });
     setEditing(null);
     setShowAdd(false);
   };
@@ -108,7 +119,7 @@ export default function DeadlinesPage() {
   return (
     <div className="min-h-screen bg-gray-50 pb-20">
       <Header />
-      <PageTitle title="Deadlines" subtitle="Track court dates and important deadlines" icon="⏰" />
+      <PageTitle title="Calendar & Deadlines" subtitle="Court dates, custody schedule, and reminders" icon="📅" />
 
       <main className="max-w-4xl mx-auto px-4 py-4">
         {/* Month Nav */}
@@ -141,8 +152,9 @@ export default function DeadlinesPage() {
                   {dayDeadlines.length > 0 && (
                     <div className="flex gap-0.5 px-1 flex-wrap">
                       {dayDeadlines.slice(0, 3).map(d => {
+                        const et = EVENT_TYPES.find(e => e.id === d.event_type);
                         const p = PRIORITIES.find(pr => pr.id === d.priority);
-                        return <div key={d.id} className={`w-1.5 h-1.5 rounded-full ${d.completed ? 'bg-green-400' : p?.dot || 'bg-gray-300'}`} />;
+                        return <div key={d.id} className={`w-1.5 h-1.5 rounded-full ${d.completed ? 'bg-green-400' : et?.dot || p?.dot || 'bg-gray-300'}`} />;
                       })}
                     </div>
                   )}
@@ -150,6 +162,16 @@ export default function DeadlinesPage() {
               );
             })}
           </div>
+        </div>
+
+        {/* Legend */}
+        <div className="flex flex-wrap gap-3 px-1 mb-4">
+          {EVENT_TYPES.map(et => (
+            <div key={et.id} className="flex items-center gap-1.5">
+              <span className={`w-2.5 h-2.5 rounded-full ${et.dot}`} />
+              <span className="text-[10px] text-gray-500">{et.label}</span>
+            </div>
+          ))}
         </div>
 
         {/* Selected Day View */}
@@ -244,10 +266,23 @@ export default function DeadlinesPage() {
         <div className="fixed inset-0 bg-black/40 z-50 flex items-end sm:items-center justify-center" onClick={resetForm}>
           <div className="bg-white rounded-t-3xl sm:rounded-2xl p-6 w-full sm:max-w-md max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
             <div className="w-10 h-1 bg-gray-200 rounded-full mx-auto mb-4 sm:hidden" />
-            <h3 className="font-bold text-gray-900 text-lg mb-4">{editing ? 'Edit Deadline' : 'Add Deadline'}</h3>
+            <h3 className="font-bold text-gray-900 text-lg mb-4">{editing ? 'Edit Event' : 'Add Event'}</h3>
             <div className="space-y-3">
+              {/* Event Type */}
+              <div>
+                <label className="block text-xs text-gray-500 mb-1.5">Type</label>
+                <div className="flex flex-wrap gap-1.5">
+                  {EVENT_TYPES.map(et => (
+                    <button key={et.id} onClick={() => setForm(prev => ({ ...prev, event_type: et.id }))}
+                      className={`px-2.5 py-1 rounded-full text-[10px] font-medium flex items-center gap-1 ${form.event_type === et.id ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-600'}`}>
+                      <span className={`w-2 h-2 rounded-full ${et.dot}`} />{et.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
               <input type="text" value={form.title} onChange={e => setForm(prev => ({ ...prev, title: e.target.value }))}
-                placeholder="Deadline title *" className="w-full px-4 py-3 border border-gray-200 rounded-xl bg-gray-50 text-sm focus:outline-none focus:border-red-400" />
+                placeholder="Event title *" className="w-full px-4 py-3 border border-gray-200 rounded-xl bg-gray-50 text-sm focus:outline-none focus:border-red-400" />
 
               <div className="grid grid-cols-2 gap-3">
                 <div>

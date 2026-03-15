@@ -1396,6 +1396,14 @@ Key sections of the ${jurisdictionData?.actName || 'Act'}:
         <PageTitle title="Know Your Rights" subtitle="Your legal protections by province" icon="⚖️" />
 
       <main className="max-w-4xl mx-auto px-4 py-6 space-y-6">
+        {/* Jurisdiction Selector */}
+        <select value={selectedJurisdiction} onChange={e => setSelectedJurisdiction(e.target.value)}
+          className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm text-gray-900 focus:outline-none focus:border-red-400">
+          {Object.entries(LEGISLATION_DB).map(([key, data]) => (
+            <option key={key} value={key}>{data.jurisdiction}</option>
+          ))}
+        </select>
+
         {jurisdictionData ? (
           <>
             {/* Legislation Info Card */}
