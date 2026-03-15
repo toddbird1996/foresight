@@ -1,8 +1,8 @@
 'use client';
 import React, { useState } from 'react';
 import Link from 'next/link';
-import Header from '../../components/Header';
-import PageTitle from '../../components/PageTitle';
+import Header from '../components/Header';
+import PageTitle from '../components/PageTitle';
 
 const TEMPLATES = [
   {

@@ -1,9 +1,9 @@
 'use client';
 import React, { useState } from 'react';
 import Link from 'next/link';
-import Header from '../../components/Header';
-import PageTitle from '../../components/PageTitle';
-import Footer from '../../components/Footer';
+import Header from '../components/Header';
+import PageTitle from '../components/PageTitle';
+import Footer from '../components/Footer';
 
 const EMERGENCY_CONTACTS = [
   { name: 'Emergency Services', number: '911', desc: 'Police, Fire, Ambulance — immediate danger', icon: '🚨', color: 'bg-red-600' },

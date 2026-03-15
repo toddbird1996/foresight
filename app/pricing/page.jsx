@@ -4,9 +4,9 @@ import { useEffect, useState } from "react";
 import { supabase } from "../../lib/supabaseClient";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import Header from '../../components/Header';
-import Footer from '../../components/Footer';
-import PageTitle from '../../components/PageTitle';
+import Header from '../components/Header';
+import Footer from '../components/Footer';
+import PageTitle from '../components/PageTitle';
 
 export default function PricingPage() {
   const router = useRouter();

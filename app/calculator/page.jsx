@@ -1,9 +1,9 @@
 'use client';
 import React, { useState } from 'react';
 import Link from 'next/link';
-import Header from '../../components/Header';
-import Footer from '../../components/Footer';
-import PageTitle from '../../components/PageTitle';
+import Header from '../components/Header';
+import Footer from '../components/Footer';
+import PageTitle from '../components/PageTitle';
 
 // Federal Child Support Guidelines - simplified monthly table amounts
 // Based on 2024 tables (annual income → monthly support per child)

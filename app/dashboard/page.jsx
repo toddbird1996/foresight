@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import OnboardingFlow from "../components/Onboarding";
 import Header from "../components/Header";
-import Footer from '../../components/Footer';
+import Footer from '../components/Footer';
 
 export default function Dashboard() {
   const router = useRouter();
