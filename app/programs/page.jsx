@@ -131,6 +131,18 @@ const PROGRAMS = {
       { category: 'therapy', name: 'Family Resource Networks', description: 'Community-based family support centres across Alberta providing parenting programs, counselling, and referrals.', url: 'https://www.alberta.ca/family-resource-networks', phone: '' },
       { category: 'children', name: 'Child and Youth Advocate', description: 'Independent advocate who represents the rights and interests of young people receiving child intervention services.', url: 'https://www.ocya.alberta.ca/', phone: '1-800-661-3446' },
       { category: 'domestic_violence', name: 'Family Violence Info Line', description: '24/7 multilingual support line for anyone affected by family violence in Alberta.', url: 'https://www.alberta.ca/family-violence-get-help', phone: '310-1818' },
+    
+      { category: 'indigenous', name: 'Alberta Native Friendship Centres Association', description: 'Network of 22 Friendship Centres providing cultural programming, family support, youth services, and community connections for urban Indigenous people.', url: 'https://anfca.com/', phone: '' },
+      { category: 'indigenous', name: 'Metis Nation of Alberta', description: 'Family services, housing, education, employment, and cultural programming for Metis families.', url: 'https://albertametis.com/', phone: '' },
+      { category: 'indigenous', name: 'Bent Arrow Traditional Healing Society', description: 'Culturally-based family support, foster care, and youth programs for Indigenous families in Edmonton.', url: 'https://bentarrow.ca/', phone: '780-481-3451' },
+      { category: 'youth', name: 'Boys and Girls Clubs of Calgary', description: 'After-school programs, mentoring, and support for youth and families.', url: 'https://www.bgcc.ab.ca/', phone: '' },
+      { category: 'youth', name: 'Youth Empowerment and Support Services (YESS)', description: 'Emergency shelter, housing, and wraparound support for at-risk youth ages 15-24 in Edmonton.', url: 'https://yess.org/', phone: '780-468-7070' },
+      { category: 'addiction', name: 'Alberta Health Services Addiction Helpline', description: '24/7 confidential addiction support and referral to treatment programs.', url: 'https://www.albertahealthservices.ca/info/page15443.aspx', phone: '1-866-332-2322' },
+      { category: 'addiction', name: 'AADAC (Alberta Alcohol and Drug Abuse Commission)', description: 'Free addiction services including outpatient counselling, residential treatment, and family support across Alberta.', url: 'https://www.albertahealthservices.ca/amh/amh.aspx', phone: '' },
+      { category: 'food', name: 'Calgary Food Bank', description: 'Emergency food hampers and community food programs for families in need.', url: 'https://www.calgaryfoodbank.com/', phone: '403-253-2059' },
+      { category: 'food', name: 'Edmonton Food Bank', description: 'Emergency food assistance and community kitchen programs.', url: 'https://edmontonsfoodbank.com/', phone: '780-425-2133' },
+      { category: 'employment', name: 'Alberta Supports', description: 'One-stop access to employment services, career planning, job search support, and financial assistance.', url: 'https://www.alberta.ca/alberta-supports', phone: '' },
+      { category: 'disability', name: 'Assured Income for the Severely Handicapped (AISH)', description: 'Monthly financial and health benefits for eligible Albertans with permanent disabilities.', url: 'https://www.alberta.ca/aish', phone: '' },
     ]
   },
   ontario: {
@@ -156,6 +168,18 @@ const PROGRAMS = {
       { category: 'children', name: 'Ontario Child Benefit', description: 'Up to $1,607 per child per year for eligible low-to-moderate income families.', url: 'https://www.ontario.ca/page/ontario-child-benefit', phone: '' },
       { category: 'domestic_violence', name: 'Victim Support Line', description: '24/7 referral and information line for victims of crime in Ontario.', url: 'https://www.ontario.ca/page/get-help-if-you-are-victim-crime', phone: '1-888-579-2888' },
       { category: 'children', name: 'Better Beginnings, Better Futures', description: 'Community-based program for families with young children in high-risk neighbourhoods — parenting support, child development, home visiting.', url: 'https://bbbf.ca/', phone: '' },
+    
+      { category: 'indigenous', name: 'Ontario Federation of Indigenous Friendship Centres', description: '29 Friendship Centres providing family support, cultural programs, youth services, and community connections.', url: 'https://ofifc.org/', phone: '' },
+      { category: 'indigenous', name: 'Indigenous Legal Services (Legal Aid Ontario)', description: 'Culturally appropriate legal services for Indigenous clients in family law matters.', url: 'https://www.legalaid.on.ca/services/aboriginal-legal-services/', phone: '' },
+      { category: 'indigenous', name: 'Anishnawbe Health Toronto', description: 'Traditional healing, mental health, and family support services for Indigenous people.', url: 'https://www.aht.ca/', phone: '416-360-0486' },
+      { category: 'youth', name: 'Covenant House Toronto', description: 'Emergency shelter and support for homeless and at-risk youth ages 16-24.', url: 'https://www.covenanthousetoronto.ca/', phone: '1-800-435-7308' },
+      { category: 'youth', name: 'Youth Without Shelter', description: 'Emergency housing and life skills for homeless youth in the GTA.', url: 'https://www.yws.on.ca/', phone: '416-748-0110' },
+      { category: 'addiction', name: 'ConnexOntario', description: 'Free information and referrals for addiction, mental health, and gambling services across Ontario.', url: 'https://www.connexontario.ca/', phone: '1-866-531-2600' },
+      { category: 'addiction', name: 'Centre for Addiction and Mental Health (CAMH)', description: 'Treatment, research, and support for addiction and mental health. Largest facility in Canada.', url: 'https://www.camh.ca/', phone: '416-535-8501' },
+      { category: 'food', name: 'Daily Bread Food Bank', description: 'Emergency food assistance for individuals and families in the Greater Toronto Area.', url: 'https://www.dailybread.ca/', phone: '416-203-0050' },
+      { category: 'food', name: 'Feed Ontario', description: 'Network of 1,200+ food banks and hunger relief programs across the province.', url: 'https://feedontario.ca/', phone: '' },
+      { category: 'employment', name: 'Employment Ontario', description: 'Free employment and training services including job search, skills training, and career counselling.', url: 'https://www.ontario.ca/page/employment-ontario', phone: '' },
+      { category: 'disability', name: 'Ontario Disability Support Program (ODSP)', description: 'Income support and benefits for people with disabilities and their families.', url: 'https://www.ontario.ca/page/ontario-disability-support-program', phone: '' },
     ]
   },
   bc: {

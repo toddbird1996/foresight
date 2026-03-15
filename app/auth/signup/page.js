@@ -22,7 +22,7 @@ export default function Signup() {
     if (password.length < 6) { setError('Password must be at least 6 characters'); setLoading(false); return; }
 
     const { data, error: signUpError } = await supabase.auth.signUp({
-      email, password, options: { data: { full_name: fullName } }
+      email, password, options: { data: { full_name: fullName }, emailRedirectTo: `${window.location.origin}/auth/login` }
     });
     if (signUpError) { setError(signUpError.message); setLoading(false); return; }
 

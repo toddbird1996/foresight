@@ -510,6 +510,10 @@ function PostsView({ channel, user, userProfile }) {
                         <span className={`px-1.5 py-0.5 rounded text-[10px] font-medium ${cfg.color}`}>{cfg.icon} {cfg.label}</span>
                       </div>
                     </div>
+                    {post.user_id === user.id && (
+                      <button onClick={async () => { if (confirm('Delete this post?')) { await supabase.from('community_posts').delete().eq('id', post.id); await fetchPosts(); } }}
+                        className="text-gray-300 hover:text-red-500 text-sm p-1">✕</button>
+                    )}
                   </div>
                   <div className="px-4 pb-3">
                     <h4 className="font-semibold text-gray-900 text-[15px] mb-1">{post.title}</h4>

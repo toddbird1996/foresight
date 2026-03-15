@@ -11,12 +11,31 @@ export const metadata = {
     default: 'Foresight - Navigate Custody Battles with Confidence',
     template: '%s | Foresight'
   },
-  description: 'Educational platform helping parents navigate custody court with step-by-step guides, AI assistance, and community support.',
+  description: 'Free self-help platform for Canadian parents navigating custody and family law. Filing guides, court forms, rights info, AI assistant, and community support across all 13 provinces.',
   manifest: '/manifest.json',
+  keywords: ['custody', 'family law', 'Canada', 'self-represented', 'court forms', 'parenting plan', 'child support', 'filing guide', 'Saskatchewan', 'Alberta', 'Ontario', 'BC'],
+  authors: [{ name: 'Foresight' }],
+  creator: 'Foresight',
+  openGraph: {
+    type: 'website',
+    locale: 'en_CA',
+    title: 'Foresight - Navigate Custody with Confidence',
+    description: 'Free tools to help parents understand and navigate custody proceedings. Filing guides, court forms, rights by province, AI assistant, and peer support.',
+    siteName: 'Foresight',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Foresight - Navigate Custody with Confidence',
+    description: 'Free tools to help parents understand and navigate custody proceedings across Canada.',
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',
     title: 'Foresight'
+  },
+  robots: {
+    index: true,
+    follow: true,
   },
 };
 
