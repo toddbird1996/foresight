@@ -120,7 +120,7 @@ export default function CommunityPage() {
       <div className="flex-1 flex flex-col min-w-0">
         {/* Channel Header */}
         <div className="h-12 px-4 flex items-center gap-3 border-b border-gray-200 bg-white flex-shrink-0 border-b border-gray-200">
-          <button onClick={() => setShowSidebar(!showSidebar)} className="sm:hidden text-gray-600 hover:text-white">
+          <button onClick={() => setShowSidebar(!showSidebar)} className="sm:hidden text-gray-600 hover:text-red-600">
             ☰
           </button>
           <span className="text-gray-500 text-xl">#</span>
@@ -132,11 +132,11 @@ export default function CommunityPage() {
           </div>
           <div className="flex items-center gap-1">
             <button onClick={() => setView('chat')}
-              className={`px-3 py-1 rounded text-xs font-medium ${view === 'chat' ? 'bg-red-50 text-white' : 'text-gray-500 hover:text-white'}`}>
+              className={`px-3 py-1 rounded text-xs font-medium ${view === 'chat' ? 'bg-red-600 text-white' : 'text-gray-500 hover:text-red-600 hover:bg-red-50'}`}>
               Chat
             </button>
             <button onClick={() => setView('posts')}
-              className={`px-3 py-1 rounded text-xs font-medium ${view === 'posts' ? 'bg-red-50 text-white' : 'text-gray-500 hover:text-white'}`}>
+              className={`px-3 py-1 rounded text-xs font-medium ${view === 'posts' ? 'bg-red-600 text-white' : 'text-gray-500 hover:text-red-600 hover:bg-red-50'}`}>
               Posts
             </button>
           </div>
@@ -157,6 +157,9 @@ function ChatView({ channel, user, userProfile }) {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const [sending, setSending] = useState(false);
+  const [showMentions, setShowMentions] = useState(false);
+  const [mentionFilter, setMentionFilter] = useState('');
+  const [chatUsers, setChatUsers] = useState([]);
   const endRef = useRef(null);
 
   useEffect(() => { fetchMessages(); }, [channel.id]);
@@ -170,9 +173,35 @@ function ChatView({ channel, user, userProfile }) {
     return () => { supabase.removeChannel(sub); };
   }, [channel.id]);
 
+  // Build list of users who have posted in this channel
+  useEffect(() => {
+    const names = [...new Set(messages.map(m => m.user_name).filter(Boolean))];
+    setChatUsers(names);
+  }, [messages]);
+
   const fetchMessages = async () => {
     const { data } = await supabase.from('chat_messages').select('*').eq('channel_id', channel.id).order('created_at', { ascending: true }).limit(100);
     setMessages(data || []);
+  };
+
+  const handleInputChange = (e) => {
+    const val = e.target.value;
+    setInput(val);
+    // Check if user is typing @mention
+    const lastAt = val.lastIndexOf('@');
+    if (lastAt !== -1 && lastAt === val.length - 1 || (lastAt !== -1 && !val.substring(lastAt).includes(' '))) {
+      const query = val.substring(lastAt + 1).toLowerCase();
+      setMentionFilter(query);
+      setShowMentions(true);
+    } else {
+      setShowMentions(false);
+    }
+  };
+
+  const insertMention = (name) => {
+    const lastAt = input.lastIndexOf('@');
+    setInput(input.substring(0, lastAt) + `@${name} `);
+    setShowMentions(false);
   };
 
   const sendMessage = async () => {
@@ -247,7 +276,11 @@ function ChatView({ channel, user, userProfile }) {
                         </span>
                       </div>
                     )}
-                    <p className="text-gray-800 text-sm leading-relaxed break-words">{msg.content}</p>
+                    <p className="text-gray-800 text-sm leading-relaxed break-words">
+                      {msg.content.split(/(@\w[\w\s.]*?)(?=\s|$)/g).map((part, i) =>
+                        part.startsWith('@') ? <span key={i} className="bg-blue-100 text-blue-700 rounded px-1 font-medium">{part}</span> : part
+                      )}
+                    </p>
                   </div>
                 </div>
               );
@@ -258,14 +291,28 @@ function ChatView({ channel, user, userProfile }) {
       </div>
 
       {/* Input */}
-      <div className="px-4 pb-6 pt-2 flex-shrink-0">
+      <div className="px-4 pb-6 pt-2 flex-shrink-0 relative">
+        {/* @Mention dropdown */}
+        {showMentions && chatUsers.filter(n => n.toLowerCase().includes(mentionFilter)).length > 0 && (
+          <div className="absolute bottom-16 left-4 right-4 bg-white border border-gray-200 rounded-xl shadow-lg overflow-hidden z-10">
+            {chatUsers.filter(n => n.toLowerCase().includes(mentionFilter)).slice(0, 5).map(name => (
+              <button key={name} onClick={() => insertMention(name)}
+                className="w-full text-left px-4 py-2.5 hover:bg-red-50 flex items-center gap-2 text-sm">
+                <div className="w-6 h-6 rounded-full flex items-center justify-center text-white text-[10px] font-bold" style={{ backgroundColor: stringToColor(name) }}>
+                  {name[0].toUpperCase()}
+                </div>
+                <span className="text-gray-900">{name}</span>
+              </button>
+            ))}
+          </div>
+        )}
         <div className="bg-white border border-gray-200 rounded-xl flex items-center">
-          <input type="text" value={input} onChange={e => setInput(e.target.value)}
-            onKeyDown={e => e.key === 'Enter' && sendMessage()}
-            placeholder={`Message #${channel.name.toLowerCase().replace(/\s+/g, '-')}`}
+          <input type="text" value={input} onChange={handleInputChange}
+            onKeyDown={e => { if (e.key === 'Enter' && !showMentions) sendMessage(); }}
+            placeholder={`Message #${channel.name.toLowerCase().replace(/\s+/g, '-')} — type @ to mention`}
             className="flex-1 bg-transparent px-4 py-3 text-sm text-gray-900 placeholder-gray-400 focus:outline-none" />
           <button onClick={sendMessage} disabled={!input.trim() || sending}
-            className="px-3 py-2 mr-1 text-gray-600 hover:text-white disabled:opacity-30 transition-colors">
+            className="px-3 py-2 mr-1 text-gray-600 hover:text-red-600 disabled:opacity-30 transition-colors">
             <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor"><path d="M2.94 3.19a1 1 0 0 1 1.15-.33l12 5a1 1 0 0 1 0 1.84l-12 5a1 1 0 0 1-1.37-1.15L4.08 10 2.72 6.45a1 1 0 0 1 .22-1.26Z"/></svg>
           </button>
         </div>
@@ -286,8 +333,10 @@ function PostsView({ channel, user, userProfile }) {
   const [posting, setPosting] = useState(false);
   const [expandedPost, setExpandedPost] = useState(null);
   const [commentText, setCommentText] = useState('');
+  const [comments, setComments] = useState({});
+  const [myLikes, setMyLikes] = useState(new Set());
 
-  useEffect(() => { fetchPosts(); }, [channel.id]);
+  useEffect(() => { fetchPosts(); fetchMyLikes(); }, [channel.id]);
 
   const fetchPosts = async () => {
     const { data } = await supabase.from('community_posts').select('*, users(full_name)')
@@ -295,25 +344,60 @@ function PostsView({ channel, user, userProfile }) {
     setPosts(data || []);
   };
 
+  const fetchMyLikes = async () => {
+    const { data } = await supabase.from('post_user_likes').select('post_id').eq('user_id', user.id);
+    setMyLikes(new Set((data || []).map(l => l.post_id)));
+  };
+
+  const fetchComments = async (postId) => {
+    const { data } = await supabase.from('post_comments').select('*, users(full_name)').eq('post_id', postId).order('created_at');
+    setComments(prev => ({ ...prev, [postId]: data || [] }));
+  };
+
   const createPost = async () => {
     if (!newTitle.trim() || !newContent.trim() || posting) return;
     setPosting(true);
-    const { error } = await supabase.from('community_posts').insert({
-      channel_id: channel.id, user_id: user.id, title: newTitle.trim(),
-      content: newContent.trim(), post_type: newType,
-    });
-    if (!error) {
-      setNewTitle(''); setNewContent(''); setShowNew(false); setNewType('discussion');
-      await fetchPosts();
-    }
+    await supabase.from('community_posts').insert({ channel_id: channel.id, user_id: user.id, title: newTitle.trim(), content: newContent.trim(), post_type: newType });
+    setNewTitle(''); setNewContent(''); setShowNew(false); setNewType('discussion');
+    await fetchPosts();
     setPosting(false);
   };
 
-  const likePost = async (postId) => {
-    const post = posts.find(p => p.id === postId);
-    if (!post) return;
-    await supabase.from('community_posts').update({ like_count: (post.like_count || 0) + 1 }).eq('id', postId);
-    setPosts(prev => prev.map(p => p.id === postId ? { ...p, like_count: (p.like_count || 0) + 1 } : p));
+  const toggleLike = async (postId) => {
+    const liked = myLikes.has(postId);
+    if (liked) {
+      await supabase.from('post_user_likes').delete().eq('user_id', user.id).eq('post_id', postId);
+      await supabase.from('community_posts').update({ like_count: Math.max(0, (posts.find(p => p.id === postId)?.like_count || 1) - 1) }).eq('id', postId);
+      setMyLikes(prev => { const n = new Set(prev); n.delete(postId); return n; });
+      setPosts(prev => prev.map(p => p.id === postId ? { ...p, like_count: Math.max(0, (p.like_count || 1) - 1) } : p));
+    } else {
+      await supabase.from('post_user_likes').insert({ user_id: user.id, post_id: postId });
+      await supabase.from('community_posts').update({ like_count: (posts.find(p => p.id === postId)?.like_count || 0) + 1 }).eq('id', postId);
+      setMyLikes(prev => new Set([...prev, postId]));
+      setPosts(prev => prev.map(p => p.id === postId ? { ...p, like_count: (p.like_count || 0) + 1 } : p));
+    }
+  };
+
+  const addComment = async (postId) => {
+    if (!commentText.trim()) return;
+    await supabase.from('post_comments').insert({ post_id: postId, user_id: user.id, content: commentText.trim() });
+    await supabase.from('community_posts').update({ comment_count: (posts.find(p => p.id === postId)?.comment_count || 0) + 1 }).eq('id', postId);
+    setPosts(prev => prev.map(p => p.id === postId ? { ...p, comment_count: (p.comment_count || 0) + 1 } : p));
+    setCommentText('');
+    await fetchComments(postId);
+  };
+
+  const deleteComment = async (commentId, postId) => {
+    await supabase.from('post_comments').delete().eq('id', commentId);
+    await supabase.from('community_posts').update({ comment_count: Math.max(0, (posts.find(p => p.id === postId)?.comment_count || 1) - 1) }).eq('id', postId);
+    setPosts(prev => prev.map(p => p.id === postId ? { ...p, comment_count: Math.max(0, (p.comment_count || 1) - 1) } : p));
+    await fetchComments(postId);
+  };
+
+  const toggleExpand = async (postId) => {
+    if (expandedPost === postId) { setExpandedPost(null); return; }
+    setExpandedPost(postId);
+    if (!comments[postId]) await fetchComments(postId);
   };
 
   const typeConfig = {
@@ -324,20 +408,17 @@ function PostsView({ channel, user, userProfile }) {
   };
 
   const timeAgo = (date) => {
-    const seconds = Math.floor((new Date() - new Date(date)) / 1000);
-    if (seconds < 60) return 'just now';
-    const minutes = Math.floor(seconds / 60);
-    if (minutes < 60) return `${minutes}m ago`;
-    const hours = Math.floor(minutes / 60);
-    if (hours < 24) return `${hours}h ago`;
-    const days = Math.floor(hours / 24);
-    if (days < 7) return `${days}d ago`;
+    const s = Math.floor((new Date() - new Date(date)) / 1000);
+    if (s < 60) return 'just now';
+    const m = Math.floor(s / 60); if (m < 60) return `${m}m ago`;
+    const h = Math.floor(m / 60); if (h < 24) return `${h}h ago`;
+    const d = Math.floor(h / 24); if (d < 7) return `${d}d ago`;
     return new Date(date).toLocaleDateString('en-CA', { month: 'short', day: 'numeric' });
   };
 
   return (
     <div className="flex-1 overflow-y-auto">
-      {/* Facebook-style Composer */}
+      {/* Composer */}
       <div className="bg-white border-b border-gray-200 p-4">
         {!showNew ? (
           <div className="flex items-center gap-3">
@@ -371,8 +452,7 @@ function PostsView({ channel, user, userProfile }) {
             </div>
             <input type="text" value={newTitle} onChange={e => setNewTitle(e.target.value)} placeholder="Title"
               className="w-full px-0 py-1 text-lg font-semibold text-gray-900 placeholder-gray-300 focus:outline-none border-0" />
-            <textarea value={newContent} onChange={e => setNewContent(e.target.value)}
-              placeholder="Share your thoughts, ask a question, or share a resource..."
+            <textarea value={newContent} onChange={e => setNewContent(e.target.value)} placeholder="Share your thoughts..."
               rows={4} className="w-full px-0 py-1 text-sm text-gray-700 placeholder-gray-400 focus:outline-none border-0 resize-none" />
             <div className="flex items-center justify-between pt-2 border-t border-gray-100">
               <button onClick={() => { setShowNew(false); setNewTitle(''); setNewContent(''); }} className="text-sm text-gray-500">Cancel</button>
@@ -388,76 +468,87 @@ function PostsView({ channel, user, userProfile }) {
       {/* Feed */}
       <div className="bg-gray-100 min-h-full">
         {posts.length === 0 ? (
-          <div className="text-center py-16 px-4">
-            <span className="text-4xl block mb-3">📝</span>
-            <p className="text-gray-500 text-sm">No posts yet. Be the first to share something!</p>
-          </div>
+          <div className="text-center py-16 px-4"><span className="text-4xl block mb-3">📝</span><p className="text-gray-500 text-sm">No posts yet. Be the first!</p></div>
         ) : (
           <div className="space-y-3 p-3 sm:p-4">
             {posts.map(post => {
               const cfg = typeConfig[post.post_type] || typeConfig.discussion;
-              const authorName = post.users?.full_name || 'User';
+              const name = post.users?.full_name || 'User';
               const isExpanded = expandedPost === post.id;
+              const liked = myLikes.has(post.id);
+              const postComments = comments[post.id] || [];
 
               return (
                 <div key={post.id} className="bg-white rounded-xl shadow-sm overflow-hidden">
-                  {/* Post Header */}
                   <div className="flex items-center gap-3 px-4 pt-4 pb-2">
                     <div className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 text-white font-semibold text-sm"
-                      style={{ backgroundColor: stringToColor(authorName) }}>
-                      {authorName[0].toUpperCase()}
-                    </div>
+                      style={{ backgroundColor: stringToColor(name) }}>{name[0].toUpperCase()}</div>
                     <div className="flex-1">
-                      <div className="font-semibold text-sm text-gray-900">{authorName}</div>
+                      <div className="font-semibold text-sm text-gray-900">{name}</div>
                       <div className="flex items-center gap-2 text-xs text-gray-500">
-                        <span>{timeAgo(post.created_at)}</span>
-                        <span>·</span>
+                        <span>{timeAgo(post.created_at)}</span><span>·</span>
                         <span className={`px-1.5 py-0.5 rounded text-[10px] font-medium ${cfg.color}`}>{cfg.icon} {cfg.label}</span>
                       </div>
                     </div>
                   </div>
-
-                  {/* Post Content */}
                   <div className="px-4 pb-3">
                     <h4 className="font-semibold text-gray-900 text-[15px] mb-1">{post.title}</h4>
                     <p className="text-gray-700 text-sm leading-relaxed whitespace-pre-wrap">{post.content}</p>
                   </div>
-
-                  {/* Like Count */}
                   {(post.like_count > 0 || post.comment_count > 0) && (
                     <div className="px-4 pb-2 flex items-center justify-between text-xs text-gray-500">
-                      <div className="flex items-center gap-1">
-                        {post.like_count > 0 && <><span className="text-red-500">❤️</span> {post.like_count}</>}
-                      </div>
-                      {post.comment_count > 0 && <span>{post.comment_count} comment{post.comment_count !== 1 ? 's' : ''}</span>}
+                      <div>{post.like_count > 0 && <><span className="text-red-500">❤️</span> {post.like_count}</>}</div>
+                      {post.comment_count > 0 && <button onClick={() => toggleExpand(post.id)} className="hover:underline">{post.comment_count} comment{post.comment_count !== 1 ? 's' : ''}</button>}
                     </div>
                   )}
-
-                  {/* Action Buttons */}
                   <div className="border-t border-gray-100 flex">
-                    <button onClick={() => likePost(post.id)}
-                      className="flex-1 flex items-center justify-center gap-2 py-2.5 text-sm text-gray-500 hover:bg-gray-50 hover:text-red-500 transition-colors">
-                      <span>❤️</span> Like
+                    <button onClick={() => toggleLike(post.id)}
+                      className={`flex-1 flex items-center justify-center gap-2 py-2.5 text-sm transition-colors ${liked ? 'text-red-500 font-medium' : 'text-gray-500 hover:bg-gray-50'}`}>
+                      {liked ? '❤️' : '🤍'} {liked ? 'Liked' : 'Like'}
                     </button>
-                    <button onClick={() => setExpandedPost(isExpanded ? null : post.id)}
-                      className="flex-1 flex items-center justify-center gap-2 py-2.5 text-sm text-gray-500 hover:bg-gray-50 hover:text-blue-500 transition-colors">
-                      <span>💬</span> Comment
+                    <button onClick={() => toggleExpand(post.id)}
+                      className="flex-1 flex items-center justify-center gap-2 py-2.5 text-sm text-gray-500 hover:bg-gray-50">
+                      💬 Comment
                     </button>
                   </div>
-
-                  {/* Comment Section (expandable) */}
                   {isExpanded && (
-                    <div className="border-t border-gray-100 px-4 py-3 bg-gray-50">
-                      <div className="flex items-center gap-2">
-                        <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 text-white font-semibold text-xs"
+                    <div className="border-t border-gray-100 bg-gray-50">
+                      {postComments.length > 0 && (
+                        <div className="px-4 pt-3 space-y-3">
+                          {postComments.map(c => (
+                            <div key={c.id} className="flex gap-2">
+                              <div className="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 text-white font-semibold text-[10px]"
+                                style={{ backgroundColor: stringToColor(c.users?.full_name || 'U') }}>
+                                {(c.users?.full_name || 'U')[0].toUpperCase()}
+                              </div>
+                              <div className="flex-1 bg-white rounded-xl px-3 py-2">
+                                <div className="flex items-center justify-between">
+                                  <span className="text-xs font-semibold text-gray-900">{c.users?.full_name || 'User'}</span>
+                                  <div className="flex items-center gap-2">
+                                    <span className="text-[10px] text-gray-400">{timeAgo(c.created_at)}</span>
+                                    {c.user_id === user.id && (
+                                      <button onClick={() => deleteComment(c.id, post.id)} className="text-[10px] text-gray-300 hover:text-red-500">✕</button>
+                                    )}
+                                  </div>
+                                </div>
+                                <p className="text-sm text-gray-700 mt-0.5">{c.content}</p>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                      <div className="px-4 py-3 flex items-center gap-2">
+                        <div className="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 text-white font-semibold text-[10px]"
                           style={{ backgroundColor: stringToColor(userProfile?.full_name || user?.email) }}>
                           {(userProfile?.full_name || 'U')[0].toUpperCase()}
                         </div>
                         <input type="text" value={commentText} onChange={e => setCommentText(e.target.value)}
+                          onKeyDown={e => e.key === 'Enter' && addComment(post.id)}
                           placeholder="Write a comment..."
-                          className="flex-1 bg-white border border-gray-200 rounded-full px-4 py-2 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:border-red-400" />
+                          className="flex-1 bg-white border border-gray-200 rounded-full px-4 py-2 text-sm placeholder-gray-400 focus:outline-none focus:border-red-400" />
+                        <button onClick={() => addComment(post.id)} disabled={!commentText.trim()}
+                          className="text-red-600 text-sm font-medium disabled:opacity-30">Post</button>
                       </div>
-                      <p className="text-[10px] text-gray-400 mt-2 text-center">Comments coming soon</p>
                     </div>
                   )}
                 </div>

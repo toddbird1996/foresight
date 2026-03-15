@@ -99,6 +99,7 @@ export default function Header() {
             { href: '/progress', label: '📊 My Progress' },
             { href: '/refer', label: '🤝 Invite a Parent' },
             { href: '/profile', label: '👤 Profile' },
+            { href: '/settings', label: '⚙️ Settings' },
             { href: '/pricing', label: '⭐ Pricing' },
           ].map(link => (
             <Link key={link.href} href={link.href} onClick={() => setMenuOpen(false)}

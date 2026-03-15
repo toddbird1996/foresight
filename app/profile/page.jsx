@@ -254,6 +254,39 @@ export default function ProfilePage() {
               {profile?.tier === 'bronze' ? 'Upgrade' : 'Manage'}
             </Link>
           </div>
+
+          {/* AI Usage */}
+          {(() => {
+            const tier = profile?.tier || 'bronze';
+            const maxQueries = tier === 'gold' ? 2000 : tier === 'silver' ? 500 : 5;
+            const used = profile?.monthly_ai_used || 0;
+            const pct = Math.min(100, Math.round((used / maxQueries) * 100));
+            const resetDate = profile?.monthly_ai_reset_at ? new Date(profile.monthly_ai_reset_at) : null;
+            const daysUntilReset = resetDate ? Math.max(0, Math.ceil((resetDate - new Date()) / 86400000)) : null;
+
+            return (
+              <div className="border-t border-gray-100 pt-4">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-sm font-medium text-gray-700">AI Usage This Month</span>
+                  <span className="text-sm text-gray-500">{used} / {maxQueries}</span>
+                </div>
+                <div className="h-3 bg-gray-100 rounded-full overflow-hidden mb-2">
+                  <div className={`h-full rounded-full transition-all ${pct >= 90 ? 'bg-red-500' : pct >= 70 ? 'bg-amber-500' : 'bg-green-500'}`} style={{ width: `${pct}%` }} />
+                </div>
+                <div className="flex items-center justify-between text-xs text-gray-500">
+                  <span>{pct}% used</span>
+                  {resetDate && (
+                    <span>Resets {daysUntilReset === 0 ? 'today' : daysUntilReset === 1 ? 'tomorrow' : `in ${daysUntilReset} days`} · {resetDate.toLocaleDateString('en-CA', { month: 'short', day: 'numeric' })}</span>
+                  )}
+                </div>
+                {pct >= 90 && tier !== 'gold' && (
+                  <Link href="/pricing" className="block mt-3 text-center py-2 bg-red-50 text-red-600 rounded-lg text-xs font-medium hover:bg-red-100">
+                    Running low — Upgrade for more AI queries
+                  </Link>
+                )}
+              </div>
+            );
+          })()}
         </div>
 
         {/* Notifications */}
