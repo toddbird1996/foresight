@@ -10,6 +10,7 @@ export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [user, setUser] = useState(null);
   const [deadlineCount, setDeadlineCount] = useState(0);
+  const [dmCount, setDmCount] = useState(0);
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data: { user } }) => {
@@ -21,6 +22,9 @@ export default function Header() {
           .eq('user_id', user.id).eq('completed', false)
           .gte('due_date', today).lte('due_date', week)
           .then(({ count }) => setDeadlineCount(count || 0));
+        supabase.from('direct_messages').select('*', { count: 'exact', head: true })
+          .eq('receiver_id', user.id).eq('is_read', false)
+          .then(({ count }) => setDmCount(count || 0));
       }
     });
     const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => setUser(session?.user || null));
@@ -74,7 +78,12 @@ export default function Header() {
               <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-600 text-white text-[10px] font-bold rounded-full flex items-center justify-center">{deadlineCount}</span>
             )}
           </Link>
-          <Link href="/dm" className="w-8 h-8 bg-gray-50 rounded-lg flex items-center justify-center text-sm">✉️</Link>
+          <Link href="/dm" className="w-8 h-8 bg-gray-50 rounded-lg flex items-center justify-center text-sm relative">
+            ✉️
+            {dmCount > 0 && (
+              <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-600 text-white text-[10px] font-bold rounded-full flex items-center justify-center">{dmCount}</span>
+            )}
+          </Link>
           <Link href="/emergency" className="w-8 h-8 bg-red-50 rounded-lg flex items-center justify-center text-sm">🚨</Link>
           <button onClick={() => setMenuOpen(!menuOpen)} className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center text-gray-600 text-sm">
             {menuOpen ? '✕' : '•••'}
