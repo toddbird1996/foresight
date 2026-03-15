@@ -14,6 +14,7 @@ export default function Dashboard() {
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [actionPlan, setActionPlan] = useState(null);
   const [userProfile, setUserProfile] = useState(null);
+  const [upcomingDeadlines, setUpcomingDeadlines] = useState([]);
 
 
   useEffect(() => {
@@ -34,6 +35,20 @@ export default function Dashboard() {
         }
         if (profile?.action_plan) setActionPlan(profile.action_plan);
         if (profile) setUserProfile(profile);
+
+        // Fetch upcoming deadlines (next 14 days, not completed)
+        const today = new Date().toISOString().split('T')[0];
+        const twoWeeks = new Date(Date.now() + 14 * 86400000).toISOString().split('T')[0];
+        const { data: deadlines } = await supabase
+          .from("deadlines")
+          .select("*")
+          .eq("user_id", user.id)
+          .eq("completed", false)
+          .gte("due_date", today)
+          .lte("due_date", twoWeeks)
+          .order("due_date", { ascending: true })
+          .limit(5);
+        setUpcomingDeadlines(deadlines || []);
       }
     });
   }, []);
@@ -66,6 +81,45 @@ export default function Dashboard() {
           </h2>
           <p className="text-gray-600">Manage your custody case from one place.</p>
         </div>
+
+        {/* Upcoming Deadline Reminders */}
+        {upcomingDeadlines.length > 0 && (
+          <div className="mb-6">
+            {upcomingDeadlines.map(d => {
+              const daysLeft = Math.ceil((new Date(d.due_date) - new Date()) / 86400000);
+              const isUrgent = daysLeft <= 3;
+              const isToday = daysLeft <= 0;
+              return (
+                <Link key={d.id} href="/deadlines"
+                  className={`flex items-center gap-3 p-3 rounded-xl mb-2 transition-colors ${
+                    isToday ? 'bg-red-50 border-2 border-red-300' :
+                    isUrgent ? 'bg-amber-50 border border-amber-200' :
+                    'bg-blue-50 border border-blue-200'
+                  }`}>
+                  <div className={`w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 ${
+                    isToday ? 'bg-red-600 text-white' : isUrgent ? 'bg-amber-500 text-white' : 'bg-blue-500 text-white'
+                  }`}>
+                    {isToday ? '!' : daysLeft}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className={`font-medium text-sm ${isToday ? 'text-red-800' : isUrgent ? 'text-amber-800' : 'text-blue-800'}`}>
+                      {d.title}
+                    </div>
+                    <div className={`text-xs ${isToday ? 'text-red-600' : isUrgent ? 'text-amber-600' : 'text-blue-600'}`}>
+                      {isToday ? 'Due today!' : daysLeft === 1 ? 'Due tomorrow' : `Due in ${daysLeft} days`}
+                      {' · '}{new Date(d.due_date).toLocaleDateString('en-CA', { month: 'short', day: 'numeric' })}
+                    </div>
+                  </div>
+                  <span className={`text-xs font-medium px-2 py-1 rounded-full ${
+                    d.priority === 'high' ? 'bg-red-100 text-red-700' :
+                    d.priority === 'medium' ? 'bg-amber-100 text-amber-700' :
+                    'bg-gray-100 text-gray-600'
+                  }`}>{d.priority}</span>
+                </Link>
+              );
+            })}
+          </div>
+        )}
 
         {/* Action Plan */}
         {actionPlan && actionPlan.length > 0 && (
