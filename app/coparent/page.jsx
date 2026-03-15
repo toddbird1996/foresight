@@ -3,6 +3,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { supabase } from '../../lib/supabaseClient';
 import { useRouter } from 'next/navigation';
+import Header from '../../components/Header';
+import PageTitle from '../../components/PageTitle';
 
 const CATEGORIES = [
   { id: 'general', label: 'General', icon: '💬' },
@@ -64,35 +66,8 @@ export default function CoParentPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-40">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              {activeConv ? (
-                <button onClick={() => setActiveConv(null)} className="text-gray-400 hover:text-red-600 text-lg md:hidden">←</button>
-              ) : (
-                <Link href="/dashboard" className="text-gray-400 hover:text-red-600 text-lg">←</Link>
-              )}
-              <div className="w-9 h-9 bg-red-600 rounded-xl flex items-center justify-center">
-                <span className="text-white font-bold">F</span>
-              </div>
-              <div>
-                <h1 className="text-lg font-bold text-gray-900">
-                  {activeConv ? (activeConv.coparent_name || 'Co-Parent') : 'Co-Parent Messenger'}
-                </h1>
-                <p className="text-xs text-gray-500">
-                  {activeConv ? (activeConv.cases?.name || 'Case') : 'Secure, court-ready communication'}
-                </p>
-              </div>
-            </div>
-            {!activeConv && (
-              <button onClick={() => setShowNewConv(true)} className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-xl text-sm font-medium">
-                + New
-              </button>
-            )}
-          </div>
-        </div>
-      </header>
+      <Header />
+        <PageTitle title="Co-Parent Messenger" subtitle="Secure, court-ready communication" icon="🤝" />
 
       {/* Main Content */}
       <div className="max-w-5xl mx-auto px-4 sm:px-6 py-6">

@@ -3,6 +3,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { supabase } from '../../lib/supabaseClient';
 import { useRouter } from 'next/navigation';
+import Header from '../../components/Header';
+import PageTitle from '../../components/PageTitle';
 
 export default function CasesPage() {
   const router = useRouter();
@@ -65,31 +67,8 @@ export default function CasesPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-40">
-        <div className="max-w-6xl mx-auto px-4 py-3">
-          <div className="flex items-center gap-3 mb-3">
-            <Link href="/dashboard" className="text-gray-400 hover:text-red-600 text-lg">←</Link>
-            <div className="w-8 h-8 bg-red-600 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-sm">F</span>
-            </div>
-            <h1 className="text-xl font-bold text-gray-900">Current Case</h1>
-          </div>
-          <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-hide">
-            {cases.map(c => (
-              <button key={c.id} onClick={() => { setActiveCase(c); setActiveTab('overview'); }}
-                className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium whitespace-nowrap transition-all ${activeCase?.id === c.id ? 'bg-red-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}>
-                <span>📁</span><span>{c.name}</span>
-                {activeCase?.id === c.id && (
-                  <button onClick={(e) => { e.stopPropagation(); deleteCase(c.id); }} className="ml-1 hover:bg-red-700 rounded px-1 text-xs" title="Delete case">×</button>
-                )}
-              </button>
-            ))}
-            <button onClick={() => setShowNewCase(true)} className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-sm font-medium bg-gray-100 text-gray-600 hover:bg-gray-200 whitespace-nowrap">
-              <span>+</span> New Case
-            </button>
-          </div>
-        </div>
-      </header>
+      <Header />
+        <PageTitle title="My Case" subtitle="Documents, AI & filing progress" icon="📁" />
 
       {showNewCase && (
         <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4" onClick={() => setShowNewCase(false)}>

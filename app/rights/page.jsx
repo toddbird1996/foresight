@@ -1284,6 +1284,9 @@ const LEGISLATION_DB = {
           { right: 'Notice is required before relocating with a child', section: 'Provincial Family Law', detail: 'A parent planning to move with a child must give written notice to the other parent. The required notice period varies by province.' },
           { right: 'Both parents must consent to international travel', section: 'General', detail: 'Taking a child outside Canada typically requires consent of both parents or a court order. Carry a notarized consent letter.' },
           { right: 'Courts can restrict travel', section: 'Provincial Family Law', detail: 'Courts can order that a child\'s passport be held by the court or restrict a parent from removing a child from the province or country.' },
+import Header from '../../components/Header';
+import Footer from '../../components/Footer';
+import PageTitle from '../../components/PageTitle';
           { right: 'Relocation disputes focus on best interests', section: 'Provincial Family Law', detail: 'When parents disagree about relocation, the court considers the child\'s best interests, the reason for the move, and the impact on relationships.' },
         ]
       },
@@ -1389,33 +1392,8 @@ Key sections of the ${jurisdictionData?.actName || 'Act'}:
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-40">
-        <div className="max-w-4xl mx-auto px-4 py-4">
-          <div className="flex items-center gap-3 mb-3">
-            <Link href="/dashboard" className="text-gray-400 hover:text-red-600 text-lg">←</Link>
-            <div>
-              <h1 className="text-xl font-bold text-gray-900">Know Your Rights</h1>
-              <p className="text-sm text-gray-500">CPS & Child Welfare — Simplified Codes & Regulations</p>
-            </div>
-          </div>
-
-          {/* Jurisdiction Selector */}
-          <select
-            value={selectedJurisdiction}
-            onChange={(e) => { setSelectedJurisdiction(e.target.value); setExpandedSection(null); setAiMessages([]); }}
-            className="w-full p-2.5 bg-white border border-gray-300 rounded-lg focus:outline-none focus:border-red-500 text-gray-900 text-sm"
-          >
-            <optgroup label="🇨🇦 Canada">
-              {Object.keys(LEGISLATION_DB).map(id => (
-                <option key={id} value={id}>{LEGISLATION_DB[id].flag} {LEGISLATION_DB[id].jurisdiction}</option>
-              ))}
-            </optgroup>
-            <optgroup label="🇺🇸 United States">
-              <option disabled>🇺🇸 All 50 States — Coming Soon</option>
-            </optgroup>
-          </select>
-        </div>
-      </header>
+      <Header />
+        <PageTitle title="Know Your Rights" subtitle="Your legal protections by province" icon="⚖️" />
 
       <main className="max-w-4xl mx-auto px-4 py-6 space-y-6">
         {jurisdictionData ? (
@@ -1634,7 +1612,8 @@ Key sections of the ${jurisdictionData?.actName || 'Act'}:
             and consult a qualified lawyer for your specific situation. If your child has been apprehended, 
             contact a lawyer immediately.
           </p>
-        </div>
+        <Footer />
+      </div>
       </main>
     </div>
   );

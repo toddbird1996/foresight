@@ -3,6 +3,9 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { supabase } from '../../lib/supabaseClient';
 import { useRouter } from 'next/navigation';
+import Header from '../../components/Header';
+import Footer from '../../components/Footer';
+import PageTitle from '../../components/PageTitle';
 
 export default function FilingGuidePage() {
   const router = useRouter();
@@ -154,72 +157,8 @@ export default function FilingGuidePage() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-40">
-        <div className="max-w-4xl mx-auto px-4 py-4">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-3">
-              <Link href="/dashboard" className="text-gray-400 hover:text-red-600">←</Link>
-              <h1 className="text-xl font-bold text-gray-900">Filing Guide</h1>
-            </div>
-          </div>
-
-          {/* Jurisdiction Selector */}
-          <div className="mb-4">
-            <label className="block text-sm text-gray-600 mb-2">Select Your Jurisdiction</label>
-            <select
-              value={selectedJurisdiction?.id || ''}
-              onChange={(e) => {
-                const j = jurisdictions.find(j => j.id === e.target.value);
-                setSelectedJurisdiction(j);
-              }}
-              className="w-full p-3 bg-white border border-gray-300 rounded-lg focus:outline-none focus:border-red-500 text-gray-900"
-            >
-              <optgroup label="🇨🇦 Canada">
-                {canadianJurisdictions.map(j => (
-                  <option key={j.id} value={j.id}>{j.name}</option>
-                ))}
-              </optgroup>
-              <optgroup label="🇺🇸 United States">
-                {usJurisdictions.map(j => (
-                  <option key={j.id} value={j.id}>{j.name}</option>
-                ))}
-              </optgroup>
-            </select>
-          </div>
-
-          {/* Jurisdiction Info */}
-          {selectedJurisdiction && (
-            <div className="bg-gray-100 rounded-lg p-3 mb-4">
-              <div className="flex items-center gap-2 mb-1">
-                <span>{selectedJurisdiction.flag}</span>
-                <span className="font-semibold text-gray-900">{selectedJurisdiction.name}</span>
-                <span className={`text-xs px-2 py-0.5 rounded ${
-                  selectedJurisdiction.status === 'live' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'
-                }`}>
-                  {selectedJurisdiction.status === 'live' ? 'Full Support' : 'Beta'}
-                </span>
-              </div>
-              <p className="text-sm text-gray-600">{selectedJurisdiction.court_name}</p>
-            </div>
-          )}
-          
-          {/* Progress Bar */}
-          {phases.length > 0 && (
-            <div>
-              <div className="flex justify-between text-sm mb-2">
-                <span className="text-gray-600">Progress</span>
-                <span className="text-red-600 font-medium">{completedSteps}/{totalSteps} steps ({progressPercent}%)</span>
-              </div>
-              <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
-                <div 
-                  className="h-full bg-red-600 transition-all"
-                  style={{ width: `${progressPercent}%` }}
-                />
-              </div>
-            </div>
-          )}
-        </div>
-      </header>
+      <Header />
+        <PageTitle title="Filing Guide" subtitle="Step-by-step filing process" icon="📋" />
 
       {/* Content */}
       <main className="max-w-4xl mx-auto px-4 py-6 space-y-6">
@@ -290,7 +229,8 @@ export default function FilingGuidePage() {
           >
             Ask AI Assistant →
           </Link>
-        </div>
+        <Footer />
+      </div>
       </main>
     </div>
   );

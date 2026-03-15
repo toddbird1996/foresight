@@ -272,18 +272,8 @@ export default function JudgeInsightPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-40">
-        <div className="max-w-4xl mx-auto px-4 py-3">
-          <div className="flex items-center gap-3">
-            <Link href="/dashboard" className="text-gray-400 hover:text-red-600 text-lg">←</Link>
-            <div className="w-8 h-8 bg-red-600 rounded-lg flex items-center justify-center"><span className="text-white font-bold text-sm">F</span></div>
-            <div>
-              <h1 className="text-lg font-bold text-gray-900">Judge Insight</h1>
-              <p className="text-xs text-gray-500">How to present yourself in court</p>
-            </div>
-          </div>
-        </div>
-      </header>
+      <Header />
+        <PageTitle title="Judge Insight" subtitle="How to present yourself in court" icon="🏛️" />
 
       <main className="max-w-4xl mx-auto px-4 py-6">
         {/* Hero */}
@@ -314,6 +304,9 @@ export default function JudgeInsightPage() {
               <div className="font-semibold text-red-800 text-sm">The #1 Rule</div>
               <p className="text-sm text-red-700 mt-1">
                 You are being judged from the moment you walk into the courthouse — not just when you speak. 
+import Header from '../../components/Header';
+import Footer from '../../components/Footer';
+import PageTitle from '../../components/PageTitle';
                 The judge, court staff, and even the security guard are forming impressions. 
                 Be respectful to everyone, at all times.
               </p>
@@ -398,7 +391,8 @@ export default function JudgeInsightPage() {
             <Link href="/filing" className="px-5 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-sm font-medium">Review Filing Guide</Link>
             <Link href="/coparent" className="px-5 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-sm font-medium">Co-Parent Messenger</Link>
           </div>
-        </div>
+        <Footer />
+      </div>
 
         <p className="text-[11px] text-gray-400 text-center mt-4">
           This is general guidance based on common courtroom practices. It is not legal advice. Court procedures may vary by jurisdiction.

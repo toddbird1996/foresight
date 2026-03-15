@@ -1,6 +1,9 @@
 'use client';
 import React, { useState } from 'react';
 import Link from 'next/link';
+import Header from '../../components/Header';
+import Footer from '../../components/Footer';
+import PageTitle from '../../components/PageTitle';
 
 // Federal Child Support Guidelines - simplified monthly table amounts
 // Based on 2024 tables (annual income → monthly support per child)
@@ -71,16 +74,8 @@ export default function CalculatorPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-40">
-        <div className="max-w-3xl mx-auto px-4 py-4 flex items-center gap-3">
-          <Link href="/dashboard" className="text-gray-400 hover:text-red-600">←</Link>
-          <div className="w-8 h-8 bg-red-600 rounded-lg flex items-center justify-center"><span className="text-white font-bold text-sm">F</span></div>
-          <div>
-            <h1 className="text-lg font-bold text-gray-900">Child Support Calculator</h1>
-            <p className="text-xs text-gray-500">Based on Federal Child Support Guidelines</p>
-          </div>
-        </div>
-      </header>
+      <Header />
+        <PageTitle title="Child Support Calculator" subtitle="Based on Federal Guidelines" icon="🧮" />
 
       <main className="max-w-3xl mx-auto px-4 py-6">
         {/* Disclaimer */}
@@ -193,7 +188,8 @@ export default function CalculatorPage() {
             <p>In <strong>shared custody</strong> (40-60% time each), the court looks at both incomes and the difference between the two table amounts. In <strong>split custody</strong>, each parent pays the table amount for children in the other's care.</p>
             <p className="text-gray-500">For accurate calculations specific to your situation, consult a family lawyer or use the <a href="https://www.justice.gc.ca/eng/fl-df/child-enfant/cst-orpe.html" target="_blank" rel="noopener" className="text-red-600 underline">Government of Canada's official lookup tool</a>.</p>
           </div>
-        </div>
+        <Footer />
+      </div>
       </main>
     </div>
   );

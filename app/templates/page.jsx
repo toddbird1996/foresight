@@ -62,6 +62,8 @@ const TEMPLATES = [
       ]},
       { id: 'concerns', title: 'Concerns About the Other Party', fields: [
         { id: 'concerns', label: 'List specific concerns (with dates and evidence)', type: 'textarea', placeholder: 'e.g., On March 1, 2025, the respondent failed to pick up the children from school (text message evidence attached as Exhibit A).' },
+import Header from '../../components/Header';
+import PageTitle from '../../components/PageTitle';
         { id: 'impact', label: 'How do these concerns affect the children?', type: 'textarea', placeholder: 'e.g., Emma has expressed anxiety about overnight visits. Her school counselor has noted changes in behavior (report attached as Exhibit B).' },
       ]},
       { id: 'orders', title: 'Orders Requested', fields: [
@@ -106,16 +108,8 @@ export default function TemplatesPage() {
   if (!activeTemplate) {
     return (
       <div className="min-h-screen bg-gray-50">
-        <header className="bg-white border-b border-gray-200 sticky top-0 z-40">
-          <div className="max-w-4xl mx-auto px-4 py-4 flex items-center gap-3">
-            <Link href="/dashboard" className="text-gray-400 hover:text-red-600">←</Link>
-            <div className="w-8 h-8 bg-red-600 rounded-lg flex items-center justify-center"><span className="text-white font-bold text-sm">F</span></div>
-            <div>
-              <h1 className="text-lg font-bold text-gray-900">Document Templates</h1>
-              <p className="text-xs text-gray-500">Guided wizards to prepare your court documents</p>
-            </div>
-          </div>
-        </header>
+        <Header />
+        <PageTitle title="Document Templates" subtitle="Guided fill-in wizards" icon="📝" />
         <main className="max-w-4xl mx-auto px-4 py-6">
           <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-6">
             <p className="text-sm text-blue-800">📝 These templates walk you through each section with prompts and examples. Your answers are exported as a structured document you can take to a lawyer or use as a basis for your court filings.</p>

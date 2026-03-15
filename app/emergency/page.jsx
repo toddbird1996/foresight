@@ -321,20 +321,8 @@ export default function EmergencyPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <header className="bg-red-600 sticky top-0 z-40">
-        <div className="max-w-4xl mx-auto px-4 py-4">
-          <div className="flex items-center gap-3">
-            <Link href="/dashboard" className="text-red-200 hover:text-white text-lg">←</Link>
-            <div className="w-9 h-9 bg-white rounded-xl flex items-center justify-center">
-              <span className="text-red-600 font-bold text-lg">!</span>
-            </div>
-            <div>
-              <h1 className="text-lg font-bold text-white">Emergency Resources</h1>
-              <p className="text-xs text-red-200">Without-notice filings & crisis contacts</p>
-            </div>
-          </div>
-        </div>
-      </header>
+      <Header />
+        <PageTitle title="Emergency Resources" subtitle="Crisis contacts & urgent filings" icon="🚨" />
 
       <main className="max-w-4xl mx-auto px-4 py-6">
         {/* Emergency Contacts - Always Visible */}
@@ -425,11 +413,15 @@ export default function EmergencyPage() {
           <div className="space-y-3 text-sm text-gray-600">
             <p><strong>Without-notice orders are temporary.</strong> The court will schedule a with-notice hearing where the other party can respond. You must attend this hearing or the order may be cancelled.</p>
             <p><strong>You must show urgency.</strong> Courts only grant without-notice orders when there is an immediate risk of harm to the child, removal of the child from the jurisdiction, or destruction of evidence.</p>
+import Header from '../../components/Header';
+import Footer from '../../components/Footer';
+import PageTitle from '../../components/PageTitle';
             <p><strong>Document everything.</strong> Take photos, save text messages, keep police report numbers, and get medical records. The more evidence you have, the stronger your emergency application.</p>
             <p><strong>Get legal help if possible.</strong> Many Legal Aid offices prioritize emergency family matters. Call them before filing if you can.</p>
           </div>
           <p className="text-[11px] text-gray-400 mt-4">This is general information, not legal advice. Emergency procedures vary by courthouse. Contact your local court or Legal Aid for specific guidance.</p>
-        </div>
+        <Footer />
+      </div>
       </main>
     </div>
   );

@@ -113,6 +113,9 @@ const PROGRAMS = {
       { category: 'legal_aid', name: 'Legal Aid BC', description: 'Free legal representation, duty counsel, and family law advice.', url: 'https://legalaid.bc.ca/', phone: '1-866-577-2525' },
       { category: 'legal_aid', name: 'Family Law in BC', description: 'Comprehensive family law information including a free online tool to fill out court forms.', url: 'https://family.legalaid.bc.ca/', phone: '1-855-875-8867' },
       { category: 'legal_aid', name: 'Clicklaw', description: 'Free BC-focused legal information from trusted agencies and organizations.', url: 'https://www.clicklaw.bc.ca/', phone: '' },
+import Header from '../../components/Header';
+import Footer from '../../components/Footer';
+import PageTitle from '../../components/PageTitle';
       { category: 'mediation', name: 'BC Family Justice Counsellors', description: 'Free dispute resolution services at Family Justice Centres across BC.', url: 'https://www2.gov.bc.ca/gov/content/life-events/divorce/family-justice/who-can-help/family-justice-counsellors', phone: '' },
       { category: 'parenting', name: 'Parenting After Separation Program', description: 'Free online course for parents going through separation.', url: 'https://www2.gov.bc.ca/gov/content/life-events/divorce/family-justice/parenting-after-separation', phone: '' },
       { category: 'funding', name: 'BC Employment and Assistance', description: 'Income and disability assistance for individuals and families in need.', url: 'https://www2.gov.bc.ca/gov/content/family-social-supports/income-assistance', phone: '' },
@@ -307,63 +310,8 @@ export default function ProgramsPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-40">
-        <div className="max-w-5xl mx-auto px-4 py-4">
-          <div className="flex items-center gap-3 mb-4">
-            <Link href="/dashboard" className="text-gray-400 hover:text-red-600 text-lg">←</Link>
-            <h1 className="text-xl font-bold text-gray-900">Programs & Resources</h1>
-          </div>
-          <p className="text-sm text-gray-600 mb-4">
-            Free and low-cost programs for legal aid, housing, therapy, children&apos;s support, domestic violence help, and more.
-          </p>
-
-          {/* Province Selector */}
-          <div className="flex flex-col sm:flex-row gap-3 mb-4">
-            <select
-              value={selectedProvince}
-              onChange={(e) => { setSelectedProvince(e.target.value); setSelectedCategory('all'); }}
-              className="flex-1 p-2.5 bg-white border border-gray-300 rounded-lg focus:outline-none focus:border-red-500 text-gray-900 text-sm"
-            >
-              <option value="national">🇨🇦 Canada-Wide Resources</option>
-              <optgroup label="Provinces">
-                {allProvinceKeys.filter(k => k !== 'national').map(k => (
-                  <option key={k} value={k}>{PROGRAMS[k].flag} {PROGRAMS[k].name}</option>
-                ))}
-              </optgroup>
-            </select>
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search programs..."
-              className="flex-1 p-2.5 bg-white border border-gray-300 rounded-lg focus:outline-none focus:border-red-500 text-gray-900 text-sm placeholder-gray-400"
-            />
-          </div>
-
-          {/* Category Filter */}
-          <div className="flex gap-2 overflow-x-auto pb-2 -mx-4 px-4 scrollbar-thin">
-            <button
-              onClick={() => setSelectedCategory('all')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-all ${
-                selectedCategory === 'all' ? 'bg-red-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-              }`}
-            >
-              All
-            </button>
-            {Object.entries(CATEGORIES).map(([key, cat]) => (
-              <button
-                key={key}
-                onClick={() => setSelectedCategory(key)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-all ${
-                  selectedCategory === key ? 'bg-red-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                }`}
-              >
-                {cat.icon} {cat.label}
-              </button>
-            ))}
-          </div>
-        </div>
-      </header>
+      <Header />
+        <PageTitle title="Programs & Resources" subtitle="Support services across Canada" icon="🛡️" />
 
       {/* Content */}
       <main className="max-w-5xl mx-auto px-4 py-6 space-y-6">
@@ -444,7 +392,8 @@ export default function ProgramsPage() {
             This is a directory of publicly available programs and resources. Foresight does not endorse or guarantee any specific program. 
             Eligibility requirements, availability, and services may change. Always contact the program directly to confirm current details.
           </p>
-        </div>
+        <Footer />
+      </div>
       </main>
     </div>
   );

@@ -4,6 +4,9 @@ import { useEffect, useState } from "react";
 import { supabase } from "../../lib/supabaseClient";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import Header from '../../components/Header';
+import Footer from '../../components/Footer';
+import PageTitle from '../../components/PageTitle';
 
 export default function PricingPage() {
   const router = useRouter();
@@ -136,14 +139,8 @@ export default function PricingPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <header className="bg-white border-b border-gray-200">
-        <div className="max-w-6xl mx-auto px-4 py-4">
-          <div className="flex items-center gap-3">
-            <Link href="/dashboard" className="text-gray-400 hover:text-red-600">←</Link>
-            <h1 className="text-xl font-bold text-gray-900">Pricing</h1>
-          </div>
-        </div>
-      </header>
+      <Header />
+        <PageTitle title="Pricing" subtitle="Choose your plan" icon="⭐" />
 
       <main className="max-w-6xl mx-auto px-4 py-12">
         {/* Title */}
@@ -242,7 +239,8 @@ export default function PricingPage() {
           <p className="text-gray-600">
             Have questions? <a href="mailto:support@foresight.app" className="text-red-600 hover:underline">Contact us</a>
           </p>
-        </div>
+        <Footer />
+      </div>
       </main>
     </div>
   );

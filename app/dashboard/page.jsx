@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import OnboardingFlow from "../components/Onboarding";
 import Header from "../components/Header";
+import Footer from '../../components/Footer';
 
 export default function Dashboard() {
   const router = useRouter();
@@ -75,12 +76,39 @@ export default function Dashboard() {
         <QuestionBar />
 
         {/* Welcome */}
-        <div className="mb-6">
-          <h2 className="text-2xl font-bold text-gray-900 mb-1">
-            {userProfile?.full_name ? `Welcome back, ${userProfile.full_name.split(' ')[0]}!` : 'Welcome back!'}
-          </h2>
-          <p className="text-gray-600">Manage your custody case from one place.</p>
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <h2 className="text-2xl font-bold text-gray-900 mb-1">
+              {userProfile?.full_name ? `Welcome back, ${userProfile.full_name.split(' ')[0]}!` : 'Welcome back!'}
+            </h2>
+            <p className="text-gray-600">Manage your custody case from one place.</p>
+          </div>
+          <Link href="/progress" className="hidden sm:flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-xl hover:border-red-300 transition-colors">
+            <span className="text-sm">📊</span>
+            <span className="text-sm text-gray-600 font-medium">My Progress</span>
+          </Link>
         </div>
+
+        {/* Getting Started Guide - shows when no action plan */}
+        {(!actionPlan || actionPlan.length === 0) && (
+          <div className="mb-6 bg-gradient-to-r from-red-600 to-red-700 rounded-2xl p-5 text-white">
+            <h3 className="font-bold text-lg mb-1">Start Your Custody Journey</h3>
+            <p className="text-red-100 text-sm mb-4">Follow these steps to build your case. Foresight will guide you through each one.</p>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+              {[
+                { step: '1', label: 'Learn Your Rights', link: '/rights' },
+                { step: '2', label: 'Read Filing Guide', link: '/filing' },
+                { step: '3', label: 'Get Court Forms', link: '/court-forms' },
+                { step: '4', label: 'Start Your Case', link: '/cases' },
+              ].map(s => (
+                <Link key={s.step} href={s.link} className="bg-white/10 hover:bg-white/20 rounded-xl p-3 text-center transition-colors">
+                  <div className="text-lg font-bold mb-0.5">{s.step}</div>
+                  <div className="text-xs text-red-100">{s.label}</div>
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Upcoming Deadline Reminders */}
         {upcomingDeadlines.length > 0 && (
@@ -398,7 +426,8 @@ function QuestionBar() {
               </div>
             </div>
           )}
-        </div>
+        <Footer />
+      </div>
       )}
     </div>
   );

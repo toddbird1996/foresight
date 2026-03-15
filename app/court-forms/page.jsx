@@ -5,6 +5,8 @@ import { useEffect, useState } from "react";
 import { supabase } from "../../lib/supabaseClient";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import Header from '../../components/Header';
+import PageTitle from '../../components/PageTitle';
 
 export default function CourtFormsPage() {
   const router = useRouter();
@@ -94,59 +96,8 @@ export default function CourtFormsPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-40">
-        <div className="max-w-4xl mx-auto px-4 py-4">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-3">
-              <Link href="/dashboard" className="text-gray-400 hover:text-red-600">←</Link>
-              <h1 className="text-xl font-bold text-gray-900">Court Forms Library</h1>
-            </div>
-          </div>
-
-          {/* Jurisdiction Selector */}
-          <div className="mb-4">
-            <label className="block text-sm text-gray-600 mb-2">Select Jurisdiction</label>
-            <select
-              value={selectedJurisdiction?.id || ''}
-              onChange={(e) => {
-                const j = jurisdictions.find(j => j.id === e.target.value);
-                setSelectedJurisdiction(j);
-              }}
-              className="w-full p-3 bg-white border border-gray-300 rounded-lg focus:outline-none focus:border-red-500 text-gray-900"
-            >
-              <optgroup label="🇨🇦 Canada">
-                {canadianJurisdictions.map(j => (
-                  <option key={j.id} value={j.id}>{j.name}</option>
-                ))}
-              </optgroup>
-              <optgroup label="🇺🇸 United States">
-                {usJurisdictions.map(j => (
-                  <option key={j.id} value={j.id}>{j.name}</option>
-                ))}
-              </optgroup>
-            </select>
-          </div>
-
-          {/* Category Filter */}
-          {forms.length > 0 && (
-            <div className="flex gap-2 overflow-x-auto pb-2">
-              {categories.map((cat) => (
-                <button
-                  key={cat}
-                  onClick={() => setSelectedCategory(cat)}
-                  className={`px-3 py-1 rounded-full text-sm whitespace-nowrap ${
-                    selectedCategory === cat
-                      ? "bg-red-600 text-white"
-                      : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-                  }`}
-                >
-                  {cat === "all" ? "All Forms" : cat}
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
-      </header>
+      <Header />
+        <PageTitle title="Court Forms" subtitle="Download official forms by province" icon="📄" />
 
       <main className="max-w-4xl mx-auto px-4 py-6">
         {forms.length === 0 ? (
