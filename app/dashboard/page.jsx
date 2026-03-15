@@ -325,6 +325,7 @@ function QuestionBar() {
   const [answer, setAnswer] = useState('');
   const [loading, setLoading] = useState(false);
   const [showAnswer, setShowAnswer] = useState(false);
+  const [showSuggestions, setShowSuggestions] = useState(false);
   const inputRef = useRef(null);
 
   const suggestions = [
@@ -341,6 +342,7 @@ function QuestionBar() {
     if (!q) return;
     setQuery(q);
     setShowAnswer(true);
+    setShowSuggestions(false);
     setLoading(true);
     setAnswer('');
 
@@ -364,7 +366,6 @@ function QuestionBar() {
 
   return (
     <div className="mb-6">
-      {/* Search Bar */}
       <div className="bg-white border border-gray-200 rounded-2xl p-4 shadow-sm">
         <div className="flex items-center gap-3">
           <div className="w-9 h-9 bg-red-600 rounded-full flex items-center justify-center flex-shrink-0">
@@ -377,7 +378,7 @@ function QuestionBar() {
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleAsk()}
-              placeholder="Ask a question about custody, court, or your rights..."
+              placeholder="Ask about custody, court, or your rights..."
               className="w-full py-2.5 px-4 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:border-red-400 focus:bg-white transition-colors"
             />
           </div>
@@ -390,18 +391,24 @@ function QuestionBar() {
           </button>
         </div>
 
-        {/* Suggested Questions */}
+        {/* Suggested Questions - collapsed behind toggle */}
         {!showAnswer && (
-          <div className="flex flex-wrap gap-2 mt-3">
-            {suggestions.map((s, i) => (
-              <button
-                key={i}
-                onClick={() => { setQuery(s); handleAsk(s); }}
-                className="px-3 py-1.5 bg-gray-50 hover:bg-red-50 border border-gray-200 hover:border-red-200 rounded-full text-xs text-gray-600 hover:text-red-600 transition-colors"
-              >
-                {s}
-              </button>
-            ))}
+          <div className="mt-2">
+            <button onClick={() => setShowSuggestions(!showSuggestions)}
+              className="text-xs text-gray-400 hover:text-red-500 transition-colors flex items-center gap-1">
+              <span className={`transition-transform ${showSuggestions ? 'rotate-90' : ''}`}>▸</span>
+              Suggested questions
+            </button>
+            {showSuggestions && (
+              <div className="flex flex-wrap gap-2 mt-2">
+                {suggestions.map((s, i) => (
+                  <button key={i} onClick={() => { setQuery(s); handleAsk(s); }}
+                    className="px-3 py-1.5 bg-gray-50 hover:bg-red-50 border border-gray-200 hover:border-red-200 rounded-full text-xs text-gray-600 hover:text-red-600 transition-colors">
+                    {s}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
         )}
       </div>
