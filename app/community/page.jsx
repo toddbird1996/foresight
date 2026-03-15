@@ -228,6 +228,16 @@ function ChatView({ channel, user, userProfile }) {
     return groups;
   }, {});
 
+  // Build mentor lookup from messages
+  const [mentorIds, setMentorIds] = useState(new Set());
+  useEffect(() => {
+    const ids = [...new Set(messages.map(m => m.user_id).filter(Boolean))];
+    if (ids.length > 0) {
+      supabase.from('users').select('id, is_mentor').in('id', ids).eq('is_mentor', true)
+        .then(({ data }) => setMentorIds(new Set((data || []).map(u => u.id))));
+    }
+  }, [messages]);
+
   return (
     <div className="flex-1 flex flex-col min-h-0">
       {/* Messages */}
@@ -242,19 +252,18 @@ function ChatView({ channel, user, userProfile }) {
 
         {Object.entries(groupedMessages).map(([date, msgs]) => (
           <div key={date}>
-            {/* Date Separator */}
             <div className="flex items-center gap-2 my-4">
               <div className="flex-1 h-px bg-gray-200" />
               <span className="text-[11px] text-gray-500 font-semibold">{date}</span>
               <div className="flex-1 h-px bg-gray-200" />
             </div>
 
-            {/* Messages */}
             {msgs.map((msg, i) => {
               const prevMsg = i > 0 ? msgs[i - 1] : null;
               const sameAuthor = prevMsg?.user_id === msg.user_id;
               const timeDiff = prevMsg ? (new Date(msg.created_at) - new Date(prevMsg.created_at)) / 60000 : 999;
               const compact = sameAuthor && timeDiff < 5;
+              const isMentor = mentorIds.has(msg.user_id);
 
               return (
                 <div key={msg.id} className={`flex gap-4 px-2 py-0.5 hover:bg-gray-50 rounded group ${compact ? '' : 'mt-4'}`}>
@@ -265,17 +274,18 @@ function ChatView({ channel, user, userProfile }) {
                       </span>
                     </div>
                   ) : (
-                    <div className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 text-white font-semibold text-sm"
+                    <Link href={`/user?id=${msg.user_id}`} className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 text-white font-semibold text-sm hover:opacity-80 transition-opacity"
                       style={{ backgroundColor: stringToColor(msg.user_name || msg.user_id) }}>
                       {(msg.user_name || 'U')[0].toUpperCase()}
-                    </div>
+                    </Link>
                   )}
                   <div className="flex-1 min-w-0">
                     {!compact && (
-                      <div className="flex items-baseline gap-2">
-                        <span className="font-medium text-sm" style={{ color: stringToColor(msg.user_name || msg.user_id) }}>
+                      <div className="flex items-center gap-2">
+                        <Link href={`/user?id=${msg.user_id}`} className="font-medium text-sm hover:underline" style={{ color: stringToColor(msg.user_name || msg.user_id) }}>
                           {msg.user_name || 'User'}
-                        </span>
+                        </Link>
+                        {isMentor && <span className="px-1.5 py-0.5 bg-amber-100 text-amber-700 rounded text-[9px] font-bold leading-none">MENTOR</span>}
                         <span className="text-[11px] text-gray-500">
                           {new Date(msg.created_at).toLocaleString('en-CA', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
                         </span>

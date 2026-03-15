@@ -74,6 +74,7 @@ export default function Header() {
               <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-600 text-white text-[10px] font-bold rounded-full flex items-center justify-center">{deadlineCount}</span>
             )}
           </Link>
+          <Link href="/dm" className="w-8 h-8 bg-gray-50 rounded-lg flex items-center justify-center text-sm">✉️</Link>
           <Link href="/emergency" className="w-8 h-8 bg-red-50 rounded-lg flex items-center justify-center text-sm">🚨</Link>
           <button onClick={() => setMenuOpen(!menuOpen)} className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center text-gray-600 text-sm">
             {menuOpen ? '✕' : '•••'}
