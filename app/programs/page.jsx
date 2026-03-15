@@ -364,29 +364,27 @@ export default function ProgramsPage() {
 
       {/* Content */}
       <main className="max-w-5xl mx-auto px-4 py-6 space-y-4">
-        {/* Province Selector */}
-        <div className="flex gap-1.5 overflow-x-auto pb-1">
-          {allProvinceKeys.map(key => {
-            const p = PROGRAMS[key];
-            return (
-              <button key={key} onClick={() => setSelectedProvince(key)}
-                className={`px-3 py-2 rounded-xl text-xs font-medium whitespace-nowrap transition-colors ${selectedProvince === key ? 'bg-red-600 text-white' : 'bg-white border border-gray-200 text-gray-600 hover:border-red-300'}`}>
-                {p.flag} {p.name}
-              </button>
-            );
-          })}
-        </div>
-
-        {/* Category Filter */}
-        <div className="flex gap-1.5 overflow-x-auto pb-1">
-          <button onClick={() => setSelectedCategory('all')}
-            className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap ${selectedCategory === 'all' ? 'bg-gray-900 text-white' : 'bg-white border border-gray-200 text-gray-500'}`}>All</button>
-          {Object.entries(CATEGORIES).map(([key, cat]) => (
-            <button key={key} onClick={() => setSelectedCategory(key)}
-              className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap ${selectedCategory === key ? 'bg-gray-900 text-white' : 'bg-white border border-gray-200 text-gray-500'}`}>
-              {cat.icon} {cat.label}
-            </button>
-          ))}
+        {/* Filters Row */}
+        <div className="flex gap-3">
+          <div className="flex-1">
+            <select value={selectedProvince} onChange={e => setSelectedProvince(e.target.value)}
+              className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm text-gray-900 focus:outline-none focus:border-red-400 appearance-none"
+              style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'12\' height=\'12\' viewBox=\'0 0 12 12\'%3E%3Cpath fill=\'%236B7280\' d=\'M6 8L1 3h10z\'/%3E%3C/svg%3E")', backgroundRepeat: 'no-repeat', backgroundPosition: 'right 12px center' }}>
+              {allProvinceKeys.map(key => (
+                <option key={key} value={key}>{PROGRAMS[key].flag} {PROGRAMS[key].name}</option>
+              ))}
+            </select>
+          </div>
+          <div className="flex-1">
+            <select value={selectedCategory} onChange={e => setSelectedCategory(e.target.value)}
+              className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm text-gray-900 focus:outline-none focus:border-red-400 appearance-none"
+              style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'12\' height=\'12\' viewBox=\'0 0 12 12\'%3E%3Cpath fill=\'%236B7280\' d=\'M6 8L1 3h10z\'/%3E%3C/svg%3E")', backgroundRepeat: 'no-repeat', backgroundPosition: 'right 12px center' }}>
+              <option value="all">All Categories</option>
+              {Object.entries(CATEGORIES).map(([key, cat]) => (
+                <option key={key} value={key}>{cat.icon} {cat.label}</option>
+              ))}
+            </select>
+          </div>
         </div>
 
         {/* Search */}
