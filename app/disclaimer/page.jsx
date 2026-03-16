@@ -10,7 +10,7 @@ export default function DisclaimerPage() {
           <h1 className="text-lg font-bold text-gray-900">Legal Disclaimer</h1>
         </div>
       </header>
-      <main className="max-w-3xl mx-auto px-4 py-8 prose prose-gray prose-sm">
+      <main className="max-w-3xl mx-auto px-4 py-8 text-gray-900 text-sm leading-relaxed space-y-4">
         <p className="text-gray-500 text-sm">Last updated: March 2026</p>
 
         <div className="bg-red-50 border border-red-200 rounded-xl p-5 not-prose mb-6">
