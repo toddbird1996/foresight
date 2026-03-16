@@ -93,8 +93,8 @@ export default function Dashboard() {
           </Link>
         </div>
 
-        {/* Getting Started Guide - shows when no action plan */}
-        {(!actionPlan || actionPlan.length === 0) && (
+        {/* Getting Started Guide - only for users who haven't started a case */}
+        {(!actionPlan || actionPlan.length === 0) && (!userProfile?.case_status || userProfile.case_status === 'no_case' || userProfile.case_status === 'preparing') && (
           <div className="mb-6 bg-gradient-to-r from-red-600 to-red-700 rounded-2xl p-5 text-white">
             <h3 className="font-bold text-lg mb-1">Start Your Custody Journey</h3>
             <p className="text-red-100 text-sm mb-4">Follow these steps to build your case. Foresight will guide you through each one.</p>
