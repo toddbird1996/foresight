@@ -181,137 +181,78 @@ export default function Dashboard() {
 
         {/* QUICK LINKS */}
         <div className="grid grid-cols-2 gap-3 mb-6">
-          <Link href="/progress" className="bg-white border border-gray-200 rounded-xl p-4 hover:border-red-500 hover:shadow-md transition-all flex items-center gap-3">
-            <div className="w-10 h-10 bg-green-50 rounded-xl flex items-center justify-center text-xl">📊</div>
+          <Link href="/cases" className="bg-white border-2 border-red-200 rounded-xl p-4 hover:border-red-500 hover:shadow-md transition-all flex items-center gap-3">
+            <div className="w-10 h-10 bg-red-50 rounded-xl flex items-center justify-center text-xl">📁</div>
             <div>
-              <h3 className="font-semibold text-gray-900 text-sm">My Progress</h3>
-              <p className="text-xs text-gray-500">Track your journey</p>
+              <h3 className="font-semibold text-gray-900 text-sm">My Case</h3>
+              <p className="text-xs text-gray-500">Documents & AI chat</p>
             </div>
           </Link>
-          <Link href="/refer" className="bg-white border border-gray-200 rounded-xl p-4 hover:border-red-500 hover:shadow-md transition-all flex items-center gap-3">
-            <div className="w-10 h-10 bg-red-50 rounded-xl flex items-center justify-center text-xl">🤝</div>
+          <Link href="/deadlines" className="bg-white border border-gray-200 rounded-xl p-4 hover:border-red-500 hover:shadow-md transition-all flex items-center gap-3">
+            <div className="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center text-xl">📅</div>
             <div>
-              <h3 className="font-semibold text-gray-900 text-sm">Invite a Parent</h3>
-              <p className="text-xs text-gray-500">Help someone else</p>
+              <h3 className="font-semibold text-gray-900 text-sm">Calendar & Deadlines</h3>
+              <p className="text-xs text-gray-500">Schedule & reminders</p>
             </div>
           </Link>
         </div>
 
-        {/* YOUR CASE */}
+        {/* YOUR CASE TOOLS */}
         <div className="mb-6">
-          <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3 px-1">Your Case</h3>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            <Link href="/cases" className="bg-white border-2 border-red-200 rounded-xl p-4 hover:border-red-500 hover:shadow-md transition-all">
-              <div className="text-2xl mb-2">📁</div>
-              <h3 className="font-semibold text-gray-900 text-sm">Current Case</h3>
-              <p className="text-xs text-gray-500">Documents, AI & progress</p>
-            </Link>
-            <Link href="/deadlines" className="bg-white border border-gray-200 rounded-xl p-4 hover:border-red-500 hover:shadow-md transition-all">
-              <div className="text-2xl mb-2">📅</div>
-              <h3 className="font-semibold text-gray-900 text-sm">Calendar Custody Calendar Deadlines</h3>
-              <p className="text-xs text-gray-500">Parenting schedule</p>
-            </Link>
-            <Link href="/expenses" className="bg-white border border-gray-200 rounded-xl p-4 hover:border-red-500 hover:shadow-md transition-all">
-              <div className="text-2xl mb-2">💰</div>
-              <h3 className="font-semibold text-gray-900 text-sm">Expenses</h3>
-              <p className="text-xs text-gray-500">Track & split costs</p>
-            </Link>
-            <Link href="/children" className="bg-white border border-gray-200 rounded-xl p-4 hover:border-red-500 hover:shadow-md transition-all">
-              <div className="text-2xl mb-2">👧</div>
-              <h3 className="font-semibold text-gray-900 text-sm">Children's Info</h3>
-              <p className="text-xs text-gray-500">Medical, school, contacts</p>
-            </Link>
-            <Link href="/coparent" className="bg-white border border-gray-200 rounded-xl p-4 hover:border-red-500 hover:shadow-md transition-all">
-              <div className="text-2xl mb-2">🤝</div>
-              <h3 className="font-semibold text-gray-900 text-sm">Co-Parent Chat</h3>
-              <p className="text-xs text-gray-500">Court-ready messaging</p>
-            </Link>
-            <Link href="/deadlines" className="bg-white border border-gray-200 rounded-xl p-4 hover:border-red-500 hover:shadow-md transition-all">
-              <div className="text-2xl mb-2">⏰</div>
-              <h3 className="font-semibold text-gray-900 text-sm">Deadlines</h3>
-              <p className="text-xs text-gray-500">Track important dates</p>
-            </Link>
-            <Link href="/templates" className="bg-white border border-gray-200 rounded-xl p-4 hover:border-red-500 hover:shadow-md transition-all">
-              <div className="text-2xl mb-2">📝</div>
-              <h3 className="font-semibold text-gray-900 text-sm">Doc Templates</h3>
-              <p className="text-xs text-gray-500">Guided fill-in wizards</p>
-            </Link>
+          <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3 px-1">Case Tools</h3>
+          <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
+            {[
+              { href: '/coparent', icon: '💬', label: 'Co-Parent Chat' },
+              { href: '/expenses', icon: '💰', label: 'Expenses' },
+              { href: '/children', icon: '👧', label: "Children's Info" },
+              { href: '/templates', icon: '📝', label: 'Templates' },
+            ].map(item => (
+              <Link key={item.href} href={item.href} className="bg-white border border-gray-200 rounded-xl p-3 hover:border-red-300 hover:shadow-sm transition-all text-center">
+                <div className="text-xl mb-1">{item.icon}</div>
+                <div className="text-[11px] font-medium text-gray-700">{item.label}</div>
+              </Link>
+            ))}
           </div>
         </div>
 
         {/* LEARN & PREPARE */}
         <div className="mb-6">
           <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3 px-1">Learn & Prepare</h3>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            <Link href="/filing" className="bg-white border border-gray-200 rounded-xl p-4 hover:border-red-500 hover:shadow-md transition-all">
-              <div className="text-2xl mb-2">📋</div>
-              <h3 className="font-semibold text-gray-900 text-sm">Filing Guide</h3>
-              <p className="text-xs text-gray-500">Step-by-step process</p>
-            </Link>
-            <Link href="/court-forms" className="bg-white border border-gray-200 rounded-xl p-4 hover:border-red-500 hover:shadow-md transition-all">
-              <div className="text-2xl mb-2">📄</div>
-              <h3 className="font-semibold text-gray-900 text-sm">Court Forms</h3>
-              <p className="text-xs text-gray-500">Download official forms</p>
-            </Link>
-            <Link href="/rights" className="bg-white border border-gray-200 rounded-xl p-4 hover:border-red-500 hover:shadow-md transition-all">
-              <div className="text-2xl mb-2">⚖️</div>
-              <h3 className="font-semibold text-gray-900 text-sm">Know Your Rights</h3>
-              <p className="text-xs text-gray-500">CPS codes & regulations</p>
-            </Link>
-            <Link href="/judge-insight" className="bg-white border border-gray-200 rounded-xl p-4 hover:border-red-500 hover:shadow-md transition-all">
-              <div className="text-2xl mb-2">🏛️</div>
-              <h3 className="font-semibold text-gray-900 text-sm">Judge Insight</h3>
-              <p className="text-xs text-gray-500">How to present in court</p>
-            </Link>
+          <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
+            {[
+              { href: '/filing', icon: '📋', label: 'Filing Guide' },
+              { href: '/court-forms', icon: '📄', label: 'Court Forms' },
+              { href: '/rights', icon: '⚖️', label: 'Your Rights' },
+              { href: '/judge-insight', icon: '🏛️', label: 'Court Tips' },
+              { href: '/calculator', icon: '🧮', label: 'Calculator' },
+              { href: '/programs', icon: '🛡️', label: 'Programs' },
+            ].map(item => (
+              <Link key={item.href} href={item.href} className="bg-white border border-gray-200 rounded-xl p-3 hover:border-red-300 hover:shadow-sm transition-all text-center">
+                <div className="text-xl mb-1">{item.icon}</div>
+                <div className="text-[11px] font-medium text-gray-700">{item.label}</div>
+              </Link>
+            ))}
           </div>
         </div>
 
-        {/* TOOLS & RESOURCES */}
+        {/* COMMUNITY & SUPPORT */}
         <div className="mb-6">
-          <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3 px-1">Tools & Resources</h3>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            <Link href="/calculator" className="bg-white border border-gray-200 rounded-xl p-4 hover:border-red-500 hover:shadow-md transition-all">
-              <div className="text-2xl mb-2">🧮</div>
-              <h3 className="font-semibold text-gray-900 text-sm">Support Calculator</h3>
-              <p className="text-xs text-gray-500">Estimate child support</p>
+          <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3 px-1">Community & Support</h3>
+          <div className="grid grid-cols-2 gap-3">
+            <Link href="/community" className="bg-white border border-gray-200 rounded-xl p-4 hover:border-red-300 hover:shadow-sm transition-all flex items-center gap-3">
+              <div className="w-10 h-10 bg-purple-50 rounded-xl flex items-center justify-center text-xl">💬</div>
+              <div>
+                <h3 className="font-semibold text-gray-900 text-sm">Community</h3>
+                <p className="text-xs text-gray-500">Chat, posts & mentors</p>
+              </div>
             </Link>
-            <Link href="/programs" className="bg-white border border-gray-200 rounded-xl p-4 hover:border-red-500 hover:shadow-md transition-all">
-              <div className="text-2xl mb-2">🛡️</div>
-              <h3 className="font-semibold text-gray-900 text-sm">Programs</h3>
-              <p className="text-xs text-gray-500">Support & resources</p>
+            <Link href="/emergency" className="bg-red-50 border-2 border-red-200 rounded-xl p-4 hover:border-red-500 hover:shadow-sm transition-all flex items-center gap-3">
+              <div className="w-10 h-10 bg-red-100 rounded-xl flex items-center justify-center text-xl">🚨</div>
+              <div>
+                <h3 className="font-semibold text-red-700 text-sm">Emergency</h3>
+                <p className="text-xs text-red-500">Crisis & urgent help</p>
+              </div>
             </Link>
-            <Link href="/community" className="bg-white border border-gray-200 rounded-xl p-4 hover:border-red-500 hover:shadow-md transition-all">
-              <div className="text-2xl mb-2">💬</div>
-              <h3 className="font-semibold text-gray-900 text-sm">Community</h3>
-              <p className="text-xs text-gray-500">Chat, posts & mentors</p>
-            </Link>
-            <Link href="/emergency" className="bg-red-50 border-2 border-red-300 rounded-xl p-4 hover:border-red-500 hover:shadow-md transition-all">
-              <div className="text-2xl mb-2">🚨</div>
-              <h3 className="font-semibold text-red-700 text-sm">Emergency</h3>
-              <p className="text-xs text-red-500">Crisis contacts & urgent filings</p>
-            </Link>
-          </div>
-        </div>
-
-        {/* ACCOUNT */}
-        <div className="mb-6">
-          <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3 px-1">Account</h3>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            <Link href="/profile" className="bg-white border border-gray-200 rounded-xl p-4 hover:border-red-500 hover:shadow-md transition-all">
-              <div className="text-2xl mb-2">👤</div>
-              <h3 className="font-semibold text-gray-900 text-sm">Profile</h3>
-              <p className="text-xs text-gray-500">Account settings</p>
-            </Link>
-            <Link href="/pricing" className="bg-white border border-gray-200 rounded-xl p-4 hover:border-red-500 hover:shadow-md transition-all">
-              <div className="text-2xl mb-2">⭐</div>
-              <h3 className="font-semibold text-gray-900 text-sm">Pricing</h3>
-              <p className="text-xs text-gray-500">Upgrade your plan</p>
-            </Link>
-            <button onClick={handleLogout} className="bg-white border border-gray-200 rounded-xl p-4 hover:border-red-500 hover:shadow-md transition-all text-left">
-              <div className="text-2xl mb-2">🚪</div>
-              <h3 className="font-semibold text-gray-900 text-sm">Logout</h3>
-              <p className="text-xs text-gray-500">Sign out</p>
-            </button>
           </div>
         </div>
 

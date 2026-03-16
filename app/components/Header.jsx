@@ -115,11 +115,10 @@ export default function Header() {
             <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider px-1 mb-1">Case Tools</div>
             <div className="grid grid-cols-2 gap-1">
               {[
-                { href: '/deadlines', label: 'Calendar Custody Calendar Deadlines', icon: '📅' },
+                { href: '/deadlines', label: 'Calendar & Deadlines', icon: '📅' },
                 { href: '/expenses', label: 'Expenses', icon: '💰' },
                 { href: '/children', label: 'Children\'s Info', icon: '👧' },
                 { href: '/coparent', label: 'Co-Parent Chat', icon: '🤝' },
-                { href: '/deadlines', label: 'Deadlines', icon: '⏰' },
                 { href: '/templates', label: 'Templates', icon: '📝' },
               ].map(link => (
                 <Link key={link.href} href={link.href} onClick={() => setMenuOpen(false)}
