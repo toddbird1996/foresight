@@ -1,10 +1,5 @@
 import { NextResponse } from 'next/server';
-import Anthropic from '@anthropic-ai/sdk';
 import { createClient } from '@supabase/supabase-js';
-
-const anthropic = new Anthropic({
-  apiKey: process.env.ANTHROPIC_API_KEY,
-});
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL,
@@ -59,33 +54,45 @@ export async function POST(request) {
         }, { status: 403 });
       }
     } else {
-      // No user ID provided - require authentication
       return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
     }
 
-    if (!process.env.ANTHROPIC_API_KEY) {
+    const apiKey = process.env.OPENAI_KEY || process.env.OPENAI_API_KEY;
+    if (!apiKey) {
       return NextResponse.json({
-        content: `AI service is not configured. Please add your ANTHROPIC_API_KEY to enable AI responses.`,
+        content: `AI service is not configured. Please add your OPENAI_KEY to enable AI responses.`,
         tokensUsed: 0
       });
     }
 
-    const response = await anthropic.messages.create({
-      model: 'claude-sonnet-4-20250514',
-      max_tokens: 1024,
-      system: SYSTEM_PROMPT + `\n\nThe user is in ${jurisdiction}.`,
-      messages: [
-        { role: 'user', content: message }
-      ]
+    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${apiKey}`
+      },
+      body: JSON.stringify({
+        model: 'gpt-4o-mini',
+        max_tokens: 1024,
+        messages: [
+          { role: 'system', content: SYSTEM_PROMPT + `\n\nThe user is in ${jurisdiction}.` },
+          { role: 'user', content: message }
+        ]
+      })
     });
 
-    const content = response.content[0].type === 'text' 
-      ? response.content[0].text 
-      : '';
+    if (!response.ok) {
+      const err = await response.json();
+      console.error('OpenAI Error:', err);
+      return NextResponse.json({ error: 'AI request failed' }, { status: 500 });
+    }
+
+    const data = await response.json();
+    const content = data.choices?.[0]?.message?.content || '';
 
     return NextResponse.json({
       content,
-      tokensUsed: response.usage?.output_tokens || 0
+      tokensUsed: data.usage?.total_tokens || 0
     });
 
   } catch (error) {

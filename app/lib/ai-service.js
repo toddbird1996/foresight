@@ -1,18 +1,18 @@
 // ============================================
-// FORESIGHT - AI SERVICE (Claude Integration)
+// FORESIGHT - AI SERVICE (OpenAI Integration)
 // ============================================
 
 // ============================================
 // CONFIGURATION
 // ============================================
 
-const ANTHROPIC_API_URL = 'https://api.anthropic.com/v1/messages';
+const OPENAI_API_URL = 'https://api.openai.com/v1/chat/completions';
 
 // Get API key from environment
 const getApiKey = () => {
-  return process.env.ANTHROPIC_API_KEY || 
-         process.env.NEXT_PUBLIC_ANTHROPIC_API_KEY ||
-         process.env.REACT_APP_ANTHROPIC_API_KEY;
+  return process.env.OPENAI_KEY || 
+         process.env.OPENAI_API_KEY ||
+         process.env.NEXT_PUBLIC_OPENAI_KEY;
 };
 
 // ============================================
@@ -331,12 +331,12 @@ Need help with a specific section?
 class ForesightAI {
   constructor(apiKey = null) {
     this.apiKey = apiKey || getApiKey();
-    this.model = 'claude-sonnet-4-20250514';
+    this.model = 'gpt-4o-mini';
     this.maxTokens = 1024;
   }
 
   /**
-   * Send a message to Claude and get a response
+   * Send a message to OpenAI and get a response
    */
   async chat(message, options = {}) {
     const {
@@ -347,13 +347,14 @@ class ForesightAI {
     } = options;
 
     if (!this.apiKey) {
-      throw new Error('Anthropic API key not configured');
+      throw new Error('OpenAI API key not configured');
     }
 
     const systemPrompt = createSystemPrompt(jurisdiction, userContext);
     
-    // Build messages array
+    // Build messages array (OpenAI format)
     const messages = [
+      { role: 'system', content: systemPrompt },
       ...conversationHistory.map(msg => ({
         role: msg.role,
         content: msg.content
@@ -365,17 +366,15 @@ class ForesightAI {
     ];
 
     try {
-      const response = await fetch(ANTHROPIC_API_URL, {
+      const response = await fetch(OPENAI_API_URL, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'x-api-key': this.apiKey,
-          'anthropic-version': '2023-06-01'
+          'Authorization': `Bearer ${this.apiKey}`
         },
         body: JSON.stringify({
           model: this.model,
           max_tokens: this.maxTokens,
-          system: systemPrompt,
           messages: messages,
           stream: stream
         })
@@ -393,10 +392,10 @@ class ForesightAI {
       const data = await response.json();
       
       return {
-        content: data.content[0].text,
-        tokensUsed: data.usage?.input_tokens + data.usage?.output_tokens,
+        content: data.choices?.[0]?.message?.content || '',
+        tokensUsed: data.usage?.total_tokens || 0,
         model: data.model,
-        stopReason: data.stop_reason
+        stopReason: data.choices?.[0]?.finish_reason
       };
     } catch (error) {
       console.error('AI chat error:', error);
@@ -675,7 +674,7 @@ export default async function handler(req, res) {
   const { message, jurisdiction, conversationHistory } = req.body;
 
   try {
-    const ai = new ForesightAI(process.env.ANTHROPIC_API_KEY);
+    const ai = new ForesightAI(process.env.OPENAI_KEY || process.env.OPENAI_API_KEY);
     const response = await ai.chat(message, {
       jurisdiction,
       conversationHistory
