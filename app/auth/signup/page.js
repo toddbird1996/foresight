@@ -1,11 +1,14 @@
 'use client';
-import { useState } from 'react';
+import { useState, Suspense } from 'react';
 import { supabase } from '../../../lib/supabaseClient';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 
-export default function Signup() {
+function SignupForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const refCode = searchParams.get('ref') || '';
+
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -41,10 +44,36 @@ export default function Signup() {
         full_name: fullName,
         tier: 'bronze',
         jurisdiction: 'saskatchewan',
+        referred_by: null, // will be set below if ref code found
       });
-      // Non-fatal if this fails (e.g. duplicate) — RLS will handle access
+
       if (profileError && profileError.code !== '23505') {
         console.warn('Profile creation warning:', profileError.message);
+      }
+
+      // Handle referral code
+      if (refCode) {
+        const { data: referrer } = await supabase
+          .from('users')
+          .select('id')
+          .eq('referral_code', refCode)
+          .single();
+
+        if (referrer) {
+          // Link referred_by on the new user
+          await supabase.from('users')
+            .update({ referred_by: referrer.id })
+            .eq('id', data.user.id);
+
+          // Create referral record
+          await supabase.from('referrals').insert({
+            referrer_id: referrer.id,
+            referral_code: refCode,
+            referred_email: email,
+            referred_user_id: data.user.id,
+            status: 'signed_up',
+          });
+        }
       }
     }
 
@@ -62,7 +91,7 @@ export default function Signup() {
           <h2 className="text-2xl font-bold text-gray-900 mb-2">Check your email</h2>
           <p className="text-gray-500 mb-2">We sent a confirmation link to</p>
           <p className="font-semibold text-gray-900 mb-6">{email}</p>
-          <p className="text-sm text-gray-400 mb-6">Click the link in that email to activate your account. Check your spam folder if you don't see it.</p>
+          <p className="text-sm text-gray-400 mb-6">Click the link in that email to activate your account. Check your spam folder if you don't see it within a few minutes.</p>
           <Link href="/auth/login" className="inline-block px-6 py-3 bg-red-600 hover:bg-red-700 text-white rounded-xl font-semibold">
             Go to Login
           </Link>
@@ -82,6 +111,12 @@ export default function Signup() {
             <h1 className="text-2xl font-bold text-gray-900">Create your account</h1>
             <p className="text-gray-500 text-sm mt-1">Start navigating your custody case today</p>
           </div>
+
+          {refCode && (
+            <div className="bg-green-50 border border-green-200 rounded-xl px-4 py-3 mb-4 text-sm text-green-700 text-center">
+              🤝 You were referred by a Foresight member
+            </div>
+          )}
 
           <div className="flex justify-center gap-4 mb-6 text-xs text-gray-500">
             <span className="flex items-center gap-1"><span className="text-green-600">✓</span> Free to start</span>
@@ -135,5 +170,13 @@ export default function Signup() {
         </div>
       </main>
     </div>
+  );
+}
+
+export default function Signup() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-gray-50 flex items-center justify-center"><div className="w-6 h-6 border-2 border-red-200 border-t-red-600 rounded-full animate-spin" /></div>}>
+      <SignupForm />
+    </Suspense>
   );
 }
