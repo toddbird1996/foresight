@@ -18,19 +18,36 @@ export default function Signup() {
     e.preventDefault();
     setLoading(true);
     setError('');
+
     if (password !== confirmPassword) { setError('Passwords do not match'); setLoading(false); return; }
     if (password.length < 6) { setError('Password must be at least 6 characters'); setLoading(false); return; }
 
     const { data, error: signUpError } = await supabase.auth.signUp({
-      email, password, options: { data: { full_name: fullName }, emailRedirectTo: `${window.location.origin}/auth/login` }
+      email,
+      password,
+      options: {
+        data: { full_name: fullName },
+        emailRedirectTo: `${window.location.origin}/auth/callback`,
+      },
     });
+
     if (signUpError) { setError(signUpError.message); setLoading(false); return; }
 
     if (data.user) {
-      await supabase.from('users').insert({
-        id: data.user.id, email, full_name: fullName, tier: 'bronze', jurisdiction: 'saskatchewan',
+      // Create user profile row
+      const { error: profileError } = await supabase.from('users').insert({
+        id: data.user.id,
+        email,
+        full_name: fullName,
+        tier: 'bronze',
+        jurisdiction: 'saskatchewan',
       });
+      // Non-fatal if this fails (e.g. duplicate) — RLS will handle access
+      if (profileError && profileError.code !== '23505') {
+        console.warn('Profile creation warning:', profileError.message);
+      }
     }
+
     setSuccess(true);
     setLoading(false);
   };
@@ -43,7 +60,9 @@ export default function Signup() {
             <span className="text-3xl text-green-600">✓</span>
           </div>
           <h2 className="text-2xl font-bold text-gray-900 mb-2">Check your email</h2>
-          <p className="text-gray-500 mb-6">We sent a confirmation link to <strong>{email}</strong>.</p>
+          <p className="text-gray-500 mb-2">We sent a confirmation link to</p>
+          <p className="font-semibold text-gray-900 mb-6">{email}</p>
+          <p className="text-sm text-gray-400 mb-6">Click the link in that email to activate your account. Check your spam folder if you don't see it.</p>
           <Link href="/auth/login" className="inline-block px-6 py-3 bg-red-600 hover:bg-red-700 text-white rounded-xl font-semibold">
             Go to Login
           </Link>
@@ -64,7 +83,6 @@ export default function Signup() {
             <p className="text-gray-500 text-sm mt-1">Start navigating your custody case today</p>
           </div>
 
-          {/* Value Props */}
           <div className="flex justify-center gap-4 mb-6 text-xs text-gray-500">
             <span className="flex items-center gap-1"><span className="text-green-600">✓</span> Free to start</span>
             <span className="flex items-center gap-1"><span className="text-green-600">✓</span> No credit card</span>
@@ -72,7 +90,9 @@ export default function Signup() {
           </div>
 
           <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
-            {error && <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl mb-5 text-sm">{error}</div>}
+            {error && (
+              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl mb-5 text-sm">{error}</div>
+            )}
 
             <form onSubmit={handleSignup} className="space-y-4">
               <div>
@@ -95,16 +115,22 @@ export default function Signup() {
                 <input type="password" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} placeholder="••••••••" required
                   className="w-full px-4 py-3 border border-gray-200 rounded-xl bg-gray-50 focus:outline-none focus:border-red-400 text-gray-900" />
               </div>
-              <button type="submit" disabled={loading} className="w-full py-3 bg-red-600 hover:bg-red-700 text-white rounded-xl font-semibold disabled:opacity-50">
+              <button type="submit" disabled={loading}
+                className="w-full py-3 bg-red-600 hover:bg-red-700 text-white rounded-xl font-semibold disabled:opacity-50">
                 {loading ? 'Creating account...' : 'Create Free Account'}
               </button>
             </form>
 
-            <p className="text-[11px] text-gray-400 mt-4 text-center">By signing up, you agree to our <Link href="/terms" className="underline">Terms</Link> and <Link href="/privacy" className="underline">Privacy Policy</Link>.</p>
+            <p className="text-[11px] text-gray-400 mt-4 text-center">
+              By signing up, you agree to our{' '}
+              <Link href="/terms" className="underline">Terms</Link> and{' '}
+              <Link href="/privacy" className="underline">Privacy Policy</Link>.
+            </p>
           </div>
 
           <p className="text-center text-sm text-gray-500 mt-5">
-            Already have an account? <Link href="/auth/login" className="text-red-600 font-medium hover:underline">Sign in</Link>
+            Already have an account?{' '}
+            <Link href="/auth/login" className="text-red-600 font-medium hover:underline">Sign in</Link>
           </p>
         </div>
       </main>
