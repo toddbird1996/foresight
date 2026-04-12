@@ -118,6 +118,21 @@ export default function FilingGuidePage() {
     setProgress(map);
   };
 
+  const autoDeadline = async (stepTitle) => {
+    let cfg = null;
+    const t = stepTitle.toLowerCase();
+    if (t.includes('swear your affidavit and file') || t.includes('file at the court')) {
+      cfg = { title: 'Response deadline — other party has 30 days to file an Answer', days: 30, event_type: 'deadline', priority: 'high' };
+    } else if (t.includes('file proof of service') || t.includes('complete and file the affidavit of service')) {
+      cfg = { title: 'Check that proof of service is on file with the court', days: 2, event_type: 'task', priority: 'medium' };
+    } else if (t.includes('request a judicial case conference')) {
+      cfg = { title: 'Follow up on JCC date if not received within 2 weeks', days: 14, event_type: 'task', priority: 'medium' };
+    }
+    if (!cfg) return;
+    const dueDate = new Date(Date.now() + cfg.days * 86400000).toISOString().split('T')[0];
+    await supabase.from('deadlines').insert({ user_id: user.id, title: cfg.title, due_date: dueDate, event_type: cfg.event_type, priority: cfg.priority, completed: false });
+  };
+
   const toggleStep = async (stepId) => {
     const isCompleted = !progress[stepId];
     setProgress(prev => ({ ...prev, [stepId]: isCompleted }));
@@ -130,6 +145,11 @@ export default function FilingGuidePage() {
     } else {
       await supabase.from('user_progress')
         .insert({ user_id: user.id, step_id: stepId, completed: isCompleted, completed_at: isCompleted ? new Date().toISOString() : null });
+    }
+    // Auto-create deadline for key steps
+    if (isCompleted) {
+      const step = phases.flatMap(p => p.steps || []).find(s => s.id === stepId);
+      if (step?.title) await autoDeadline(step.title);
     }
   };
 
