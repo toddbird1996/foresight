@@ -1,43 +1,10 @@
-import { createMiddlewareClient } from '@supabase/auth-helpers-nextjs';
 import { NextResponse } from 'next/server';
 
-// Routes that don't require authentication
-const PUBLIC_ROUTES = [
-  '/auth/login',
-  '/auth/signup',
-  '/auth/reset-password',
-  '/auth/callback',
-  '/',
-  '/disclaimer',
-  '/privacy',
-  '/terms',
-];
-
+// Middleware is kept minimal - each page handles its own auth check
+// The supabase client uses localStorage which middleware can't read,
+// so we just pass all requests through and let page-level auth handle redirects.
 export async function middleware(req) {
-  const res = NextResponse.next();
-  const supabase = createMiddlewareClient({ req, res });
-
-  // Refresh session if it exists (keeps cookies in sync)
-  const { data: { session } } = await supabase.auth.getSession();
-
-  const { pathname } = req.nextUrl;
-
-  // Allow public routes and static assets
-  const isPublic = PUBLIC_ROUTES.some(route => pathname === route || pathname.startsWith('/auth/'));
-  const isAsset = pathname.startsWith('/_next') || pathname.startsWith('/icons') || pathname.startsWith('/api') || pathname.includes('.');
-
-  if (isAsset || isPublic) {
-    return res;
-  }
-
-  // Redirect unauthenticated users to login
-  if (!session) {
-    const loginUrl = new URL('/auth/login', req.url);
-    loginUrl.searchParams.set('redirect', pathname);
-    return NextResponse.redirect(loginUrl);
-  }
-
-  return res;
+  return NextResponse.next();
 }
 
 export const config = {
