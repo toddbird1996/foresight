@@ -47,6 +47,72 @@ const KIT_INFO = {
 };
 
 
+
+// ── Consent Order Declined — What Now? ──────────────────────────────────────
+function ConsentOrderDeniedPanel() {
+  const [open, setOpen] = useState(false);
+  const [chosen, setChosen] = useState(null);
+  const CHOICES = [
+    { id: 'rewrite', icon: '✏️', color: 'blue', title: 'Rewrite and resubmit',
+      when: 'The judge found a drafting issue — wording was unclear, a clause was unenforceable, or a required element was missing.',
+      steps: ['Ask the clerk or judge exactly what needs to change.', 'Revise the draft — be precise about dates, amounts, and conditions.', 'Both parties sign the revised version.', 'Resubmit to the court for the judge to sign.'],
+      tip: 'Most rejections are fixable. Ask the clerk if you can briefly speak to the judge before leaving the courthouse.' },
+    { id: 'negotiate', icon: '🤝', color: 'green', title: 'Renegotiate the terms',
+      when: 'The judge felt the terms were not in the children\'s best interests or were unfair to one party.',
+      steps: ['Ask the judge what specific concerns they have.', 'Return to negotiation — in person, through lawyers, or via Family Justice Services (1-866-933-5972).', 'Address the judge\'s concerns in the revised agreement.', 'Draft a new consent order and resubmit.'],
+      tip: 'Family Justice Services offers free mediation if you need help reaching a revised agreement.' },
+    { id: 'hearing', icon: '🏛️', color: 'amber', title: 'Proceed to a hearing',
+      when: 'You cannot reach an agreement the judge will approve, or the issues are too complex.',
+      steps: ['Request a hearing date through the court registry.', 'Prepare your evidence: affidavits, financial statements, parenting plan.', 'Serve the other party with your application.', 'Consider getting legal representation — hearings are complex.', 'Present your case and the judge makes the final decision.'],
+      tip: 'Legal Aid Saskatchewan (1-800-667-3764) and Pro Bono Law SK (306-569-3100) may assist qualifying applicants.' },
+    { id: 'appeal', icon: '⚖️', color: 'red', title: 'Appeal the decision',
+      when: 'You believe the judge made a legal error in refusing to sign — not just that you disagree with the outcome.',
+      steps: ['You have 30 days from the decision to file a Notice of Appeal.', 'Appeals go to the Court of Appeal for Saskatchewan.', 'You must show the judge made an error in law.', 'Get a hearing transcript first — required for most appeals.', 'Legal representation is strongly recommended.'],
+      tip: 'Appeals are expensive and rarely succeed without strong legal grounds. Consult a lawyer before pursuing this path.' },
+  ];
+  const COLS = { blue: 'bg-blue-50 border-blue-200 text-blue-900', green: 'bg-green-50 border-green-200 text-green-900', amber: 'bg-amber-50 border-amber-200 text-amber-900', red: 'bg-red-50 border-red-200 text-red-900' };
+  const BTNS = { blue: 'bg-blue-100 text-blue-700', green: 'bg-green-100 text-green-700', amber: 'bg-amber-100 text-amber-700', red: 'bg-red-100 text-red-700' };
+  return (
+    <div className="border border-gray-200 rounded-xl overflow-hidden mt-1">
+      <button onClick={() => setOpen(v => !v)} className="w-full flex items-center gap-2 px-3 py-2.5 bg-gray-50 hover:bg-gray-100 text-left transition-colors">
+        <span className="text-sm">❓</span>
+        <div className="flex-1">
+          <p className="text-xs font-semibold text-gray-800">What if the judge declines to sign the consent order?</p>
+          <p className="text-[10px] text-gray-500">Choose your path based on what happened</p>
+        </div>
+        <span className="text-gray-400 text-xs">{open ? '▲' : '▼'}</span>
+      </button>
+      {open && (
+        <div className="p-3 bg-white space-y-3">
+          <p className="text-[11px] text-gray-600">A judge can decline if terms are unclear, unenforceable, or not in the children\'s best interests. Pick the situation that fits yours:</p>
+          <div className="grid grid-cols-2 gap-2">
+            {CHOICES.map(c => (
+              <button key={c.id} onClick={() => setChosen(chosen === c.id ? null : c.id)}
+                className={`flex items-center gap-2 p-2.5 rounded-xl border-2 text-left transition-all ${
+                  chosen === c.id ? `${COLS[c.color]} border-current` : 'bg-white border-gray-200 hover:border-gray-300'
+                }`}>
+                <span className="text-base flex-shrink-0">{c.icon}</span>
+                <span className="text-[11px] font-semibold leading-tight text-gray-800">{c.title}</span>
+              </button>
+            ))}
+          </div>
+          {chosen && (() => {
+            const c = CHOICES.find(x => x.id === chosen);
+            return (
+              <div className={`${COLS[c.color]} border rounded-xl p-3 space-y-2`}>
+                <p className="text-[11px] font-semibold">When to use this:</p>
+                <p className="text-[11px] leading-relaxed">{c.when}</p>
+                <p className="text-[11px] font-semibold pt-1">Steps:</p>
+                <ol className="space-y-1">{c.steps.map((s, i) => <li key={i} className="flex gap-1.5 text-[11px]"><span className="font-bold flex-shrink-0">{i+1}.</span><span className="leading-relaxed">{s}</span></li>)}</ol>
+                <div className={`${BTNS[c.color]} rounded-lg px-2.5 py-2 text-[11px] font-medium`}>💡 {c.tip}</div>
+              </div>
+            );
+          })()}
+        </div>
+      )}
+    </div>
+  );
+}
 // ─── What Happens Next ────────────────────────────────────────────────────────
 const WHAT_NEXT = {
   divorce: {
@@ -396,6 +462,10 @@ export default function FilingGuidePage() {
                                 : `▼ Tips${hasForms ? ' & forms' : ''}`}
                             </button>
                           )}
+            {/* Consent order denial choices */}
+            {(step.title?.toLowerCase().includes('consent order') || step.title?.toLowerCase().includes('negotiate consent')) && (
+              <ConsentOrderDeniedPanel />
+            )}
                         </div>
 
                         {step.estimated_time_days && (
