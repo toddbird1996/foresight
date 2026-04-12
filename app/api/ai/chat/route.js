@@ -81,7 +81,7 @@ If the user asks about preparation, deadlines, or what to do next — factor in 
 
 export async function POST(request) {
   try {
-    const { message, jurisdiction = 'saskatchewan', userId } = await request.json();
+    const { message, jurisdiction = 'saskatchewan', userId, history = [] } = await request.json();
 
     if (!message) return NextResponse.json({ error: 'Message is required' }, { status: 400 });
     if (!userId) return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
@@ -153,6 +153,7 @@ export async function POST(request) {
         max_tokens: 1024,
         messages: [
           { role: 'system', content: systemPrompt },
+          ...history.slice(-8).map(m => ({ role: m.role, content: m.content })),
           { role: 'user', content: message }
         ]
       })
