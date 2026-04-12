@@ -54,9 +54,12 @@ export default function ProgramsPage() {
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
         const { data: profile } = await supabase.from('users').select('jurisdiction').eq('id', user.id).single();
-        if (profile?.jurisdiction) setUserJurisdiction(profile.jurisdiction);
+        if (profile?.jurisdiction) {
+        setUserJurisdiction(profile.jurisdiction);
+        await fetchPrograms(profile.jurisdiction);
+      } else {
+        await fetchPrograms();
       }
-      await fetchPrograms();
     };
     init();
   }, []);
@@ -72,11 +75,13 @@ export default function ProgramsPage() {
     modification:    { label: 'Modifying Order', categories: ['legal','financial','parenting'] },
   };
 
-  const fetchPrograms = async () => {
+  const fetchPrograms = async (jid = null) => {
+    const jurisdictionToFetch = jid || userJurisdiction || 'saskatchewan';
     const { data, error } = await supabase
       .from('programs')
       .select('*')
       .eq('is_active', true)
+      .eq('jurisdiction_id', jurisdictionToFetch)
       .order('display_order', { ascending: true });
     if (data) setPrograms(data);
     setLoading(false);
