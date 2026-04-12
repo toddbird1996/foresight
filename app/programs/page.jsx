@@ -1,501 +1,262 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Header from '../components/Header';
 import PageTitle from '../components/PageTitle';
 import Footer from '../components/Footer';
+import { supabase } from '../../lib/supabaseClient';
 
-// ============================================
-// PROGRAM CATEGORIES
-// ============================================
-const CATEGORIES = {
-  legal_aid: { label: 'Legal Aid & Free Legal Help', icon: '⚖️', color: 'bg-red-50 text-red-700 border-red-200' },
-  funding: { label: 'Financial Assistance & Funding', icon: '💰', color: 'bg-emerald-50 text-emerald-700 border-emerald-200' },
+const CATEGORY_META = {
+  financial: { label: 'Financial Assistance', icon: '💰', color: 'bg-emerald-50 text-emerald-700 border-emerald-200' },
   housing: { label: 'Housing Support', icon: '🏠', color: 'bg-blue-50 text-blue-700 border-blue-200' },
-  therapy: { label: 'Counselling & Mental Health', icon: '🧠', color: 'bg-purple-50 text-purple-700 border-purple-200' },
-  children: { label: 'Programs for Children', icon: '👧', color: 'bg-amber-50 text-amber-700 border-amber-200' },
-  domestic_violence: { label: 'Domestic Violence Support', icon: '🛡️', color: 'bg-rose-50 text-rose-700 border-rose-200' },
-  mediation: { label: 'Mediation & Dispute Resolution', icon: '🤝', color: 'bg-teal-50 text-teal-700 border-teal-200' },
-  parenting: { label: 'Parenting Programs & Education', icon: '👨‍👩‍👧', color: 'bg-indigo-50 text-indigo-700 border-indigo-200' },
-  indigenous: { label: 'Indigenous & First Nations Services', icon: '🪶', color: 'bg-orange-50 text-orange-700 border-orange-200' },
-  youth: { label: 'Youth Programs & Services', icon: '🧑‍🎓', color: 'bg-cyan-50 text-cyan-700 border-cyan-200' },
+  legal: { label: 'Legal Aid', icon: '⚖️', color: 'bg-red-50 text-red-700 border-red-200' },
+  counseling: { label: 'Counselling', icon: '🧠', color: 'bg-purple-50 text-purple-700 border-purple-200' },
+  mental_health: { label: 'Mental Health', icon: '💙', color: 'bg-indigo-50 text-indigo-700 border-indigo-200' },
+  support: { label: 'Support Services', icon: '🤝', color: 'bg-teal-50 text-teal-700 border-teal-200' },
+  crisis: { label: 'Crisis Services', icon: '🆘', color: 'bg-rose-50 text-rose-700 border-rose-200' },
+  parenting: { label: 'Parenting', icon: '👨‍👩‍👧', color: 'bg-amber-50 text-amber-700 border-amber-200' },
+  childcare: { label: 'Childcare', icon: '🧒', color: 'bg-orange-50 text-orange-700 border-orange-200' },
+  education: { label: 'Education', icon: '🎓', color: 'bg-cyan-50 text-cyan-700 border-cyan-200' },
+  employment: { label: 'Employment', icon: '💼', color: 'bg-sky-50 text-sky-700 border-sky-200' },
+  indigenous: { label: 'Indigenous Services', icon: '🪶', color: 'bg-orange-50 text-orange-700 border-orange-200' },
+  food: { label: 'Food Security', icon: '🍎', color: 'bg-green-50 text-green-700 border-green-200' },
   addiction: { label: 'Addiction & Recovery', icon: '💪', color: 'bg-lime-50 text-lime-700 border-lime-200' },
-  food: { label: 'Food Security & Nutrition', icon: '🍎', color: 'bg-green-50 text-green-700 border-green-200' },
-  employment: { label: 'Employment & Job Training', icon: '💼', color: 'bg-sky-50 text-sky-700 border-sky-200' },
   disability: { label: 'Disability Support', icon: '♿', color: 'bg-violet-50 text-violet-700 border-violet-200' },
+  mentorship: { label: 'Mentorship', icon: '⭐', color: 'bg-yellow-50 text-yellow-700 border-yellow-200' },
+  youth: { label: 'Youth Services', icon: '🧑‍🎓', color: 'bg-pink-50 text-pink-700 border-pink-200' },
 };
 
-// ============================================
-// PROGRAMS DATABASE - ALL PROVINCES
-// ============================================
-const PROGRAMS = {
-  national: {
-    name: 'Canada-Wide',
-    flag: '🇨🇦',
-    programs: [
-      { category: 'legal_aid', name: 'Department of Justice - Family Law', description: 'Federal family law information including the Divorce Act, child support guidelines, and parenting arrangements.', url: 'https://www.justice.gc.ca/eng/fl-df/', phone: '' },
-      { category: 'legal_aid', name: 'Canada Child Support Tables', description: 'Official federal child support lookup tables used across Canada.', url: 'https://www.justice.gc.ca/eng/fl-df/child-enfant/cst-orpe.html', phone: '' },
-      { category: 'funding', name: 'Canada Child Benefit (CCB)', description: 'Tax-free monthly payment to eligible families to help with the cost of raising children under 18.', url: 'https://www.canada.ca/en/revenue-agency/services/child-family-benefits/canada-child-benefit-overview.html', phone: '1-800-387-1193' },
-      { category: 'domestic_violence', name: 'National Domestic Violence Hotline', description: '24/7 crisis support for anyone experiencing domestic violence.', url: 'https://endingviolencecanada.org/', phone: '1-800-363-9010' },
-      { category: 'therapy', name: 'Kids Help Phone', description: '24/7 support for young people — call, text, or chat online. Free and confidential.', url: 'https://kidshelpphone.ca/', phone: '1-800-668-6868' },
-      { category: 'therapy', name: 'Crisis Services Canada', description: '24/7 crisis support and suicide prevention for anyone in distress.', url: 'https://www.crisisservicescanada.ca/', phone: '1-833-456-4566' },
-      { category: 'children', name: 'Children\'s Aid Society', description: 'Child welfare services available in every province — contact your local office for support.', url: 'https://www.canada.ca/en/public-health/services/child-welfare.html', phone: '' },
-    
-      { category: 'indigenous', name: 'Indigenous Services Canada - Child & Family', description: 'Federal support for Indigenous child and family services, including the Act respecting First Nations, Inuit and Métis children.', url: 'https://www.sac-isc.gc.ca/eng/1100100035698/1613665727010', phone: '1-800-567-9604' },
-      { category: 'indigenous', name: 'Métis Nation Family Services', description: 'Family support, cultural programming, and child welfare services through Métis governing bodies across Canada.', url: 'https://www.metisnation.ca/', phone: '' },
-      { category: 'indigenous', name: 'National Indian Residential School Crisis Line', description: '24/7 crisis support for former residential school students and their families.', url: '', phone: '1-866-925-4419' },
-      { category: 'indigenous', name: 'Hope for Wellness Helpline', description: '24/7 counselling for all Indigenous peoples. Available in English, French, Cree, Ojibway, and Inuktitut.', url: 'https://www.hopeforwellness.ca/', phone: '1-855-242-3310' },
-      { category: 'youth', name: 'Youth Employment and Skills Strategy', description: 'Federal funding for youth employment programs, job training, and skills development for ages 15-30.', url: 'https://www.canada.ca/en/employment-social-development/services/funding/youth-employment-strategy.html', phone: '' },
-      { category: 'youth', name: 'Pathways to Education', description: 'Free program providing tutoring, mentoring, financial support, and social support to youth in low-income communities.', url: 'https://www.pathwaystoeducation.ca/', phone: '' },
-      { category: 'addiction', name: 'Canadian Centre on Substance Use and Addiction', description: 'National resources on substance use, treatment options, and recovery support.', url: 'https://www.ccsa.ca/', phone: '' },
-      { category: 'addiction', name: 'Alcoholics Anonymous Canada', description: 'Free peer support groups for alcohol addiction. Meetings available in every province.', url: 'https://www.aa.org/', phone: '' },
-      { category: 'addiction', name: 'Narcotics Anonymous Canada', description: 'Free peer support groups for drug addiction recovery.', url: 'https://canaacna.org/', phone: '' },
-      { category: 'food', name: 'Food Banks Canada', description: 'National network of food banks. Find your local food bank for emergency food assistance.', url: 'https://www.foodbankscanada.ca/', phone: '' },
-      { category: 'food', name: 'Canada Prenatal Nutrition Program', description: 'Free nutrition support and counselling for pregnant women facing challenging life circumstances.', url: 'https://www.canada.ca/en/public-health/services/health-promotion/childhood-adolescence/programs-initiatives/canada-prenatal-nutrition-program-cpnp.html', phone: '' },
-      { category: 'employment', name: 'Job Bank Canada', description: 'Free national job search tool with resume builder, job alerts, and career planning resources.', url: 'https://www.jobbank.gc.ca/', phone: '' },
-      { category: 'disability', name: 'Canada Disability Benefit', description: 'Federal income supplement for working-age persons with disabilities. Reduced barriers for single parents.', url: 'https://www.canada.ca/en/employment-social-development/programs/disability/cdb.html', phone: '' },
-      { category: 'disability', name: 'Registered Disability Savings Plan (RDSP)', description: 'Long-term savings plan for persons with disabilities. Government matching grants up to $3,500/year.', url: 'https://www.canada.ca/en/revenue-agency/services/tax/individuals/topics/registered-disability-savings-plan-rdsp.html', phone: '' },
-      { category: 'parenting', name: "Nobody's Perfect Parenting Program", description: 'Free national parenting program for parents of children birth to 5 years. Group-based, available in every province.', url: 'https://www.canada.ca/en/public-health/services/health-promotion/childhood-adolescence/parent/nobody-perfect.html', phone: '' },
-      { category: 'parenting', name: 'Triple P Positive Parenting Program', description: 'Evidence-based parenting support. Free through many community health centres and family resource centres.', url: 'https://www.triplep-parenting.ca/', phone: '' },
-    ]
-  },
-  saskatchewan: {
-    name: 'Saskatchewan',
-    flag: '🇨🇦',
-    programs: [
-      { category: 'legal_aid', name: 'Legal Aid Saskatchewan', description: 'Free legal representation for eligible individuals in family law matters.', url: 'https://legalaid.sk.ca/', phone: '1-800-667-3764' },
-      { category: 'legal_aid', name: 'PLEA Saskatchewan', description: 'Free legal information on family law, housing, and more. Includes Family Law Saskatchewan form wizard.', url: 'https://plea.org/', phone: '' },
-      { category: 'legal_aid', name: 'Family Law Information Centre (FLIC)', description: 'Free help identifying court forms, self-help kits, and referrals to family law services.', url: 'https://www.saskatchewan.ca/residents/births-deaths-marriages-and-divorces/separation-or-divorce/represent-yourself-in-family-court', phone: '1-888-218-2822' },
-      { category: 'mediation', name: 'Dispute Resolution Office - Family Mediation', description: 'Provincial mediation service. Fees on a sliding scale based on income.', url: 'https://www.saskatchewan.ca/residents/births-deaths-marriages-and-divorces/separation-or-divorce', phone: '306-787-5747' },
-      { category: 'parenting', name: 'For the Children\'s Sake / Parenting After Separation', description: 'Mandatory parenting course for separating parents. Free to attend.', url: 'https://www.saskatchewan.ca/residents/births-deaths-marriages-and-divorces/separation-or-divorce', phone: '' },
-      { category: 'funding', name: 'Saskatchewan Social Services', description: 'Income assistance, child care subsidies, and emergency support for families in need.', url: 'https://www.saskatchewan.ca/residents/family-and-social-support', phone: '' },
-      { category: 'housing', name: 'Saskatchewan Housing Corporation', description: 'Affordable housing, rental supplements, and emergency shelter for families.', url: 'https://www.saskatchewan.ca/residents/housing', phone: '' },
-      { category: 'domestic_violence', name: 'Provincial Association of Transition Houses (PATHS)', description: 'Network of shelters and services for victims of domestic violence across Saskatchewan.', url: 'https://pathssk.org/', phone: '306-522-3515' },
-      { category: 'therapy', name: 'Saskatchewan Health Authority - Mental Health', description: 'Free mental health and addictions services across the province.', url: 'https://www.saskhealthauthority.ca/your-health/conditions-diseases-services/mental-health-addictions-services', phone: '811' },
-      { category: 'children', name: 'Family Matters Program', description: 'Assists families experiencing separation with information, support, and guidance.', url: 'https://www.saskatchewan.ca/residents/births-deaths-marriages-and-divorces/separation-or-divorce', phone: '' },
-      { category: 'funding', name: 'Saskatchewan Income Support (SIS)', description: 'Financial assistance for basic living costs including shelter, food, and utilities for individuals and families with low income.', url: 'https://www.saskatchewan.ca/residents/family-and-social-support/financial-help/saskatchewan-income-support', phone: '' },
-      { category: 'funding', name: 'Saskatchewan Employment Incentive (SEI)', description: 'Monthly financial incentive for working families with lower incomes, plus supplementary health benefits and bus passes.', url: 'https://www.saskatchewan.ca/residents/family-and-social-support/financial-help/saskatchewan-employment-incentive', phone: '' },
-      { category: 'funding', name: 'Saskatchewan Low-Income Tax Credit', description: 'Up to $1,196/year per family. Combined with quarterly GST credit payments. No application needed — based on tax return.', url: 'https://www.canada.ca/en/revenue-agency/services/child-family-benefits/provincial-territorial-programs/province-saskatchewan.html', phone: '' },
-      { category: 'funding', name: 'Child Care Subsidy', description: 'Financial assistance to help with the cost of regulated child care. Parents pay minimum 10% of fees.', url: 'https://www.saskatchewan.ca/residents/family-and-social-support/child-care/paying-for-child-care', phone: '' },
-      { category: 'housing', name: 'Saskatchewan Housing Benefit', description: 'Monthly benefit for low-income renters through the Saskatchewan Housing Corporation.', url: 'https://www.saskatchewan.ca/residents/housing', phone: '' },
-      { category: 'housing', name: 'Social Housing Program', description: 'Rent set at 30% of household income. Available in 300+ communities across Saskatchewan. Priority for families with children.', url: 'https://www.saskatchewan.ca/residents/housing/find-housing/social-housing', phone: '' },
-      { category: 'therapy', name: 'Family Service Saskatchewan', description: 'Counselling services for individuals, couples, and families. Sliding scale fees available.', url: 'https://familyservice.sk.ca/', phone: '' },
-      { category: 'children', name: 'Counsel for Children Program', description: 'Free lawyer appointed for children involved in child protection proceedings under the Child and Family Services Act.', url: 'https://www.saskatchewan.ca/residents/justice-crime-and-the-law/courts-and-sentencing/counsel-for-children', phone: '' },
-      { category: 'children', name: 'KidsFirst Program', description: 'Home visiting program for vulnerable families with young children. Provides parenting support, child development info, and community connections.', url: 'https://www.saskatchewan.ca/residents/family-and-social-support/child-care', phone: '' },
-    
-      { category: 'indigenous', name: 'Federation of Sovereign Indigenous Nations (FSIN)', description: 'Advocacy and support for First Nations families in Saskatchewan. Includes child and family services, education, and justice support.', url: 'https://www.fsin.com/', phone: '306-665-1215' },
-      { category: 'indigenous', name: 'Métis Nation-Saskatchewan Family Services', description: 'Child and family services, Métis cultural programs, housing support, and educational programs for Métis families.', url: 'https://metisnationsk.com/', phone: '306-343-8285' },
-      { category: 'indigenous', name: 'Saskatchewan First Nations Family and Community Institute', description: 'Research, training, and support for First Nations child welfare and family services.', url: 'https://www.sfnfci.ca/', phone: '306-373-2874' },
-      { category: 'indigenous', name: 'Saskatoon Indian and Métis Friendship Centre', description: 'Cultural programs, family support, youth programming, and community connections for urban Indigenous people.', url: 'https://simfc.ca/', phone: '306-244-0174' },
-      { category: 'indigenous', name: 'Regina Treaty Status Indian Services (RTSIS)', description: 'Family support, youth programs, addictions support, and cultural programming for Treaty Indigenous people in Regina.', url: 'https://www.rtsis.ca/', phone: '306-924-1606' },
-      { category: 'youth', name: 'Ranch Ehrlo Society', description: 'Residential care, group homes, outreach, and support programs for at-risk youth and young families in Saskatchewan.', url: 'https://ehrlo.com/', phone: '306-781-1800' },
-
-      { category: 'domestic_violence', name: 'Safe & Together Institute (Ranch Ehrlo)', description: 'Evidence-based model used by Ranch Ehrlo and child welfare agencies. Helps workers assess domestic violence while keeping children safely with the non-offending parent. Training, resources, and family support.', url: 'https://ehrlo.com/', phone: '306-781-1800' },      { category: 'youth', name: 'Egadz Youth Centre', description: 'Free drop-in, meals, emergency shelter, outreach, and support for at-risk youth in Saskatoon.', url: 'https://www.egadz.ca/', phone: '306-931-6644' },
-      { category: 'youth', name: 'SIGN (Street and Intensive Gang Navigation)', description: 'Outreach and support for young people involved in or at risk of gang involvement. Family support included.', url: '', phone: '306-668-7446' },
-      { category: 'youth', name: 'Saskatchewan Youth in Care and Custody Network', description: 'Peer support, mentorship, and advocacy for youth who have been in government care.', url: '', phone: '' },
-      { category: 'youth', name: 'Big Brothers Big Sisters Saskatchewan', description: 'Free mentoring programs for children and youth. 1-to-1 and group programs available.', url: 'https://bigbrothersbigsisters.ca/', phone: '' },
-      { category: 'addiction', name: 'Saskatchewan Health Authority - Addictions Services', description: 'Free addiction assessment, outpatient counselling, detox, and residential treatment across the province.', url: 'https://www.saskhealthauthority.ca/your-health/conditions-diseases-services/mental-health-addictions-services', phone: '811' },
-      { category: 'addiction', name: 'Calder Centre (Saskatoon)', description: 'Residential addiction treatment program. Detox and 28-day treatment. Referral through SHA.', url: '', phone: '306-655-4100' },
-      { category: 'addiction', name: 'Larson House (Regina)', description: 'Residential addiction treatment and recovery support. Referral through SHA.', url: '', phone: '306-766-6600' },
-      { category: 'food', name: 'Regina Food Bank', description: 'Emergency food hampers for individuals and families. Also operates community kitchens and food skills programs.', url: 'https://reginafoodbank.ca/', phone: '306-791-6533' },
-      { category: 'food', name: 'Saskatoon Food Bank & Learning Centre', description: 'Emergency food, cooking classes, nutrition education, and community garden programs.', url: 'https://saskatoonfoodbank.org/', phone: '306-664-6565' },
-      { category: 'food', name: 'Canada Nutrition North Program', description: 'Subsidized food for northern and remote Saskatchewan communities.', url: 'https://www.nutritionnorthcanada.gc.ca/', phone: '' },
-      { category: 'food', name: 'Good Food Inc.', description: 'Affordable good food box program delivering fresh produce to families across Saskatchewan at reduced cost.', url: 'https://goodfoodinc.ca/', phone: '' },
-      { category: 'employment', name: 'Saskatchewan Employment Programs', description: 'Job search support, training subsidies, and career counselling through Ministry of Immigration and Career Training.', url: 'https://www.saskatchewan.ca/residents/jobs-working-and-training', phone: '' },
-      { category: 'employment', name: 'SaskJobs', description: 'Provincial job search portal with listings across Saskatchewan. Free resume builder and job alerts.', url: 'https://www.saskjobs.ca/', phone: '' },
-      { category: 'employment', name: 'Aboriginal Employment Development Program', description: 'Employment and training support specifically for Indigenous job seekers in Saskatchewan.', url: 'https://www.saskatchewan.ca/residents/jobs-working-and-training', phone: '' },
-      { category: 'disability', name: 'Saskatchewan Assured Income for Disability (SAID)', description: 'Monthly income support for people with significant and enduring disabilities. Higher benefit than standard income support.', url: 'https://www.saskatchewan.ca/residents/family-and-social-support/people-with-disabilities/saskatchewan-assured-income-for-disability-said', phone: '' },
-      { category: 'disability', name: 'Sask Abilities Council', description: 'Programs and services for people with disabilities including employment, accessible parking, assistive technology, and family support.', url: 'https://www.saskabilities.ca/', phone: '306-374-4448' },
-      { category: 'parenting', name: 'Positive Parenting Program (Triple P) - Saskatchewan', description: 'Free parenting support through community health centres. Group sessions and one-on-one support for parents of children 0-16.', url: '', phone: '' },
-      { category: 'parenting', name: 'Parents as Teachers Saskatchewan', description: 'Home visiting program providing parenting education, child development screening, and family support from prenatal to kindergarten.', url: 'https://parentsasteachers.org/', phone: '' },
-      { category: 'parenting', name: 'Early Childhood Intervention Programs (ECIP)', description: 'Free support for families with children birth to school age who have developmental delays or are at risk.', url: 'https://www.saskatchewan.ca/residents/family-and-social-support/child-care', phone: '' },
-    ]
-  },
-  alberta: {
-    name: 'Alberta',
-    flag: '🇨🇦',
-    programs: [
-      { category: 'legal_aid', name: 'Legal Aid Alberta', description: 'Free legal services for eligible Albertans in family law, including Emergency Protection Orders.', url: 'https://www.legalaid.ab.ca/', phone: '1-866-845-3425' },
-      { category: 'legal_aid', name: 'Alberta Family Court Assistance', description: 'Help for self-represented litigants navigating the family court process.', url: 'https://www.alberta.ca/family-law-assistance', phone: '' },
-      { category: 'legal_aid', name: 'Resolution & Court Administration Services (RCAS)', description: 'Court-connected family mediation, parenting coordination, and dispute resolution.', url: 'https://www.alberta.ca/rcas-family-justice-services', phone: '' },
-      { category: 'mediation', name: 'Alberta Family Mediation Program', description: 'Subsidized family mediation for parents with gross annual income under $60,000.', url: 'https://www.alberta.ca/family-mediation', phone: '' },
-      { category: 'parenting', name: 'Parenting After Separation Course', description: 'Free mandatory course for parents involved in custody proceedings in Alberta.', url: 'https://www.alberta.ca/parenting-after-separation', phone: '' },
-      { category: 'funding', name: 'Alberta Child and Family Benefit', description: 'Quarterly tax-free payment to help Alberta families with children.', url: 'https://www.alberta.ca/child-and-family-benefit', phone: '' },
-      { category: 'housing', name: 'Alberta Seniors and Housing', description: 'Affordable housing programs, rent supplements, and homeless prevention.', url: 'https://www.alberta.ca/housing-programs-and-services', phone: '' },
-      { category: 'domestic_violence', name: 'Alberta Council of Women\'s Shelters', description: 'Network of shelters for women and children fleeing family violence.', url: 'https://acws.ca/', phone: '1-866-331-3933' },
-      { category: 'therapy', name: 'Alberta Mental Health Helpline', description: '24/7 confidential mental health support for all Albertans.', url: 'https://www.albertahealthservices.ca/findhealth/service.aspx?Id=6810', phone: '1-877-303-2642' },
-      { category: 'children', name: 'Alberta Child Intervention', description: 'Child welfare services and supports for children and families at risk.', url: 'https://www.alberta.ca/child-intervention', phone: '' },
-      { category: 'funding', name: 'Alberta Child Care Subsidy', description: 'Income-based subsidy for licensed child care. Apply through the Alberta Child Care Subsidy portal.', url: 'https://www.alberta.ca/child-care-subsidy', phone: '' },
-      { category: 'funding', name: 'Alberta Affordability Grant (Child Care)', description: 'Reduces child care fees for children birth to kindergarten age. Automatically applied at licensed programs.', url: 'https://www.alberta.ca/federal-provincial-child-care-agreement', phone: '' },
-      { category: 'funding', name: 'Income Support Program', description: 'Financial benefits for Albertans who cannot meet their basic needs — food, clothing, shelter. Includes health benefits.', url: 'https://www.alberta.ca/income-support', phone: '' },
-      { category: 'housing', name: 'Rent Supplement Programs', description: 'Provincial and federal rent supplements to help families afford housing in the private market.', url: 'https://www.alberta.ca/housing-programs-and-services', phone: '' },
-      { category: 'therapy', name: 'Family Resource Networks', description: 'Community-based family support centres across Alberta providing parenting programs, counselling, and referrals.', url: 'https://www.alberta.ca/family-resource-networks', phone: '' },
-      { category: 'children', name: 'Child and Youth Advocate', description: 'Independent advocate who represents the rights and interests of young people receiving child intervention services.', url: 'https://www.ocya.alberta.ca/', phone: '1-800-661-3446' },
-      { category: 'domestic_violence', name: 'Family Violence Info Line', description: '24/7 multilingual support line for anyone affected by family violence in Alberta.', url: 'https://www.alberta.ca/family-violence-get-help', phone: '310-1818' },
-    
-      { category: 'indigenous', name: 'Alberta Native Friendship Centres Association', description: 'Network of 22 Friendship Centres providing cultural programming, family support, youth services, and community connections for urban Indigenous people.', url: 'https://anfca.com/', phone: '' },
-      { category: 'indigenous', name: 'Metis Nation of Alberta', description: 'Family services, housing, education, employment, and cultural programming for Metis families.', url: 'https://albertametis.com/', phone: '' },
-      { category: 'indigenous', name: 'Bent Arrow Traditional Healing Society', description: 'Culturally-based family support, foster care, and youth programs for Indigenous families in Edmonton.', url: 'https://bentarrow.ca/', phone: '780-481-3451' },
-      { category: 'youth', name: 'Boys and Girls Clubs of Calgary', description: 'After-school programs, mentoring, and support for youth and families.', url: 'https://www.bgcc.ab.ca/', phone: '' },
-      { category: 'youth', name: 'Youth Empowerment and Support Services (YESS)', description: 'Emergency shelter, housing, and wraparound support for at-risk youth ages 15-24 in Edmonton.', url: 'https://yess.org/', phone: '780-468-7070' },
-      { category: 'addiction', name: 'Alberta Health Services Addiction Helpline', description: '24/7 confidential addiction support and referral to treatment programs.', url: 'https://www.albertahealthservices.ca/info/page15443.aspx', phone: '1-866-332-2322' },
-      { category: 'addiction', name: 'AADAC (Alberta Alcohol and Drug Abuse Commission)', description: 'Free addiction services including outpatient counselling, residential treatment, and family support across Alberta.', url: 'https://www.albertahealthservices.ca/amh/amh.aspx', phone: '' },
-      { category: 'food', name: 'Calgary Food Bank', description: 'Emergency food hampers and community food programs for families in need.', url: 'https://www.calgaryfoodbank.com/', phone: '403-253-2059' },
-      { category: 'food', name: 'Edmonton Food Bank', description: 'Emergency food assistance and community kitchen programs.', url: 'https://edmontonsfoodbank.com/', phone: '780-425-2133' },
-      { category: 'employment', name: 'Alberta Supports', description: 'One-stop access to employment services, career planning, job search support, and financial assistance.', url: 'https://www.alberta.ca/alberta-supports', phone: '' },
-      { category: 'disability', name: 'Assured Income for the Severely Handicapped (AISH)', description: 'Monthly financial and health benefits for eligible Albertans with permanent disabilities.', url: 'https://www.alberta.ca/aish', phone: '' },
-    ]
-  },
-  ontario: {
-    name: 'Ontario',
-    flag: '🇨🇦',
-    programs: [
-      { category: 'legal_aid', name: 'Legal Aid Ontario', description: 'Free legal representation and duty counsel for eligible Ontarians in family court.', url: 'https://www.legalaid.on.ca/', phone: '1-800-668-8258' },
-      { category: 'legal_aid', name: 'CLEO - Steps to Justice', description: 'Free legal information on family law, with guided pathways to fill out court forms.', url: 'https://stepstojustice.ca/', phone: '' },
-      { category: 'legal_aid', name: 'Family Law Information Centres (FLICs)', description: 'Free information about family court at courthouses across Ontario.', url: 'https://www.ontario.ca/page/family-law-information-centres', phone: '' },
-      { category: 'mediation', name: 'Ontario Family Mediation Service', description: 'Free family mediation available at 45+ sites across Ontario.', url: 'https://www.ontario.ca/page/family-mediation-services', phone: '' },
-      { category: 'parenting', name: 'Mandatory Information Program (MIP)', description: 'Required information session for parents starting family court proceedings.', url: 'https://www.ontario.ca/page/mandatory-information-program', phone: '' },
-      { category: 'funding', name: 'Ontario Works', description: 'Financial and employment assistance for people in temporary financial need.', url: 'https://www.ontario.ca/page/apply-ontario-works', phone: '' },
-      { category: 'housing', name: 'Ontario Housing Benefits', description: 'Portable housing benefit and social housing programs for low-income families.', url: 'https://www.ontario.ca/page/co-operative-and-social-housing', phone: '' },
-      { category: 'domestic_violence', name: 'Assaulted Women\'s Helpline', description: '24/7 crisis line for women experiencing violence in Ontario.', url: 'https://www.awhl.org/', phone: '1-866-863-0511' },
-      { category: 'therapy', name: 'ConnexOntario', description: 'Free information and referrals for mental health, addictions, and gambling services.', url: 'https://www.connexontario.ca/', phone: '1-866-531-2600' },
-      { category: 'children', name: 'Office of the Children\'s Lawyer', description: 'Provides legal representation and clinical services for children in custody cases.', url: 'https://www.ontario.ca/page/office-childrens-lawyer', phone: '' },
-      { category: 'funding', name: 'Ontario Child Care Subsidy', description: 'Income-tested subsidy to help families with the cost of licensed child care. Apply through your municipal service manager.', url: 'https://www.ontario.ca/page/child-care-subsidies', phone: '' },
-      { category: 'funding', name: 'Ontario Disability Support Program (ODSP)', description: 'Income support and benefits for people with disabilities and their families.', url: 'https://www.ontario.ca/page/ontario-disability-support-program', phone: '' },
-      { category: 'funding', name: 'Ontario Trillium Benefit', description: 'Combined payment for Ontario energy and property tax credit, Northern Ontario energy credit, and Ontario sales tax credit.', url: 'https://www.ontario.ca/page/ontario-trillium-benefit', phone: '' },
-      { category: 'housing', name: 'Canada-Ontario Housing Benefit', description: 'Monthly portable housing benefit for eligible low-income families. You choose where you live.', url: 'https://www.ontario.ca/page/canada-ontario-housing-benefit', phone: '' },
-      { category: 'therapy', name: 'Family Health Teams', description: 'Community-based primary health care including mental health counselling, social work, and family support.', url: 'https://www.ontario.ca/page/family-health-teams', phone: '' },
-      { category: 'therapy', name: 'BounceBack Ontario', description: 'Free guided self-help program for adults and youth 15+ experiencing low mood, anxiety, or stress.', url: 'https://bouncebackontario.ca/', phone: '1-866-345-0224' },
-      { category: 'children', name: 'Ontario Child Benefit', description: 'Up to $1,607 per child per year for eligible low-to-moderate income families.', url: 'https://www.ontario.ca/page/ontario-child-benefit', phone: '' },
-      { category: 'domestic_violence', name: 'Victim Support Line', description: '24/7 referral and information line for victims of crime in Ontario.', url: 'https://www.ontario.ca/page/get-help-if-you-are-victim-crime', phone: '1-888-579-2888' },
-      { category: 'children', name: 'Better Beginnings, Better Futures', description: 'Community-based program for families with young children in high-risk neighbourhoods — parenting support, child development, home visiting.', url: 'https://bbbf.ca/', phone: '' },
-    
-      { category: 'indigenous', name: 'Ontario Federation of Indigenous Friendship Centres', description: '29 Friendship Centres providing family support, cultural programs, youth services, and community connections.', url: 'https://ofifc.org/', phone: '' },
-      { category: 'indigenous', name: 'Indigenous Legal Services (Legal Aid Ontario)', description: 'Culturally appropriate legal services for Indigenous clients in family law matters.', url: 'https://www.legalaid.on.ca/services/aboriginal-legal-services/', phone: '' },
-      { category: 'indigenous', name: 'Anishnawbe Health Toronto', description: 'Traditional healing, mental health, and family support services for Indigenous people.', url: 'https://www.aht.ca/', phone: '416-360-0486' },
-      { category: 'youth', name: 'Covenant House Toronto', description: 'Emergency shelter and support for homeless and at-risk youth ages 16-24.', url: 'https://www.covenanthousetoronto.ca/', phone: '1-800-435-7308' },
-      { category: 'youth', name: 'Youth Without Shelter', description: 'Emergency housing and life skills for homeless youth in the GTA.', url: 'https://www.yws.on.ca/', phone: '416-748-0110' },
-      { category: 'addiction', name: 'ConnexOntario', description: 'Free information and referrals for addiction, mental health, and gambling services across Ontario.', url: 'https://www.connexontario.ca/', phone: '1-866-531-2600' },
-      { category: 'addiction', name: 'Centre for Addiction and Mental Health (CAMH)', description: 'Treatment, research, and support for addiction and mental health. Largest facility in Canada.', url: 'https://www.camh.ca/', phone: '416-535-8501' },
-      { category: 'food', name: 'Daily Bread Food Bank', description: 'Emergency food assistance for individuals and families in the Greater Toronto Area.', url: 'https://www.dailybread.ca/', phone: '416-203-0050' },
-      { category: 'food', name: 'Feed Ontario', description: 'Network of 1,200+ food banks and hunger relief programs across the province.', url: 'https://feedontario.ca/', phone: '' },
-      { category: 'employment', name: 'Employment Ontario', description: 'Free employment and training services including job search, skills training, and career counselling.', url: 'https://www.ontario.ca/page/employment-ontario', phone: '' },
-      { category: 'disability', name: 'Ontario Disability Support Program (ODSP)', description: 'Income support and benefits for people with disabilities and their families.', url: 'https://www.ontario.ca/page/ontario-disability-support-program', phone: '' },
-    ]
-  },
-  bc: {
-    name: 'British Columbia',
-    flag: '🇨🇦',
-    programs: [
-      { category: 'legal_aid', name: 'Legal Aid BC', description: 'Free legal representation, duty counsel, and family law advice.', url: 'https://legalaid.bc.ca/', phone: '1-866-577-2525' },
-      { category: 'legal_aid', name: 'Family Law in BC', description: 'Comprehensive family law information including a free online tool to fill out court forms.', url: 'https://family.legalaid.bc.ca/', phone: '1-855-875-8867' },
-      { category: 'legal_aid', name: 'Clicklaw', description: 'Free BC-focused legal information from trusted agencies and organizations.', url: 'https://www.clicklaw.bc.ca/', phone: '' },
-      { category: 'mediation', name: 'BC Family Justice Counsellors', description: 'Free dispute resolution services at Family Justice Centres across BC.', url: 'https://www2.gov.bc.ca/gov/content/life-events/divorce/family-justice/who-can-help/family-justice-counsellors', phone: '' },
-      { category: 'parenting', name: 'Parenting After Separation Program', description: 'Free online course for parents going through separation.', url: 'https://www2.gov.bc.ca/gov/content/life-events/divorce/family-justice/parenting-after-separation', phone: '' },
-      { category: 'funding', name: 'BC Employment and Assistance', description: 'Income and disability assistance for individuals and families in need.', url: 'https://www2.gov.bc.ca/gov/content/family-social-supports/income-assistance', phone: '' },
-      { category: 'housing', name: 'BC Housing', description: 'Subsidized housing, rent supplements, and emergency shelter for families.', url: 'https://www.bchousing.org/', phone: '604-433-2218' },
-      { category: 'domestic_violence', name: 'VictimLink BC', description: '24/7 crisis line for victims of family and sexual violence in BC.', url: 'https://www2.gov.bc.ca/gov/content/justice/criminal-justice/victims-of-crime/victimlinkbc', phone: '1-800-563-0808' },
-      { category: 'therapy', name: 'BC Mental Health Support Line', description: '24/7 confidential mental health crisis support.', url: 'https://www2.gov.bc.ca/gov/content/health/managing-your-health/mental-health-substance-use', phone: '310-6789' },
-      { category: 'children', name: 'BC Representative for Children and Youth', description: 'Independent advocacy for children and youth in government care.', url: 'https://rcybc.ca/', phone: '1-800-476-3933' },
-      { category: 'funding', name: 'BC Child Care Fee Reduction Initiative', description: 'Reduces parent fees at participating licensed facilities by up to $900/month for under 3 and $350/month for 3-5.', url: 'https://www2.gov.bc.ca/gov/content/family-social-supports/caring-for-young-children/child-care-funding/child-care-fee-reduction-initiative', phone: '' },
-      { category: 'funding', name: 'Affordable Child Care Benefit', description: 'Income-tested benefit for families using licensed child care. Can cover up to 100% of child care fees for low-income families.', url: 'https://www2.gov.bc.ca/gov/content/family-social-supports/caring-for-young-children/child-care-funding/child-care-benefit', phone: '' },
-      { category: 'funding', name: 'BC Income Assistance', description: 'Financial support for basic needs for people in hardship. Includes shelter, food, and transportation allowances.', url: 'https://www2.gov.bc.ca/gov/content/family-social-supports/income-assistance', phone: '1-866-866-0800' },
-      { category: 'funding', name: 'BC Family Benefit', description: 'Tax-free monthly payment for families with children under 18. Up to $1,750 per child per year.', url: 'https://www2.gov.bc.ca/gov/content/taxes/income-taxes/personal/credits/family-benefit', phone: '' },
-      { category: 'housing', name: 'BC Rental Assistance Program', description: 'Cash assistance for working families with low income who are renting. Up to $1,387/month depending on family size.', url: 'https://www.bchousing.org/housing-assistance/rental-assistance-financial-aid-702702702702702702702702/rental-assistance-program', phone: '' },
-      { category: 'therapy', name: 'BC 211', description: 'Free helpline connecting people to community, social, and government services including counselling and family support.', url: 'https://bc211.ca/', phone: '211' },
-      { category: 'children', name: 'BC Early Childhood Development Programs', description: 'Free early childhood programs including StrongStart centres, Ready Set Learn, and family drop-in programs.', url: 'https://www2.gov.bc.ca/gov/content/education-training/early-learning', phone: '' },
-      { category: 'domestic_violence', name: 'BC Society of Transition Houses', description: 'Network of over 100 transition houses, safe homes, and second-stage housing programs across BC.', url: 'https://bcsth.ca/', phone: '' },
-    ]
-  },
-  manitoba: {
-    name: 'Manitoba',
-    flag: '🇨🇦',
-    programs: [
-      { category: 'legal_aid', name: 'Legal Aid Manitoba', description: 'Free legal services for eligible Manitobans in family law matters.', url: 'https://www.legalaid.mb.ca/', phone: '1-800-261-2960' },
-      { category: 'mediation', name: 'Family Conciliation Services', description: 'Free mediation and family dispute resolution for separating parents.', url: 'https://www.gov.mb.ca/familylaw/resolution/conciliation.html', phone: '204-945-7236' },
-      { category: 'parenting', name: 'For the Sake of the Children', description: 'Mandatory parenting education for separating families.', url: 'https://www.gov.mb.ca/familylaw/programs/children.html', phone: '' },
-      { category: 'funding', name: 'Manitoba Employment & Income Assistance', description: 'Financial support for basic needs including food, clothing, and shelter.', url: 'https://www.gov.mb.ca/fs/eia/', phone: '' },
-      { category: 'housing', name: 'Manitoba Housing', description: 'Social housing and rent-geared-to-income housing for families in need.', url: 'https://www.gov.mb.ca/housing/', phone: '' },
-      { category: 'domestic_violence', name: 'Manitoba Domestic Violence Crisis Line', description: '24/7 crisis support for victims of domestic violence.', url: 'https://www.gov.mb.ca/stoptheviolence/', phone: '1-877-977-0007' },
-      { category: 'therapy', name: 'Manitoba Mental Health Crisis Line', description: '24/7 crisis support for mental health concerns.', url: '', phone: '1-888-322-3019' },
-      { category: 'funding', name: 'Manitoba Child Care Subsidy', description: 'Income-tested subsidy for licensed child care. Apply online or by mail.', url: 'https://www.gov.mb.ca/fs/childcare/families/subsidy.html', phone: '' },
-      { category: 'funding', name: 'Manitoba Prenatal Benefit', description: 'Monthly benefit for pregnant people with low income to help with nutritional needs.', url: 'https://www.gov.mb.ca/healthyliving/hlp/prenatal.html', phone: '' },
-      { category: 'housing', name: 'Manitoba Housing Authority', description: 'Social housing and rent-geared-to-income housing across Manitoba. Priority for families with children.', url: 'https://www.gov.mb.ca/housing/', phone: '' },
-      { category: 'children', name: 'Families First Program', description: 'Home visiting program for families with newborns. Provides parenting support and connects families to community resources.', url: 'https://www.gov.mb.ca/healthyliving/hlp/familiesfirst.html', phone: '' },
-      { category: 'children', name: 'Manitoba Advocate for Children and Youth', description: 'Independent advocate who reviews the quality of services for children in care and investigates complaints.', url: 'https://manitobaadvocate.ca/', phone: '1-800-263-7146' },
-      { category: 'therapy', name: 'Klinic Community Health', description: 'Free counselling services including sexual assault crisis, domestic violence support, and general counselling in Winnipeg.', url: 'https://klinic.mb.ca/', phone: '204-784-4090' },
-    ]
-  },
-  quebec: {
-    name: 'Quebec',
-    flag: '🇨🇦',
-    programs: [
-      { category: 'legal_aid', name: 'Commission des services juridiques (Legal Aid)', description: 'Free legal services for eligible Quebec residents in family law matters.', url: 'https://www.csj.qc.ca/commission-des-services-juridiques/en/home.html', phone: '' },
-      { category: 'legal_aid', name: 'Éducaloi', description: 'Free legal information and tools including family law templates and guides in English and French.', url: 'https://educaloi.qc.ca/en/', phone: '' },
-      { category: 'legal_aid', name: 'JuridiQC', description: 'Free online guided tool for preparing joint divorce applications in Quebec.', url: 'https://juridiqc.gouv.qc.ca/en/', phone: '' },
-      { category: 'mediation', name: 'Quebec Family Mediation (5 Free Sessions)', description: 'Parents with children are entitled to 5 free sessions with an accredited mediator.', url: 'https://www.justice.gouv.qc.ca/en/couples-and-families/separation-and-divorce/', phone: '' },
-      { category: 'funding', name: 'Quebec Family Allowance', description: 'Provincial benefit for families with children under 18.', url: 'https://www.rrq.gouv.qc.ca/en/programmes/soutien_enfants/Pages/soutien_enfants.aspx', phone: '' },
-      { category: 'domestic_violence', name: 'SOS Violence Conjugale', description: '24/7 bilingual crisis line for victims of domestic violence in Quebec.', url: 'https://sosviolenceconjugale.ca/en', phone: '1-800-363-9010' },
-      { category: 'therapy', name: 'Tel-Aide', description: '24/7 confidential listening and support line.', url: 'https://www.telaide.org/', phone: '514-935-1101' },
-      { category: 'children', name: 'Direction de la protection de la jeunesse (DPJ)', description: 'Quebec youth protection services for children at risk.', url: 'https://www.quebec.ca/en/family-and-support-for-individuals/childhood/youth-protection', phone: '' },
-      { category: 'funding', name: 'Quebec Family Allowance', description: 'Provincial benefit for families with children under 18. Up to $2,903 per child per year depending on income.', url: 'https://www.rrq.gouv.qc.ca/en/programmes/soutien_enfants/Pages/soutien_enfants.aspx', phone: '' },
-      { category: 'funding', name: 'Quebec Reduced-Contribution Child Care ($8.70/day)', description: 'Subsidized child care at $8.70/day in licensed centres and home daycares. Apply through the waiting list.', url: 'https://www.mfa.gouv.qc.ca/en/services-de-garde/parents/Pages/index.aspx', phone: '' },
-      { category: 'funding', name: 'Social Assistance (Aide sociale)', description: 'Financial assistance for basic needs for individuals and families with no or insufficient income.', url: 'https://www.quebec.ca/en/employment/social-assistance-social-solidarity/social-assistance-program', phone: '' },
-      { category: 'housing', name: 'Société d\'habitation du Québec (SHQ)', description: 'Social and affordable housing, rent supplements, and home adaptation programs for Quebec families.', url: 'https://www.habitation.gouv.qc.ca/english.html', phone: '' },
-      { category: 'therapy', name: 'CLSC Services (Local Community Service Centres)', description: 'Free front-line health and social services including family counselling, social work, and crisis intervention at CLSCs across Quebec.', url: 'https://www.quebec.ca/en/health/finding-a-resource/clsc', phone: '' },
-      { category: 'legal_aid', name: 'Juripop', description: 'Affordable legal services for people who don\'t qualify for legal aid but can\'t afford a private lawyer.', url: 'https://juripop.org/en/', phone: '' },
-      { category: 'children', name: 'La Ligne Parents', description: '24/7 support line for parents. Free, confidential, bilingual.', url: 'https://ligneparents.com/', phone: '1-800-361-5085' },
-    ]
-  },
-  nova_scotia: {
-    name: 'Nova Scotia',
-    flag: '🇨🇦',
-    programs: [
-      { category: 'legal_aid', name: 'Nova Scotia Legal Aid', description: 'Free legal services for eligible Nova Scotians in family matters.', url: 'https://www.nslegalaid.ca/', phone: '902-420-6573' },
-      { category: 'legal_aid', name: 'Nova Scotia Family Law Information', description: 'Comprehensive guide to family law court forms and processes.', url: 'https://www.nsfamilylaw.ca/', phone: '' },
-      { category: 'mediation', name: 'Conciliation Services (Supreme Court)', description: 'Court-connected conciliation service for family disputes.', url: 'https://www.nsfamilylaw.ca/', phone: '' },
-      { category: 'funding', name: 'Nova Scotia Income Assistance', description: 'Financial assistance for basic needs for individuals and families.', url: 'https://novascotia.ca/coms/employment/income_assistance/', phone: '' },
-      { category: 'domestic_violence', name: 'Transition House Association of Nova Scotia', description: 'Network of shelters for women and children fleeing violence.', url: 'https://thans.ca/', phone: '1-855-225-0220' },
-      { category: 'therapy', name: 'Nova Scotia Mental Health Crisis Line', description: '24/7 provincial crisis support.', url: '', phone: '1-888-429-8167' },
-      { category: 'funding', name: 'Nova Scotia Child Care Subsidy', description: 'Income-tested subsidy to help families with the cost of licensed child care.', url: 'https://www.novascotia.ca/coms/families/childcare/ChildCareSubsidy.html', phone: '' },
-      { category: 'funding', name: 'Nova Scotia Child Benefit', description: 'Monthly benefit for families with children. Combined with the Canada Child Benefit.', url: 'https://www.canada.ca/en/revenue-agency/services/child-family-benefits/provincial-territorial-programs/province-nova-scotia.html', phone: '' },
-      { category: 'housing', name: 'Housing Nova Scotia', description: 'Public housing, rent supplements, and housing repair programs for low-income families.', url: 'https://housing.novascotia.ca/', phone: '' },
-      { category: 'children', name: 'Family Resource Centres', description: 'Community-based centres offering parenting programs, play groups, and family support across Nova Scotia.', url: 'https://www.novascotia.ca/coms/families/', phone: '' },
-      { category: 'legal_aid', name: 'Nova Scotia Barristers\' Society Lawyer Referral Service', description: 'Free 30-minute consultation with a lawyer to discuss your legal options.', url: 'https://nsbs.org/for-the-public/finding-a-lawyer/lawyer-referral-service/', phone: '1-800-665-9779' },
-    ]
-  },
-  new_brunswick: {
-    name: 'New Brunswick',
-    flag: '🇨🇦',
-    programs: [
-      { category: 'legal_aid', name: 'Legal Aid New Brunswick', description: 'Free legal services for eligible residents in family law matters.', url: 'https://www.legalaidnb.ca/', phone: '1-800-442-4862' },
-      { category: 'mediation', name: 'Family Mediation Services', description: 'Free family mediation through the Department of Justice.', url: 'https://www2.gnb.ca/content/gnb/en/services/services_renderer.201316.Family_Mediation_Services.html', phone: '' },
-      { category: 'parenting', name: 'Parent Information Program', description: 'Mandatory education session for separating parents.', url: '', phone: '' },
-      { category: 'domestic_violence', name: 'Chimo Helpline', description: '24/7 bilingual crisis line for New Brunswick.', url: 'https://www.chimohelpline.ca/', phone: '1-800-667-5005' },
-      { category: 'funding', name: 'NB Social Development', description: 'Income support, housing assistance, and family services.', url: 'https://www2.gnb.ca/content/gnb/en/departments/social_development.html', phone: '' },
-      { category: 'funding', name: 'NB Child Day Care Subsidy', description: 'Subsidy to help families with the cost of licensed child care based on income.', url: 'https://www2.gnb.ca/content/gnb/en/services/services_renderer.200965.Child_Day_Care_Services_Subsidy.html', phone: '' },
-      { category: 'housing', name: 'NB Housing', description: 'Social housing, rent supplements, and housing repair programs for families in need.', url: 'https://www2.gnb.ca/content/gnb/en/departments/social_development/housing.html', phone: '' },
-      { category: 'therapy', name: 'NB Mental Health Services', description: 'Free mental health services through regional health authorities across New Brunswick.', url: 'https://www2.gnb.ca/content/gnb/en/departments/health/MentalHealth.html', phone: '' },
-      { category: 'children', name: 'NB Child and Youth Advocate', description: 'Independent advocate for children and youth in government services.', url: 'https://www.cyanb.ca/', phone: '1-888-465-1100' },
-      { category: 'children', name: 'Family Resource Centres', description: 'Community-based family support including parenting programs, early childhood development, and family counselling.', url: '', phone: '' },
-    ]
-  },
-  newfoundland: {
-    name: 'Newfoundland & Labrador',
-    flag: '🇨🇦',
-    programs: [
-      { category: 'legal_aid', name: 'Legal Aid Newfoundland & Labrador', description: 'Free legal services in family law for eligible residents.', url: 'https://www.legalaid.nl.ca/', phone: '1-800-563-9911' },
-      { category: 'mediation', name: 'Family Justice Services', description: 'Free mediation and dispute resolution for separating families.', url: '', phone: '' },
-      { category: 'domestic_violence', name: 'Provincial Crisis Line', description: '24/7 crisis support for violence and mental health.', url: '', phone: '1-888-737-4668' },
-      { category: 'funding', name: 'Income Support Program', description: 'Financial assistance for basic needs.', url: 'https://www.gov.nl.ca/ecc/income-support/', phone: '' },
-      { category: 'funding', name: 'NL Child Care Subsidy', description: 'Income-tested subsidy for regulated child care services in Newfoundland and Labrador.', url: 'https://www.gov.nl.ca/education/early-learning/childcare/', phone: '' },
-      { category: 'funding', name: 'NL Mother Baby Nutrition Supplement', description: 'Monthly benefit for pregnant women and families with children under one year who receive income support.', url: 'https://www.gov.nl.ca/ecc/income-support/', phone: '' },
-      { category: 'housing', name: 'Newfoundland & Labrador Housing Corporation', description: 'Social housing, rental assistance, and home repair programs for low-income families.', url: 'https://www.nlhc.nl.ca/', phone: '' },
-      { category: 'therapy', name: 'NL Mental Health Crisis Line', description: '24/7 crisis support.', url: '', phone: '1-888-737-4668' },
-      { category: 'children', name: 'Child and Youth Advocate NL', description: 'Independent advocate for children and youth involved in government services.', url: 'https://www.childandyouthadvocate.nl.ca/', phone: '1-877-753-3840' },
-      { category: 'children', name: 'Family Resource Centres', description: '35+ family resource centres across the province offering parenting programs, early childhood development, and family support.', url: '', phone: '' },
-    ]
-  },
-  pei: {
-    name: 'Prince Edward Island',
-    flag: '🇨🇦',
-    programs: [
-      { category: 'legal_aid', name: 'Legal Aid PEI', description: 'Free legal services for eligible residents in family law.', url: 'https://www.legalaidpei.ca/', phone: '902-368-6043' },
-      { category: 'legal_aid', name: 'Community Legal Information Association (CLIA)', description: 'Free legal information and self-help guides for PEI residents.', url: 'https://www.cliapei.ca/', phone: '902-892-0853' },
-      { category: 'mediation', name: 'Child Focused Parenting Plan Mediation', description: 'Free mediation to help parents create parenting plans.', url: '', phone: '' },
-      { category: 'domestic_violence', name: 'PEI Family Violence Prevention Services', description: 'Crisis support and shelter for victims of family violence.', url: 'https://www.fvps.ca/', phone: '1-800-240-9894' },
-      { category: 'funding', name: 'PEI Social Assistance', description: 'Financial assistance for individuals and families in need.', url: 'https://www.princeedwardisland.ca/en/information/social-development-and-housing/social-assistance-program', phone: '' },
-      { category: 'funding', name: 'PEI Child Care Subsidy', description: 'Income-tested subsidy for licensed child care. PEI has moved toward $10/day child care.', url: 'https://www.princeedwardisland.ca/en/information/education-and-early-years/child-care-subsidy-program', phone: '' },
-      { category: 'housing', name: 'PEI Housing Programs', description: 'Social housing, rent supplements, and housing repair for low-income families.', url: 'https://www.princeedwardisland.ca/en/topic/housing', phone: '' },
-      { category: 'therapy', name: 'PEI Mental Health and Addictions', description: 'Free mental health services through Health PEI.', url: 'https://www.healthpei.ca/mentalhealth', phone: '' },
-      { category: 'children', name: 'PEI Family Resource Centres', description: 'Community-based family support including parenting programs, child development activities, and family counselling.', url: '', phone: '' },
-    ]
-  },
-  northwest_territories: {
-    name: 'Northwest Territories',
-    flag: '🇨🇦',
-    programs: [
-      { category: 'legal_aid', name: 'Legal Aid NWT', description: 'Free legal services for eligible residents.', url: 'https://www.justice.gov.nt.ca/en/legal-aid/', phone: '867-920-6356' },
-      { category: 'legal_aid', name: 'Law Line', description: 'Free legal information for NWT residents.', url: '', phone: '867-920-6356' },
-      { category: 'domestic_violence', name: 'NWT Help Line', description: '24/7 crisis and support line.', url: '', phone: '1-800-661-0844' },
-      { category: 'funding', name: 'NWT Income Assistance', description: 'Financial support for basic needs.', url: 'https://www.ece.gov.nt.ca/en/services/income-security', phone: '' },
-      { category: 'funding', name: 'NWT Child Care Subsidy', description: 'Subsidy to help families afford licensed child care in the Northwest Territories.', url: 'https://www.ece.gov.nt.ca/en/services/early-childhood-programs', phone: '' },
-      { category: 'housing', name: 'NWT Housing Corporation', description: 'Social housing, homeownership programs, and housing repair for NWT residents.', url: 'https://www.nwthc.gov.nt.ca/', phone: '' },
-      { category: 'therapy', name: 'NWT Counselling Services', description: 'Free community counselling through the Department of Health and Social Services.', url: '', phone: '' },
-      { category: 'children', name: 'Healthy Family Program', description: 'Home visiting program for families with young children in the NWT.', url: '', phone: '' },
-    ]
-  },
-  yukon: {
-    name: 'Yukon',
-    flag: '🇨🇦',
-    programs: [
-      { category: 'legal_aid', name: 'Yukon Legal Services Society', description: 'Free legal representation for eligible Yukoners.', url: 'https://legalaid.yk.ca/', phone: '867-667-5210' },
-      { category: 'legal_aid', name: 'Family Law Information Centre', description: 'Free legal information and family mediation services.', url: '', phone: '867-667-3083' },
-      { category: 'domestic_violence', name: 'VictimLINK Yukon', description: '24/7 crisis support for victims of violence.', url: '', phone: '1-800-563-0808' },
-      { category: 'funding', name: 'Yukon Social Assistance', description: 'Financial assistance for individuals and families.', url: 'https://yukon.ca/en/social-assistance', phone: '' },
-      { category: 'funding', name: 'Yukon Child Care Subsidy', description: 'Subsidy for licensed child care. Yukon is working toward $10/day child care.', url: 'https://yukon.ca/en/child-care-subsidy', phone: '' },
-      { category: 'housing', name: 'Yukon Housing Corporation', description: 'Social housing, rent supplements, and housing programs for Yukon families.', url: 'https://yukon.ca/en/housing-corporation', phone: '' },
-      { category: 'therapy', name: 'Many Rivers Counselling', description: 'Affordable counselling services for individuals, couples, and families in Whitehorse and communities across Yukon.', url: 'https://manyrivers.yk.ca/', phone: '867-667-2970' },
-      { category: 'children', name: 'Yukon Child and Youth Advocate', description: 'Independent advocate for children and youth involved in government services.', url: 'https://ycya.ca/', phone: '867-456-5575' },
-    ]
-  },
-  nunavut: {
-    name: 'Nunavut',
-    flag: '🇨🇦',
-    programs: [
-      { category: 'legal_aid', name: 'Maliiganik Tukisiiniakvik Legal Aid', description: 'Free legal services for eligible Nunavummiut. Available in Inuktitut and English.', url: '', phone: '867-979-5377' },
-      { category: 'domestic_violence', name: 'Nunavut Kamatsiaqtut Help Line', description: '24/7 crisis support line. Available in Inuktitut and English.', url: '', phone: '1-800-265-3333' },
-      { category: 'funding', name: 'Nunavut Income Assistance', description: 'Financial assistance for basic needs.', url: '', phone: '' },
-      { category: 'therapy', name: 'Nunavut Mental Health Line', description: 'Crisis and mental health support.', url: '', phone: '1-800-265-3333' },
-      { category: 'funding', name: 'Nunavut Child Care Subsidy', description: 'Financial support for families to access licensed child care in Nunavut communities.', url: '', phone: '' },
-      { category: 'housing', name: 'Nunavut Housing Corporation', description: 'Public housing and housing programs for Nunavut residents. Waitlists may apply.', url: 'https://www.nunavuthousing.ca/', phone: '' },
-      { category: 'children', name: 'Nunavut Representative for Children and Youth', description: 'Independent advocate for children and youth. Services in Inuktitut and English.', url: '', phone: '867-975-5090' },
-      { category: 'children', name: 'Inuuqatigiit Centre for Inuit Children, Youth and Families', description: 'Culturally-based programs and services for Inuit families. Based in Ottawa but serves Inuit nationally.', url: 'https://inuuqatigiit.ca/', phone: '' },
-    ]
-  },
+const TARGET_META = {
+  parents: 'Parents',
+  children: 'Children',
+  both: 'Parents & Children',
+  youth: 'Youth',
+  indigenous: 'Indigenous',
+  women: 'Women',
+  men: 'Men',
+  families: 'Families',
+  seniors: 'Seniors',
 };
 
-// ============================================
-// PROGRAMS PAGE COMPONENT
-// ============================================
 export default function ProgramsPage() {
-  const [selectedProvince, setSelectedProvince] = useState('national');
+  const [programs, setPrograms] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
-  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedTarget, setSelectedTarget] = useState('all');
+  const [expanded, setExpanded] = useState(null);
+  const [userJurisdiction, setUserJurisdiction] = useState('saskatchewan');
 
-  const provinceData = PROGRAMS[selectedProvince];
-  const allProvinceKeys = Object.keys(PROGRAMS);
+  useEffect(() => {
+    const init = async () => {
+      // Get user's jurisdiction
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        const { data: profile } = await supabase.from('users').select('jurisdiction').eq('id', user.id).single();
+        if (profile?.jurisdiction) setUserJurisdiction(profile.jurisdiction);
+      }
+      await fetchPrograms();
+    };
+    init();
+  }, []);
 
-  const filteredPrograms = (provinceData?.programs || []).filter(p => {
-    const matchesCategory = selectedCategory === 'all' || p.category === selectedCategory;
-    const matchesSearch = searchQuery === '' ||
-      p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      p.description.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesCategory && matchesSearch;
+  const fetchPrograms = async () => {
+    const { data, error } = await supabase
+      .from('programs')
+      .select('*')
+      .eq('is_active', true)
+      .order('display_order', { ascending: true });
+    if (data) setPrograms(data);
+    setLoading(false);
+  };
+
+  const categories = ['all', ...Object.keys(CATEGORY_META).filter(c =>
+    programs.some(p => p.category === c)
+  )];
+
+  const targets = ['all', ...Object.keys(TARGET_META).filter(t =>
+    programs.some(p => p.target_group === t)
+  )];
+
+  const filtered = programs.filter(p => {
+    const matchSearch = !search ||
+      p.name?.toLowerCase().includes(search.toLowerCase()) ||
+      p.description?.toLowerCase().includes(search.toLowerCase());
+    const matchCat = selectedCategory === 'all' || p.category === selectedCategory;
+    const matchTarget = selectedTarget === 'all' || p.target_group === selectedTarget;
+    return matchSearch && matchCat && matchTarget;
   });
 
-  // Group by category for display
-  const groupedPrograms = filteredPrograms.reduce((acc, p) => {
-    if (!acc[p.category]) acc[p.category] = [];
-    acc[p.category].push(p);
-    return acc;
-  }, {});
+  if (loading) return (
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="w-6 h-6 border-2 border-red-200 border-t-red-600 rounded-full animate-spin" />
+    </div>
+  );
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
       <Header />
-        <PageTitle title="Programs & Resources" subtitle="Support services across Canada" icon="🛡️" />
+      <PageTitle title="Programs & Resources" subtitle="Support services for your family" icon="🤝" />
 
-      {/* Content */}
-      <main className="max-w-5xl mx-auto px-4 py-6 space-y-4">
-        {/* Filters Row */}
-        <div className="flex gap-3">
-          <div className="flex-1">
-            <select value={selectedProvince} onChange={e => setSelectedProvince(e.target.value)}
-              className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm text-gray-900 focus:outline-none focus:border-red-400 appearance-none"
-              style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'12\' height=\'12\' viewBox=\'0 0 12 12\'%3E%3Cpath fill=\'%236B7280\' d=\'M6 8L1 3h10z\'/%3E%3C/svg%3E")', backgroundRepeat: 'no-repeat', backgroundPosition: 'right 12px center' }}>
-              {allProvinceKeys.map(key => (
-                <option key={key} value={key}>{PROGRAMS[key].flag} {PROGRAMS[key].name}</option>
-              ))}
-            </select>
-          </div>
-          <div className="flex-1">
-            <select value={selectedCategory} onChange={e => setSelectedCategory(e.target.value)}
-              className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm text-gray-900 focus:outline-none focus:border-red-400 appearance-none"
-              style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'12\' height=\'12\' viewBox=\'0 0 12 12\'%3E%3Cpath fill=\'%236B7280\' d=\'M6 8L1 3h10z\'/%3E%3C/svg%3E")', backgroundRepeat: 'no-repeat', backgroundPosition: 'right 12px center' }}>
-              <option value="all">All Categories</option>
-              {Object.entries(CATEGORIES).map(([key, cat]) => (
-                <option key={key} value={key}>{cat.icon} {cat.label}</option>
-              ))}
-            </select>
-          </div>
-        </div>
+      <main className="max-w-4xl mx-auto px-4 py-6">
 
         {/* Search */}
-        <input type="text" value={searchQuery} onChange={e => setSearchQuery(e.target.value)}
-          placeholder="Search programs..." className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:border-red-400" />
+        <input
+          type="text"
+          value={search}
+          onChange={e => setSearch(e.target.value)}
+          placeholder="Search programs, services, support..."
+          className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-red-400 mb-4"
+        />
 
-        {/* Province Header */}
-        <div className="bg-white border border-gray-200 rounded-xl p-4 flex items-center gap-3">
-          <span className="text-2xl">{provinceData?.flag}</span>
-          <div>
-            <h2 className="font-bold text-gray-900 text-lg">{provinceData?.name}</h2>
-            <p className="text-sm text-gray-500">{filteredPrograms.length} programs available</p>
-          </div>
+        {/* Category filter */}
+        <div className="flex gap-2 mb-3 overflow-x-auto pb-1">
+          {categories.map(cat => (
+            <button
+              key={cat}
+              onClick={() => setSelectedCategory(cat)}
+              className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors ${
+                selectedCategory === cat
+                  ? 'bg-red-600 text-white'
+                  : 'bg-white border border-gray-200 text-gray-600 hover:border-red-300'
+              }`}
+            >
+              {cat === 'all' ? `All (${programs.length})` : `${CATEGORY_META[cat]?.icon} ${CATEGORY_META[cat]?.label}`}
+            </button>
+          ))}
         </div>
 
-        {/* Programs by Category */}
-        {Object.keys(groupedPrograms).length === 0 ? (
-          <div className="text-center py-12 text-gray-400">
-            <span className="text-4xl block mb-3">🔍</span>
-            <p className="text-lg font-medium text-gray-600">No programs found</p>
-            <p className="text-sm">Try a different province or category.</p>
+        {/* Target filter */}
+        <div className="flex gap-2 mb-5 overflow-x-auto pb-1">
+          {targets.map(t => (
+            <button
+              key={t}
+              onClick={() => setSelectedTarget(t)}
+              className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors ${
+                selectedTarget === t
+                  ? 'bg-gray-800 text-white'
+                  : 'bg-white border border-gray-200 text-gray-600 hover:border-gray-400'
+              }`}
+            >
+              {t === 'all' ? 'All groups' : TARGET_META[t]}
+            </button>
+          ))}
+        </div>
+
+        {/* Results count */}
+        <p className="text-xs text-gray-500 mb-4">
+          Showing {filtered.length} of {programs.length} programs
+        </p>
+
+        {/* Program list */}
+        {filtered.length === 0 ? (
+          <div className="text-center py-16">
+            <div className="text-4xl mb-3">🔍</div>
+            <h3 className="font-semibold text-gray-900 mb-1">No programs found</h3>
+            <p className="text-sm text-gray-500">Try a different search or filter.</p>
           </div>
         ) : (
-          Object.entries(groupedPrograms).map(([catKey, programs]) => {
-            const cat = CATEGORIES[catKey];
-            return (
-              <div key={catKey}>
-                <h3 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
-                  <span>{cat.icon}</span> {cat.label}
-                </h3>
-                <div className="space-y-3">
-                  {programs.map((program, i) => (
-                    <div key={i} className={`bg-white border rounded-xl p-4 hover:border-red-300 transition-colors ${cat.color.includes('border') ? '' : 'border-gray-200'}`}>
-                      <div className="flex items-start justify-between gap-3">
-                        <div className="flex-1">
-                          <h4 className="font-semibold text-gray-900 mb-1">{program.name}</h4>
-                          <p className="text-sm text-gray-600 mb-2">{program.description}</p>
-                          <div className="flex flex-wrap gap-2">
-                            {program.url && (
-                              <a
-                                href={program.url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="inline-flex items-center gap-1 text-xs bg-red-50 text-red-700 px-2.5 py-1 rounded-lg hover:bg-red-100 transition-colors"
-                              >
-                                🌐 Visit Website
-                              </a>
-                            )}
-                            {program.phone && (
-                              <a
-                                href={`tel:${program.phone.replace(/[^0-9+]/g, '')}`}
-                                className="inline-flex items-center gap-1 text-xs bg-emerald-50 text-emerald-700 px-2.5 py-1 rounded-lg hover:bg-emerald-100 transition-colors"
-                              >
-                                📞 {program.phone}
-                              </a>
-                            )}
-                          </div>
+          <div className="space-y-3">
+            {filtered.map(program => {
+              const meta = CATEGORY_META[program.category] || { label: program.category, icon: '📋', color: 'bg-gray-50 text-gray-700 border-gray-200' };
+              const isExpanded = expanded === program.id;
+
+              return (
+                <div key={program.id} className="bg-white border border-gray-200 rounded-xl overflow-hidden hover:border-gray-300 transition-colors">
+                  <button
+                    className="w-full text-left p-4"
+                    onClick={() => setExpanded(isExpanded ? null : program.id)}
+                  >
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 flex-wrap mb-1">
+                          <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium border ${meta.color}`}>
+                            {meta.icon} {meta.label}
+                          </span>
+                          {program.cost === 'Free' && (
+                            <span className="px-2 py-0.5 bg-green-50 text-green-700 border border-green-200 rounded-full text-xs font-medium">Free</span>
+                          )}
+                          {program.target_group && program.target_group !== 'parents' && (
+                            <span className="px-2 py-0.5 bg-gray-50 text-gray-600 border border-gray-200 rounded-full text-xs">
+                              {TARGET_META[program.target_group] || program.target_group}
+                            </span>
+                          )}
                         </div>
+                        <h3 className="font-semibold text-gray-900 text-sm">{program.name}</h3>
+                        <p className="text-xs text-gray-500 mt-0.5 line-clamp-2">{program.description}</p>
+                      </div>
+                      <span className="text-gray-400 text-sm flex-shrink-0">{isExpanded ? '▲' : '▼'}</span>
+                    </div>
+                  </button>
+
+                  {isExpanded && (
+                    <div className="px-4 pb-4 border-t border-gray-100 pt-3">
+                      {program.description && (
+                        <p className="text-sm text-gray-700 mb-3">{program.description}</p>
+                      )}
+
+                      {program.eligibility?.length > 0 && (
+                        <div className="mb-3">
+                          <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Who Can Apply</h4>
+                          <ul className="space-y-1">
+                            {program.eligibility.map((e, i) => (
+                              <li key={i} className="text-xs text-gray-700 flex items-start gap-1.5">
+                                <span className="text-green-500 mt-0.5">✓</span> {e}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+
+                      {program.benefits?.length > 0 && (
+                        <div className="mb-3">
+                          <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">What You Get</h4>
+                          <ul className="space-y-1">
+                            {program.benefits.map((b, i) => (
+                              <li key={i} className="text-xs text-gray-700 flex items-start gap-1.5">
+                                <span className="text-blue-500 mt-0.5">•</span> {b}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+
+                      {program.how_to_apply && (
+                        <div className="mb-3">
+                          <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">How to Apply</h4>
+                          <p className="text-xs text-gray-700">{program.how_to_apply}</p>
+                        </div>
+                      )}
+
+                      <div className="flex flex-wrap gap-2 mt-3">
+                        {program.contact_phone && (
+                          <a href={`tel:${program.contact_phone}`}
+                            className="flex items-center gap-1.5 px-3 py-2 bg-green-50 hover:bg-green-100 border border-green-200 rounded-lg text-xs font-medium text-green-700">
+                            📞 {program.contact_phone}
+                          </a>
+                        )}
+                        {program.contact_email && (
+                          <a href={`mailto:${program.contact_email}`}
+                            className="flex items-center gap-1.5 px-3 py-2 bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded-lg text-xs font-medium text-blue-700">
+                            ✉️ Email
+                          </a>
+                        )}
+                        {program.website && (
+                          <a href={program.website} target="_blank" rel="noopener noreferrer"
+                            className="flex items-center gap-1.5 px-3 py-2 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-lg text-xs font-medium text-gray-700">
+                            🌐 Website →
+                          </a>
+                        )}
                       </div>
                     </div>
-                  ))}
+                  )}
                 </div>
-              </div>
-            );
-          })
+              );
+            })}
+          </div>
         )}
-
-        {/* USA Coming Soon */}
-        <div className="bg-gray-100 border border-gray-200 rounded-xl p-6 text-center">
-          <span className="text-3xl block mb-2">🇺🇸</span>
-          <h3 className="font-bold text-gray-900 mb-2">United States — Coming Soon</h3>
-          <p className="text-sm text-gray-600">
-            Programs and resources for US states are being researched and will be added in a future update.
-          </p>
-        </div>
-
-        {/* Disclaimer */}
-        <div className="bg-amber-50 border border-amber-200 rounded-xl p-4">
-          <h4 className="font-semibold text-amber-800 mb-1">⚠️ Important</h4>
-          <p className="text-sm text-amber-700">
-            This is a directory of publicly available programs and resources. Foresight does not endorse or guarantee any specific program. 
-            Eligibility requirements, availability, and services may change. Always contact the program directly to confirm current details.
-          </p>
-        <Footer />
-      </div>
       </main>
+      <Footer />
     </div>
   );
 }
