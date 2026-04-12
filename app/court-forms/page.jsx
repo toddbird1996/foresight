@@ -421,6 +421,20 @@ export default function CourtFormsPage() {
           </div>
         )}
 
+        {/* Suggest a missing form */}
+        <div className="bg-gray-50 border border-dashed border-gray-300 rounded-xl p-4 flex items-center justify-between gap-3">
+          <div>
+            <p className="text-sm font-semibold text-gray-700">Can't find the form you need?</p>
+            <p className="text-xs text-gray-500 mt-0.5">Suggest it and we'll add it to Foresight.</p>
+          </div>
+          <a
+            href={`mailto:toddbird1996@outlook.com?subject=Form Request — ${selectedJurisdiction?.name || 'Canada'}&body=Hi,%0A%0AI'm looking for the following court form:%0A%0AForm name/number: %0AJurisdiction: ${selectedJurisdiction?.name || ''}%0APurpose: %0A%0APlease add it to Foresight. Thank you.`}
+            className="flex-shrink-0 px-3 py-2 bg-red-600 hover:bg-red-700 text-white rounded-xl text-xs font-semibold whitespace-nowrap"
+          >
+            📩 Suggest a Form
+          </a>
+        </div>
+
         {/* ── Self-Help Kit section ──────────────────────────────────────────── */}
         {kit && (
           <div className="space-y-4">
