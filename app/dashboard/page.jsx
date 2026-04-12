@@ -17,7 +17,6 @@ export default function Dashboard() {
   const [actionPlan, setActionPlan] = useState(null);
   const [userProfile, setUserProfile] = useState(null);
   const [upcomingDeadlines, setUpcomingDeadlines] = useState([]);
-  const [checklist, setChecklist] = useState({});
 
 
   useEffect(() => {
@@ -39,14 +38,6 @@ export default function Dashboard() {
         if (profile?.action_plan) setActionPlan(profile.action_plan);
         if (profile) setUserProfile(profile);
 
-        // Fetch document checklist progress
-        const { data: checklistData } = await supabase
-          .from('document_checklist')
-          .select('item_key, checked')
-          .eq('user_id', user.id);
-        const checkMap = {};
-        (checklistData || []).forEach(r => { checkMap[r.item_key] = r.checked; });
-        setChecklist(checkMap);
 
         // Fetch upcoming deadlines (next 14 days, not completed)
         const today = new Date().toISOString().split('T')[0];
@@ -87,25 +78,9 @@ export default function Dashboard() {
         <QuestionBar />
 
         {/* Smart Status Banner */}
-        {userProfile && <SmartStatusBanner profile={userProfile} />}
+        {userProfile && <CaseWalkthroughBanner profile={userProfile} />}
 
-        {/* Document Checklist */}
-        {userProfile && (
-          <DocChecklist
-            profile={userProfile}
-            checklist={checklist}
-            userId={user?.id}
-            onToggle={async (key, val) => {
-              setChecklist(prev => ({ ...prev, [key]: val }));
-              const { data: existing } = await supabase.from('document_checklist').select('id').eq('user_id', user.id).eq('item_key', key).single();
-              if (existing) {
-                await supabase.from('document_checklist').update({ checked: val, checked_at: val ? new Date().toISOString() : null }).eq('id', existing.id);
-              } else {
-                await supabase.from('document_checklist').insert({ user_id: user.id, item_key: key, checked: val, checked_at: val ? new Date().toISOString() : null });
-              }
-            }}
-          />
-        )}
+
 
         {/* Case Guide - Step by Step Walkthrough */}
         {user && <CaseGuide userId={user.id} currentStep={userProfile?.case_guide_step || 0} dismissed={userProfile?.guide_dismissed || false} caseStatus={userProfile?.case_status} />}
@@ -295,298 +270,187 @@ export default function Dashboard() {
 
 /* ============================================ */
 
-// ─── Smart Case Status Banner ──────────────────────────────────────────────────
-const STATUS_CONFIG = {
+// ─── Case Walkthrough Banner ─────────────────────────────────────────────────
+const WALKTHROUGH = {
   no_case: {
-    colour: 'blue',
-    icon: '🔍',
-    headline: 'Start by understanding your options.',
-    action: 'Read the Filing Guide to see what to expect and which situation applies to you.',
-    link: '/filing',
-    linkLabel: 'Open Filing Guide →',
+    colour: { bg: 'bg-blue-50 border-blue-200', badge: 'bg-blue-100 text-blue-700', head: 'text-blue-900', sub: 'text-blue-700', btn: 'bg-blue-600 hover:bg-blue-700', step: 'bg-blue-200 text-blue-800', mand: 'bg-blue-600', opt: 'bg-blue-200' },
+    icon: '🔍', label: 'Getting Started',
+    headline: "Let's figure out where you stand.",
+    summary: "Before filing anything, take a few minutes to understand your situation and what the court process looks like for your case type.",
+    steps: [
+      { title: "Read the Filing Guide", desc: "Choose your situation — Divorce, Parenting Only, or Variation — and see the exact phases ahead of you.", link: '/filing', linkLabel: 'Open Filing Guide', mandatory: true },
+      { title: "Know your rights", desc: "Saskatchewan's Children's Law Act governs how courts decide parenting matters. Understanding it changes how you prepare.", link: '/rights', linkLabel: 'Your Rights', mandatory: true },
+      { title: "Review legal terms", desc: "Terms like parenting time, decision-making responsibility, affidavit, and JCC come up constantly. Know them before you file.", link: '/glossary', linkLabel: 'Legal Glossary', mandatory: false },
+      { title: "Calculate child support", desc: "Get an estimate of what the guidelines say before you walk into court. It helps you know what to expect.", link: '/calculator', linkLabel: 'Run Estimate', mandatory: false },
+    ],
   },
   preparing: {
-    colour: 'amber',
-    icon: '📝',
-    headline: "You're preparing to file.",
-    action: 'Your next step is to get your document checklist together. See exactly what you need below.',
-    link: '/court-forms',
-    linkLabel: 'Get Court Forms →',
+    colour: { bg: 'bg-amber-50 border-amber-200', badge: 'bg-amber-100 text-amber-700', head: 'text-amber-900', sub: 'text-amber-700', btn: 'bg-amber-600 hover:bg-amber-700', step: 'bg-amber-200 text-amber-800', mand: 'bg-amber-500', opt: 'bg-amber-200' },
+    icon: '📝', label: 'Preparing to File',
+    headline: "You're preparing to file. Here's exactly what you need.",
+    summary: "Before you can file, you need the right documents and completed requirements. Missing any mandatory item will delay your application.",
+    steps: [
+      { title: "Request your self-help kit", desc: "Call the Family Law Information Centre (free). Specify your situation: Divorce, Parenting & Support, or Variation. Ask for the fillable PDF.", link: '/court-forms', linkLabel: 'Court Forms & Kit Info', mandatory: true, detail: "📞 1-888-218-2822 · familylaw@gov.sk.ca" },
+      { title: "Complete For Kids' Sake course", desc: "Mandatory for any case involving children. Must be done BEFORE filing. Register at saskatchewanforkidssake.ca.", link: 'https://www.saskatchewanforkidssake.ca/', linkLabel: 'Register Now', mandatory: true, detail: "~$25 · Takes a few hours · You get a certificate to attach to your filing" },
+      { title: "Gather your financial documents", desc: "3 years of T1 tax returns, 3 months of pay stubs, and 3 months of bank statements for all accounts.", link: null, linkLabel: null, mandatory: true, detail: "Required whenever child or spousal support is part of your application" },
+      { title: "Gather identity & children's documents", desc: "Your photo ID, children's birth certificates, marriage certificate (if divorce), and children's school and doctor info.", link: null, linkLabel: null, mandatory: true },
+      { title: "Get a Commissioner for Oaths lined up", desc: "Your affidavit must be signed in front of one. Available at most law offices and banks — usually free.", link: null, linkLabel: null, mandatory: true },
+      { title: "Collect evidence relevant to your case", desc: "Texts, emails, police reports, medical records, photos — anything that supports what you are telling the court.", link: null, linkLabel: null, mandatory: false, detail: "Optional but strongly recommended for contested cases" },
+      { title: "Create your case file in Foresight", desc: "Store your documents, track deadlines, and use the AI assistant from one place.", link: '/cases', linkLabel: 'My Case', mandatory: false },
+    ],
   },
   filed: {
-    colour: 'purple',
-    icon: '📋',
-    headline: 'Your application is filed.',
-    action: 'Now you need to serve the other party. Check the filing guide for exact service requirements.',
-    link: '/filing',
-    linkLabel: 'View Service Steps →',
+    colour: { bg: 'bg-purple-50 border-purple-200', badge: 'bg-purple-100 text-purple-700', head: 'text-purple-900', sub: 'text-purple-700', btn: 'bg-purple-600 hover:bg-purple-700', step: 'bg-purple-200 text-purple-800', mand: 'bg-purple-600', opt: 'bg-purple-200' },
+    icon: '📋', label: 'Filed — Awaiting Service',
+    headline: "Your application is filed. Now you need to serve the other party.",
+    summary: "Filing is step one. The other parent must be personally served — you cannot do it yourself. Until service is confirmed with the court, nothing proceeds.",
+    steps: [
+      { title: "Arrange personal service", desc: "An adult (18+) who is not involved in the case must hand the documents directly to the other parent. You cannot serve them yourself.", link: '/filing', linkLabel: 'Service Steps', mandatory: true },
+      { title: "Complete the Affidavit of Service (Form 12-15)", desc: "The person who served the documents fills this out and swears it before a Commissioner for Oaths. This is your proof of service.", link: '/court-forms', linkLabel: 'Get Form 12-15', mandatory: true },
+      { title: "File proof of service with the court", desc: "Submit the sworn Affidavit of Service to the court registry. Without this, your case cannot proceed.", link: null, linkLabel: null, mandatory: true },
+      { title: "Set a deadline reminder", desc: "The other parent has 30 days to respond (60 days if outside SK). Set a reminder so you know when you can move forward.", link: '/deadlines', linkLabel: 'Set Reminder', mandatory: false },
+    ],
   },
   waiting_hearing: {
-    colour: 'red',
-    icon: '⏳',
-    headline: 'You have a hearing coming up.',
-    action: "Review the Judge Insight tips to make sure you're presenting yourself as well as possible.",
-    link: '/judge-insight',
-    linkLabel: 'Court Tips →',
+    colour: { bg: 'bg-red-50 border-red-200', badge: 'bg-red-100 text-red-700', head: 'text-red-900', sub: 'text-red-700', btn: 'bg-red-600 hover:bg-red-700', step: 'bg-red-100 text-red-800', mand: 'bg-red-600', opt: 'bg-red-200' },
+    icon: '⏳', label: 'Hearing Approaching',
+    headline: "You have a court appearance coming up. Prepare now.",
+    summary: "How you present yourself in court matters as much as your evidence. Judges are watching everything. Use this time to be as prepared as possible.",
+    steps: [
+      { title: "Read the Judge Insight tips", desc: "Everything from what to wear to how to address the judge to what not to do when the other parent is lying. Critical reading.", link: '/judge-insight', linkLabel: 'Court Tips', mandatory: true },
+      { title: "Organize your documents into a binder", desc: "Tab and label every document chronologically. You must be able to find anything in seconds. Bring 3 copies of everything.", link: null, linkLabel: null, mandatory: true, detail: "One for the judge, one for the other party, one for you" },
+      { title: "Review your JCC Brief or evidence package", desc: "Know exactly what you filed. The judge will have read it. Be ready to discuss every point.", link: null, linkLabel: null, mandatory: true },
+      { title: "Prepare what you will say", desc: "Write bullet points — not a script. Practice saying your key points out loud. Have a friend challenge you with hard questions.", link: null, linkLabel: null, mandatory: true },
+      { title: "Know the other parent's likely arguments", desc: "Think through what they will say and prepare calm, factual, evidence-backed responses.", link: null, linkLabel: null, mandatory: false },
+      { title: "Arrange childcare for the court date", desc: "Children must not be present in court waiting areas. Arrange care in advance.", link: null, linkLabel: null, mandatory: false },
+    ],
   },
   mediation: {
-    colour: 'green',
-    icon: '🤝',
-    headline: "You're in mediation.",
-    action: 'Use the Co-Parent Messenger to keep communication documented and professional.',
-    link: '/coparent',
-    linkLabel: 'Open Co-Parent Chat →',
+    colour: { bg: 'bg-green-50 border-green-200', badge: 'bg-green-100 text-green-700', head: 'text-green-900', sub: 'text-green-700', btn: 'bg-green-600 hover:bg-green-700', step: 'bg-green-100 text-green-800', mand: 'bg-green-600', opt: 'bg-green-200' },
+    icon: '🤝', label: 'In Mediation',
+    headline: "You're in mediation. Keep communication professional and documented.",
+    summary: "Mediation is an opportunity to settle without a judge deciding for you. What you agree to here can become a legally binding consent order.",
+    steps: [
+      { title: "Use the Co-Parent Messenger for all communication", desc: "Every message is timestamped and stored. Professional written communication protects you and demonstrates maturity to the court if needed.", link: '/coparent', linkLabel: 'Co-Parent Chat', mandatory: false },
+      { title: "Know your bottom line before each session", desc: "Decide in advance what you can and cannot agree to. Mediation moves fast — don't agree to something you'll regret.", link: null, linkLabel: null, mandatory: true },
+      { title: "Bring your financial disclosure to each session", desc: "Mediators need accurate income information to help with support discussions.", link: null, linkLabel: null, mandatory: true },
+      { title: "If you reach agreement — get it in writing immediately", desc: "A verbal agreement in mediation is not binding. A written Consent Order filed with the court is.", link: '/court-forms', linkLabel: 'Consent Order Info', mandatory: true },
+    ],
   },
   responding: {
-    colour: 'orange',
-    icon: '📩',
-    headline: "You've been served — time to respond.",
-    action: 'You have 30 days to file an Answer. Read the filing guide for your situation now.',
-    link: '/filing',
-    linkLabel: 'See Response Steps →',
+    colour: { bg: 'bg-orange-50 border-orange-200', badge: 'bg-orange-100 text-orange-700', head: 'text-orange-900', sub: 'text-orange-700', btn: 'bg-orange-600 hover:bg-orange-700', step: 'bg-orange-100 text-orange-800', mand: 'bg-orange-600', opt: 'bg-orange-200' },
+    icon: '📩', label: 'Responding to Papers',
+    headline: "You've been served. You have 30 days to respond.",
+    summary: "If you miss the 30-day deadline to file your Answer, the court can proceed without you and make orders based only on what the other parent asked for.",
+    steps: [
+      { title: "Read every page of what you were served", desc: "Understand exactly what they are asking for. Note every claim you disagree with — these are the issues you will address in your Answer.", link: null, linkLabel: null, mandatory: true },
+      { title: "Contact Legal Aid immediately if you can't afford a lawyer", desc: "Legal Aid Saskatchewan: 1-800-667-3764. Even a consultation helps. The 30-day clock is running.", link: null, linkLabel: null, mandatory: true, detail: "📞 1-800-667-3764" },
+      { title: "File your Answer (Form 15-14A) within 30 days", desc: "Your Answer tells the court what you agree with, what you disagree with, and what orders you want. This is your opportunity to be heard.", link: '/court-forms', linkLabel: 'Get Form 15-14A', mandatory: true },
+      { title: "Complete For Kids' Sake if children are involved", desc: "Even as a respondent, you must complete this course. Register at saskatchewanforkidssake.ca.", link: 'https://www.saskatchewanforkidssake.ca/', linkLabel: 'Register', mandatory: true },
+      { title: "File a Financial Statement if support is claimed", desc: "If they are asking for child or spousal support, you must respond with your own financial disclosure.", link: '/court-forms', linkLabel: 'Forms', mandatory: true, detail: "Failure to disclose finances can result in serious penalties" },
+    ],
   },
   cps: {
-    colour: 'red',
-    icon: '🛡️',
-    headline: 'CPS is involved in your case.',
-    action: 'Know your rights immediately. The Rights page explains what investigators can and cannot do.',
-    link: '/rights',
-    linkLabel: 'Your Rights →',
+    colour: { bg: 'bg-rose-50 border-rose-200', badge: 'bg-rose-100 text-rose-700', head: 'text-rose-900', sub: 'text-rose-700', btn: 'bg-rose-600 hover:bg-rose-700', step: 'bg-rose-100 text-rose-800', mand: 'bg-rose-600', opt: 'bg-rose-200' },
+    icon: '🛡️', label: 'CPS Involved',
+    headline: "CPS is involved. Know your rights before anything else.",
+    summary: "Child Protection proceedings are different from family court. The ministry has legal obligations AND limits on what they can do. Understanding both protects you and your children.",
+    steps: [
+      { title: "Read your rights under the Child and Family Services Act immediately", desc: "Officers must notify you in writing, must offer family services before removal, and must tell you to get a lawyer. Know what they must do.", link: '/rights', linkLabel: 'Your CPS Rights', mandatory: true },
+      { title: "Get a lawyer — today if possible", desc: "CPS cases move fast and the consequences are serious. Legal Aid Saskatchewan handles CPS matters: 1-800-667-3764.", link: null, linkLabel: null, mandatory: true, detail: "📞 Legal Aid SK: 1-800-667-3764 · Saskatchewan Advocate for Children: 1-800-322-7221" },
+      { title: "Document everything with dates and times", desc: "Every interaction with a worker — write it down immediately after. What was said, who was there, what was decided.", link: null, linkLabel: null, mandatory: true },
+      { title: "Do not sign anything without legal advice", desc: "Voluntary service agreements and consent forms can have long-term implications. Read everything carefully and get advice first.", link: null, linkLabel: null, mandatory: true },
+      { title: "Contact the Saskatchewan Advocate for Children and Youth", desc: "They are independent of the ministry and can provide information and support for children and families.", link: null, linkLabel: null, mandatory: false, detail: "📞 1-800-322-7221" },
+      { title: "Use the Emergency page for crisis contacts", desc: "Mobile Crisis Services, child abuse hotlines, and family violence resources are listed there.", link: '/emergency', linkLabel: 'Emergency Contacts', mandatory: false },
+    ],
   },
   modification: {
-    colour: 'purple',
-    icon: '🔄',
-    headline: "You're changing an existing order.",
-    action: 'Open the Filing Guide and select "Change an Existing Order" to see the variation steps.',
-    link: '/filing',
-    linkLabel: 'Variation Steps →',
+    colour: { bg: 'bg-indigo-50 border-indigo-200', badge: 'bg-indigo-100 text-indigo-700', head: 'text-indigo-900', sub: 'text-indigo-700', btn: 'bg-indigo-600 hover:bg-indigo-700', step: 'bg-indigo-100 text-indigo-800', mand: 'bg-indigo-600', opt: 'bg-indigo-200' },
+    icon: '🔄', label: 'Varying an Existing Order',
+    headline: "You're applying to change an existing order.",
+    summary: "Courts only vary orders when there has been a significant change in circumstances since the original order. You must be able to show what changed and why it matters.",
+    steps: [
+      { title: "Confirm you have grounds — significant change in circumstances", desc: "Examples: major income change, one parent relocating, children's needs changing significantly, new evidence of risk. Minor disagreements are not enough.", link: '/filing', linkLabel: 'Variation Steps', mandatory: true },
+      { title: "Locate your existing order and court file number", desc: "You need the exact wording of what you want to change and the file number. Contact the court registry if you can't find it.", link: null, linkLabel: null, mandatory: true },
+      { title: "Request the Variation Self-Help Kit", desc: "The forms are different from a new application. Call 1-888-218-2822 and specify you are applying to vary.", link: '/court-forms', linkLabel: 'Kit Info', mandatory: true, detail: "📞 1-888-218-2822 · familylaw@gov.sk.ca" },
+      { title: "Gather updated financial documents if varying support", desc: "Current T1 returns, recent pay stubs, and any evidence of changed circumstances.", link: null, linkLabel: null, mandatory: false, detail: "Only required if the variation involves child or spousal support" },
+    ],
   },
 };
 
-const COLOUR_MAP = {
-  blue:   { bg: 'bg-blue-50 border-blue-200',   icon: 'bg-blue-100', text: 'text-blue-900',  sub: 'text-blue-700',  btn: 'bg-blue-600 hover:bg-blue-700' },
-  amber:  { bg: 'bg-amber-50 border-amber-200',  icon: 'bg-amber-100', text: 'text-amber-900', sub: 'text-amber-700', btn: 'bg-amber-600 hover:bg-amber-700' },
-  purple: { bg: 'bg-purple-50 border-purple-200', icon: 'bg-purple-100', text: 'text-purple-900', sub: 'text-purple-700', btn: 'bg-purple-600 hover:bg-purple-700' },
-  red:    { bg: 'bg-red-50 border-red-200',      icon: 'bg-red-100',  text: 'text-red-900',   sub: 'text-red-700',   btn: 'bg-red-600 hover:bg-red-700' },
-  green:  { bg: 'bg-green-50 border-green-200',  icon: 'bg-green-100', text: 'text-green-900', sub: 'text-green-700', btn: 'bg-green-600 hover:bg-green-700' },
-  orange: { bg: 'bg-orange-50 border-orange-200', icon: 'bg-orange-100', text: 'text-orange-900', sub: 'text-orange-700', btn: 'bg-orange-600 hover:bg-orange-700' },
-};
-
-function SmartStatusBanner({ profile }) {
+function CaseWalkthroughBanner({ profile }) {
+  const [expanded, setExpanded] = useState(true);
   const status = profile.case_status || 'no_case';
-  const cfg = STATUS_CONFIG[status];
-  if (!cfg) return null;
-  const c = COLOUR_MAP[cfg.colour] || COLOUR_MAP.blue;
+  const data = WALKTHROUGH[status];
+  if (!data) return null;
+  const c = data.colour;
+  const mandatoryCount = data.steps.filter(s => s.mandatory).length;
+  const optionalCount = data.steps.filter(s => !s.mandatory).length;
 
   return (
-    <div className={`mb-5 border rounded-2xl p-4 flex items-start gap-4 ${c.bg}`}>
-      <div className={`w-11 h-11 rounded-xl flex items-center justify-center text-2xl flex-shrink-0 ${c.icon}`}>
-        {cfg.icon}
-      </div>
-      <div className="flex-1 min-w-0">
-        <p className={`font-semibold text-sm mb-0.5 ${c.text}`}>{cfg.headline}</p>
-        <p className={`text-xs leading-relaxed mb-3 ${c.sub}`}>{cfg.action}</p>
-        <Link
-          href={cfg.link}
-          className={`inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-semibold text-white transition-colors ${c.btn}`}
-        >
-          {cfg.linkLabel}
-        </Link>
-      </div>
-    </div>
-  );
-}
-
-// ─── Document Checklist ────────────────────────────────────────────────────────
-const DOC_CHECKLISTS = {
-  default: [
-    { key: 'doc_id', label: "Government-issued photo ID (driver's licence or passport)", category: 'Identity' },
-    { key: 'doc_children_bc', label: 'Birth certificate(s) for each child', category: 'Children' },
-    { key: 'doc_children_school', label: 'School information for each child (name, grade, address)', category: 'Children' },
-    { key: 'doc_separation_date', label: 'Written record of your exact separation date', category: 'Relationship' },
-    { key: 'doc_t1_returns', label: '3 years of T1 tax returns and Notices of Assessment', category: 'Financial' },
-    { key: 'doc_pay_stubs', label: '3 months of recent pay stubs', category: 'Financial' },
-    { key: 'doc_bank_statements', label: '3 months of bank statements for all accounts', category: 'Financial' },
-    { key: 'doc_address_proof', label: 'Proof of your current address (utility bill, lease)', category: 'Housing' },
-    { key: 'doc_other_address', label: "Other parent's full name and current address", category: 'Other Party' },
-  ],
-  divorce: [
-    { key: 'doc_marriage_cert', label: 'Original marriage certificate', category: 'Marriage' },
-    { key: 'doc_id', label: 'Government-issued photo ID', category: 'Identity' },
-    { key: 'doc_children_bc', label: 'Birth certificate(s) for each child', category: 'Children' },
-    { key: 'doc_separation_date', label: 'Written record of your exact separation date', category: 'Relationship' },
-    { key: 'doc_t1_returns', label: '3 years of T1 tax returns and Notices of Assessment', category: 'Financial' },
-    { key: 'doc_pay_stubs', label: '3 months of recent pay stubs', category: 'Financial' },
-    { key: 'doc_bank_statements', label: '3 months of bank statements', category: 'Financial' },
-    { key: 'doc_assets_list', label: 'List of all assets: home, vehicles, savings, investments', category: 'Property' },
-    { key: 'doc_debts_list', label: 'List of all debts: mortgage, loans, credit cards', category: 'Property' },
-    { key: 'doc_address_proof', label: 'Proof of your current address', category: 'Housing' },
-    { key: 'doc_other_address', label: "Other spouse's full name and current address", category: 'Other Party' },
-    { key: 'doc_kids_sake', label: "For Kids' Sake course certificate (if children involved)", category: 'Required Courses' },
-  ],
-  custody: [
-    { key: 'doc_id', label: 'Government-issued photo ID', category: 'Identity' },
-    { key: 'doc_children_bc', label: 'Birth certificate(s) for each child', category: 'Children' },
-    { key: 'doc_children_school', label: 'School name, grade, and address for each child', category: 'Children' },
-    { key: 'doc_children_doctor', label: "Children's doctor name and contact info", category: 'Children' },
-    { key: 'doc_current_schedule', label: 'Written record of current parenting arrangement (if any)', category: 'Parenting' },
-    { key: 'doc_t1_returns', label: '3 years of T1 tax returns and Notices of Assessment', category: 'Financial' },
-    { key: 'doc_pay_stubs', label: '3 months of recent pay stubs', category: 'Financial' },
-    { key: 'doc_address_proof', label: 'Proof of your current address', category: 'Housing' },
-    { key: 'doc_other_address', label: "Other parent's full name and current address", category: 'Other Party' },
-    { key: 'doc_kids_sake', label: "For Kids' Sake course certificate", category: 'Required Courses' },
-    { key: 'doc_incidents', label: 'Any police reports, medical records, or texts relevant to your case', category: 'Evidence' },
-  ],
-  support: [
-    { key: 'doc_id', label: 'Government-issued photo ID', category: 'Identity' },
-    { key: 'doc_children_bc', label: 'Birth certificate(s) for each child', category: 'Children' },
-    { key: 'doc_t1_returns', label: '3 years of T1 tax returns and Notices of Assessment — yours', category: 'Financial (You)' },
-    { key: 'doc_pay_stubs', label: '3 months of recent pay stubs — yours', category: 'Financial (You)' },
-    { key: 'doc_t1_other', label: "Other parent's most recent T1 return (if available)", category: 'Financial (Other)' },
-    { key: 'doc_child_expenses', label: 'Receipts for child expenses: daycare, activities, medical', category: 'Expenses' },
-    { key: 'doc_existing_order', label: 'Copy of any existing support order (if varying)', category: 'Existing Orders' },
-  ],
-  variation: [
-    { key: 'doc_existing_order', label: 'Full copy of the existing court order you want to change', category: 'Existing Order' },
-    { key: 'doc_court_file_num', label: 'Court file number from the original order', category: 'Existing Order' },
-    { key: 'doc_change_evidence', label: 'Evidence of the significant change in circumstances', category: 'Change Evidence' },
-    { key: 'doc_id', label: 'Government-issued photo ID', category: 'Identity' },
-    { key: 'doc_t1_returns', label: '3 years of T1 tax returns and Notices of Assessment', category: 'Financial' },
-    { key: 'doc_pay_stubs', label: '3 months of recent pay stubs', category: 'Financial' },
-    { key: 'doc_other_address', label: "Other party's full name and current address", category: 'Other Party' },
-  ],
-  protection: [
-    { key: 'doc_id', label: 'Government-issued photo ID', category: 'Identity' },
-    { key: 'doc_children_bc', label: 'Birth certificate(s) for each child', category: 'Children' },
-    { key: 'doc_incident_log', label: 'Detailed written log of all concerning incidents (dates, what happened)', category: 'Evidence' },
-    { key: 'doc_police_reports', label: 'Any police reports filed', category: 'Evidence' },
-    { key: 'doc_medical_records', label: 'Medical records related to injuries or assessments', category: 'Evidence' },
-    { key: 'doc_texts_emails', label: 'Printed or screenshot copies of relevant texts and emails', category: 'Evidence' },
-    { key: 'doc_witnesses', label: 'Names and contact info of any witnesses', category: 'Evidence' },
-    { key: 'doc_address_proof', label: 'Proof of your current safe address', category: 'Housing' },
-  ],
-};
-
-const CATEGORY_ICONS = {
-  'Identity': '🪪',
-  'Children': '👧',
-  'Marriage': '💍',
-  'Relationship': '📅',
-  'Financial': '💰',
-  'Financial (You)': '💰',
-  'Financial (Other)': '💵',
-  'Housing': '🏠',
-  'Property': '🏡',
-  'Other Party': '👤',
-  'Required Courses': '📜',
-  'Parenting': '🤝',
-  'Evidence': '📁',
-  'Existing Order': '⚖️',
-  'Existing Orders': '⚖️',
-  'Change Evidence': '🔄',
-  'Expenses': '🧾',
-};
-
-function DocChecklist({ profile, checklist, userId, onToggle }) {
-  const [open, setOpen] = useState(false);
-  const items = DOC_CHECKLISTS[profile.case_type] || DOC_CHECKLISTS.default;
-  const checked = items.filter(i => checklist[i.key]).length;
-  const total = items.length;
-  const pct = total > 0 ? Math.round((checked / total) * 100) : 0;
-
-  // Group by category
-  const grouped = {};
-  items.forEach(item => {
-    if (!grouped[item.category]) grouped[item.category] = [];
-    grouped[item.category].push(item);
-  });
-
-  const caseLabels = {
-    divorce: 'Divorce',
-    custody: 'Parenting / Custody',
-    support: 'Child Support',
-    protection: 'Child Protection (CPS)',
-    variation: 'Variation of Order',
-    default: 'Family Law',
-  };
-
-  return (
-    <div className="mb-5 bg-white border border-gray-200 rounded-2xl overflow-hidden">
-      {/* Header — always visible */}
+    <div className={`mb-5 border-2 rounded-2xl overflow-hidden ${c.bg}`}>
+      {/* Header */}
       <button
-        onClick={() => setOpen(v => !v)}
-        className="w-full flex items-center gap-3 p-4 text-left hover:bg-gray-50 transition-colors"
+        onClick={() => setExpanded(v => !v)}
+        className="w-full flex items-center gap-3 p-4 text-left"
       >
-        <div className="w-10 h-10 bg-emerald-50 rounded-xl flex items-center justify-center text-xl flex-shrink-0">
-          📂
-        </div>
+        <div className="text-2xl flex-shrink-0">{data.icon}</div>
         <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 mb-1">
-            <p className="font-semibold text-gray-900 text-sm">Document Checklist</p>
-            <span className="text-xs text-gray-400 font-normal">
-              {caseLabels[profile.case_type] || 'Family Law'}
-            </span>
+          <div className="flex items-center gap-2 mb-0.5">
+            <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${c.badge}`}>{data.label}</span>
+            <span className={`text-[10px] ${c.sub}`}>{mandatoryCount} required · {optionalCount} optional</span>
           </div>
-          <div className="flex items-center gap-2">
-            <div className="flex-1 h-1.5 bg-gray-100 rounded-full overflow-hidden">
-              <div
-                className="h-full bg-emerald-500 rounded-full transition-all duration-500"
-                style={{ width: `${pct}%` }}
-              />
-            </div>
-            <span className={`text-xs font-semibold flex-shrink-0 ${pct === 100 ? 'text-emerald-600' : 'text-gray-500'}`}>
-              {checked}/{total} {pct === 100 ? '✅' : ''}
-            </span>
-          </div>
+          <p className={`font-bold text-sm leading-snug ${c.head}`}>{data.headline}</p>
         </div>
-        <span className="text-gray-400 text-sm flex-shrink-0">{open ? '▲' : '▼'}</span>
+        <span className={`text-lg flex-shrink-0 ${c.head}`}>{expanded ? '▲' : '▼'}</span>
       </button>
 
-      {/* Expanded checklist */}
-      {open && (
-        <div className="border-t border-gray-100 divide-y divide-gray-50">
-          {pct === 100 && (
-            <div className="px-4 py-3 bg-emerald-50">
-              <p className="text-emerald-700 text-sm font-medium">
-                🎉 You have everything! You're ready to move to the next step.
-              </p>
-            </div>
-          )}
-          {Object.entries(grouped).map(([category, catItems]) => (
-            <div key={category} className="px-4 py-3">
-              <div className="flex items-center gap-1.5 mb-2">
-                <span className="text-sm">{CATEGORY_ICONS[category] || '📋'}</span>
-                <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">{category}</p>
-              </div>
-              <div className="space-y-2">
-                {catItems.map(item => {
-                  const isChecked = !!checklist[item.key];
-                  return (
-                    <button
-                      key={item.key}
-                      onClick={() => onToggle(item.key, !isChecked)}
-                      className="w-full flex items-start gap-3 text-left group"
-                    >
-                      <div className={`w-5 h-5 rounded border-2 flex items-center justify-center flex-shrink-0 mt-0.5 transition-colors ${
-                        isChecked
-                          ? 'bg-emerald-500 border-emerald-500 text-white'
-                          : 'border-gray-300 group-hover:border-emerald-400'
-                      }`}>
-                        {isChecked && <span className="text-[10px] font-bold">✓</span>}
-                      </div>
-                      <span className={`text-sm leading-snug ${isChecked ? 'line-through text-gray-400' : 'text-gray-700'}`}>
-                        {item.label}
+      {/* Body */}
+      {expanded && (
+        <div className="px-4 pb-4 space-y-3 border-t border-white/40">
+          <p className={`text-xs leading-relaxed pt-3 ${c.sub}`}>{data.summary}</p>
+
+          <div className="space-y-2">
+            {data.steps.map((step, i) => (
+              <div key={i} className="bg-white rounded-xl p-3 shadow-sm">
+                <div className="flex items-start gap-3">
+                  {/* Number + mandatory indicator */}
+                  <div className="flex flex-col items-center gap-1 flex-shrink-0">
+                    <div className={`w-6 h-6 rounded-full flex items-center justify-center text-white text-xs font-bold ${step.mandatory ? c.mand : 'bg-gray-300'}`}>
+                      {i + 1}
+                    </div>
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-0.5 flex-wrap">
+                      <p className="font-semibold text-gray-900 text-sm">{step.title}</p>
+                      <span className={`text-[9px] font-bold uppercase px-1.5 py-0.5 rounded-full ${step.mandatory ? 'bg-red-100 text-red-700' : 'bg-gray-100 text-gray-500'}`}>
+                        {step.mandatory ? 'Required' : 'Optional'}
                       </span>
-                    </button>
-                  );
-                })}
+                    </div>
+                    <p className="text-xs text-gray-600 leading-relaxed">{step.desc}</p>
+                    {step.detail && (
+                      <p className="text-xs text-gray-400 mt-1 italic">{step.detail}</p>
+                    )}
+                    {step.link && step.linkLabel && (
+                      <Link
+                        href={step.link}
+                        className={`inline-flex items-center gap-1 mt-2 text-xs font-semibold text-white px-3 py-1.5 rounded-lg transition-colors ${c.btn}`}
+                      >
+                        {step.linkLabel} →
+                      </Link>
+                    )}
+                  </div>
+                </div>
               </div>
-            </div>
-          ))}
-          <div className="px-4 py-3 bg-gray-50">
-            <p className="text-xs text-gray-400">
-              ✓ Tap each item as you gather it. Your progress saves automatically.
-            </p>
+            ))}
+          </div>
+
+          {/* Footer */}
+          <div className="flex items-center gap-2 pt-1">
+            <span className="w-3 h-3 rounded-full bg-red-600 flex-shrink-0" />
+            <span className="text-xs text-gray-500">Required steps</span>
+            <span className="w-3 h-3 rounded-full bg-gray-300 flex-shrink-0 ml-2" />
+            <span className="text-xs text-gray-500">Optional but recommended</span>
           </div>
         </div>
       )}
