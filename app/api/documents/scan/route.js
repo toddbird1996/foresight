@@ -64,7 +64,7 @@ export async function POST(request) {
 
     // Get the document record
     const { data: doc, error: docError } = await supabase
-      .from('documents')
+      .from('case_documents')
       .select('*')
       .eq('id', documentId)
       .eq('user_id', userId)
@@ -112,14 +112,14 @@ export async function POST(request) {
         { role: 'system', content: SCAN_PROMPT },
         {
           role: 'user',
-          content: `Please analyze this legal document (${doc.name}). The document is encoded in base64 below:\n\n${base64File.substring(0, 8000)}`
+          content: `Please analyze this legal document (${doc.file_name}). The document is encoded in base64 below:\n\n${base64File.substring(0, 8000)}`
         }
       ];
     }
 
     // Update status to processing
     await supabase
-      .from('documents')
+      .from('case_documents')
       .update({ status: 'processing' })
       .eq('id', documentId);
 
@@ -137,7 +137,7 @@ export async function POST(request) {
     });
 
     if (!aiResponse.ok) {
-      await supabase.from('documents').update({ status: 'failed' }).eq('id', documentId);
+      await supabase.from('case_documents').update({ status: 'failed' }).eq('id', documentId);
       return NextResponse.json({ error: 'AI scan failed' }, { status: 500 });
     }
 
@@ -146,11 +146,11 @@ export async function POST(request) {
 
     // Save results to document record
     await supabase
-      .from('documents')
+      .from('case_documents')
       .update({
         status: 'analyzed',
-        ai_insights: [{ analysis, scanned_at: new Date().toISOString() }],
-        analyzed_at: new Date().toISOString(),
+        ai_summary: analysis,
+        
         ai_scanned: true
       })
       .eq('id', documentId);
