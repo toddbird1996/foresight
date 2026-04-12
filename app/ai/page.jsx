@@ -1,19 +1,22 @@
 'use client';
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { supabase } from '../../lib/supabaseClient';
-import { useRouter } from 'next/navigation';
-import Link from 'next/link';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Header from '../components/Header';
+import Link from 'next/link';
 
 export default function AIPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [user, setUser] = useState(null);
   const [profile, setProfile] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [conversations, setConversations] = useState([]);
+  const [activeConvId, setActiveConvId] = useState(null);
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const [sending, setSending] = useState(false);
-  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [showSidebar, setShowSidebar] = useState(false);
   const endRef = useRef(null);
 
   useEffect(() => {
@@ -21,225 +24,276 @@ export default function AIPage() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) { router.push('/auth/login'); return; }
       setUser(user);
-      const { data: profile } = await supabase.from('users')
-        .select('full_name, tier, jurisdiction, monthly_ai_used, ai_trial_used, daily_queries_used')
-        .eq('id', user.id).single();
-      setProfile(profile);
+      const { data: prof } = await supabase.from('users').select('full_name, tier, ai_trial_used, daily_queries_used, jurisdiction, case_status, case_type').eq('id', user.id).single();
+      setProfile(prof);
+      await fetchConversations(user.id);
+
+      // Pre-fill from URL query param
+      const q = searchParams.get('q');
+      if (q) setInput(q);
       setLoading(false);
     };
     init();
   }, []);
 
-  useEffect(() => {
-    endRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages]);
+  useEffect(() => { endRef.current?.scrollIntoView({ behavior: 'smooth' }); }, [messages]);
 
-  const isBronze = profile?.tier === 'bronze';
-  const trialUsed = profile?.ai_trial_used || 0;
-  const dailyUsed = profile?.daily_queries_used || 0;
-  const tierLimits = { silver: 500, gold: 2000 };
-  const limit = isBronze ? 5 : (tierLimits[profile?.tier] || 500);
-  const used = isBronze ? trialUsed : dailyUsed;
-  const remaining = Math.max(0, limit - used);
+  const fetchConversations = async (uid) => {
+    const { data } = await supabase.from('ai_conversations')
+      .select('*').eq('user_id', uid)
+      .order('updated_at', { ascending: false }).limit(20);
+    setConversations(data || []);
+  };
 
-  const SUGGESTED = [
-    'What forms do I need to file for custody in ' + (profile?.jurisdiction || 'my province') + '?',
-    'What is the difference between sole and joint custody?',
-    'How does child support get calculated in Canada?',
-    'What should I bring to my first court appearance?',
-    'How do I respond to papers served by the other parent?',
-    'What does "best interests of the child" mean legally?',
-  ];
+  const fetchMessages = async (convId) => {
+    const { data } = await supabase.from('ai_messages')
+      .select('*').eq('conversation_id', convId)
+      .order('created_at', { ascending: true });
+    setMessages(data || []);
+  };
 
-  const send = async (text) => {
-    const content = (text || input).trim();
-    if (!content || sending) return;
-    if (isBronze && used >= 5) {
-      setError('You have used all 5 free AI questions. Upgrade to Silver or Gold for monthly credits.');
-      return;
-    }
-    if (remaining <= 0) {
-      setError('Monthly AI limit reached. Your credits reset on the 1st of next month.');
-      return;
-    }
-
+  const startNewConversation = () => {
+    setActiveConvId(null);
+    setMessages([]);
     setInput('');
-    setError('');
-    const userMsg = { role: 'user', content, id: Date.now() };
-    setMessages(prev => [...prev, userMsg]);
+    setShowSidebar(false);
+  };
+
+  const openConversation = async (conv) => {
+    setActiveConvId(conv.id);
+    await fetchMessages(conv.id);
+    setShowSidebar(false);
+  };
+
+  const deleteConversation = async (convId, e) => {
+    e.stopPropagation();
+    await supabase.from('ai_messages').delete().eq('conversation_id', convId);
+    await supabase.from('ai_conversations').delete().eq('id', convId);
+    if (activeConvId === convId) startNewConversation();
+    setConversations(prev => prev.filter(c => c.id !== convId));
+  };
+
+  const sendMessage = async () => {
+    const q = input.trim();
+    if (!q || sending) return;
+    setInput('');
     setSending(true);
 
-    try {
-      const res = await fetch('/api/ai/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          message: content,
-          jurisdiction: profile?.jurisdiction || 'saskatchewan',
-          userId: user?.id,
-        }),
-      });
+    // Add user message optimistically
+    const tempId = 'temp-' + Date.now();
+    setMessages(prev => [...prev, { id: tempId, role: 'user', content: q, created_at: new Date().toISOString() }]);
 
+    try {
+      let convId = activeConvId;
+
+      // Create conversation if first message
+      if (!convId) {
+        const title = q.length > 60 ? q.substring(0, 57) + '...' : q;
+        const { data: newConv } = await supabase.from('ai_conversations')
+          .insert({ user_id: user.id, title }).select().single();
+        convId = newConv.id;
+        setActiveConvId(convId);
+        setConversations(prev => [newConv, ...prev]);
+      }
+
+      // Save user message
+      await supabase.from('ai_messages').insert({ conversation_id: convId, user_id: user.id, role: 'user', content: q });
+
+      // Call AI
+      const res = await fetch('/api/ai/chat', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: q, userId: user.id, jurisdiction: profile?.jurisdiction || 'saskatchewan' })
+      });
       const data = await res.json();
 
-      if (!res.ok || data.error) {
-        if (data.upgradeRequired) {
-          setError('AI assistant requires a Silver or Gold plan. Upgrade to unlock unlimited questions.');
-        } else {
-          setError(data.error || 'Something went wrong. Please try again.');
-        }
-        setMessages(prev => prev.filter(m => m.id !== userMsg.id));
-      } else {
-        setMessages(prev => [...prev, { role: 'assistant', content: data.content, id: Date.now() }]);
-        // Update local usage count
-        setProfile(prev => prev ? { ...prev, ai_trial_used: isBronze ? (prev.ai_trial_used || 0) + 1 : prev.ai_trial_used, daily_queries_used: !isBronze ? (prev.daily_queries_used || 0) + 1 : prev.daily_queries_used } : prev);
+      if (data.error && data.upgradeRequired) {
+        const errMsg = data.content || 'Trial limit reached. Upgrade to continue.';
+        setMessages(prev => [...prev.filter(m => m.id !== tempId),
+          { id: 'ai-' + Date.now(), role: 'assistant', content: errMsg, created_at: new Date().toISOString(), isError: true }]);
+        setSending(false);
+        return;
       }
-    } catch (e) {
-      setError('Network error. Please check your connection and try again.');
-      setMessages(prev => prev.filter(m => m.id !== userMsg.id));
+
+      const reply = data.content || 'Sorry, I was unable to process that. Please try again.';
+
+      // Save AI message
+      await supabase.from('ai_messages').insert({ conversation_id: convId, user_id: user.id, role: 'assistant', content: reply });
+
+      // Update conversation timestamp
+      await supabase.from('ai_conversations').update({ updated_at: new Date().toISOString() }).eq('id', convId);
+
+      setMessages(prev => [...prev, { id: 'ai-' + Date.now(), role: 'assistant', content: reply, created_at: new Date().toISOString() }]);
+      await fetchConversations(user.id);
+
+    } catch (err) {
+      setMessages(prev => [...prev, { id: 'err-' + Date.now(), role: 'assistant', content: 'Connection error. Please try again.', created_at: new Date().toISOString(), isError: true }]);
     }
     setSending(false);
   };
 
+  const isBronze = profile?.tier === 'bronze';
+  const remaining = isBronze ? Math.max(0, 5 - (profile?.ai_trial_used || 0)) : null;
+
+  const SUGGESTIONS = [
+    'What should I bring to my JCC?',
+    'How is child support calculated in Saskatchewan?',
+    'What does parenting time mean?',
+    'How do I respond to papers I was served?',
+    'What is a Judicial Case Conference?',
+    'What factors does a judge consider for parenting time?',
+  ];
+
   if (loading) return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-      <div className="w-6 h-6 border-2 border-red-200 border-t-red-600 rounded-full animate-spin" />
+      <div className="w-6 h-6 border-2 border-red-600 border-t-transparent rounded-full animate-spin" />
     </div>
   );
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
+    <div className="h-screen flex flex-col bg-gray-50">
       <Header />
 
-      <div className="flex-1 flex flex-col max-w-3xl mx-auto w-full px-4 py-4" style={{ height: 'calc(100vh - 3.5rem)' }}>
+      <div className="flex-1 flex overflow-hidden max-w-5xl mx-auto w-full px-0 sm:px-4">
 
-        {/* Header bar */}
-        <div className="flex items-center justify-between mb-4">
-          <div>
-            <h1 className="text-lg font-bold text-gray-900">Foresight AI</h1>
-            <p className="text-xs text-gray-500">Custody guidance for {profile?.jurisdiction?.replace(/_/g, ' ') || 'Canada'}</p>
+        {/* Sidebar - conversation history */}
+        <div className={`${showSidebar ? 'flex' : 'hidden'} sm:flex flex-col w-64 flex-shrink-0 bg-white border-r border-gray-200 overflow-y-auto`}>
+          <div className="p-3 border-b border-gray-100">
+            <button onClick={startNewConversation}
+              className="w-full py-2 bg-red-600 hover:bg-red-700 text-white rounded-xl text-sm font-semibold">
+              + New Conversation
+            </button>
           </div>
-          <div className="text-right">
-            {isBronze ? (
-              <div className="text-xs">
-                <span className="font-semibold text-gray-700">{remaining} / 5</span>
-                <span className="text-gray-400 ml-1">free questions</span>
-                <Link href="/pricing" className="block text-red-600 text-[10px] hover:underline">Upgrade for more →</Link>
-              </div>
+          <div className="flex-1 overflow-y-auto p-2 space-y-1">
+            {conversations.length === 0 ? (
+              <p className="text-xs text-gray-400 text-center py-4">No conversations yet</p>
             ) : (
-              <div className="text-xs">
-                <span className="font-semibold text-gray-700">{remaining}</span>
-                <span className="text-gray-400 ml-1">questions left</span>
-                <div className="text-[10px] text-gray-400 capitalize">{profile?.tier} plan</div>
-              </div>
+              conversations.map(conv => (
+                <div key={conv.id}
+                  onClick={() => openConversation(conv)}
+                  className={`group flex items-center gap-2 px-3 py-2.5 rounded-xl cursor-pointer transition-colors ${activeConvId === conv.id ? 'bg-red-50 border border-red-200' : 'hover:bg-gray-50'}`}>
+                  <span className="text-sm flex-shrink-0">💬</span>
+                  <p className={`text-xs flex-1 truncate ${activeConvId === conv.id ? 'text-red-800 font-medium' : 'text-gray-700'}`}>
+                    {conv.title || 'Conversation'}
+                  </p>
+                  <button onClick={(e) => deleteConversation(conv.id, e)}
+                    className="opacity-0 group-hover:opacity-100 text-gray-400 hover:text-red-500 text-xs flex-shrink-0">
+                    ✕
+                  </button>
+                </div>
+              ))
             )}
           </div>
         </div>
 
-        {/* Disclaimer */}
-        <div className="bg-amber-50 border border-amber-200 rounded-xl px-4 py-2.5 mb-4 text-xs text-amber-800">
-          <strong>Educational guidance only.</strong> This is not legal advice. Consult a lawyer for advice specific to your situation.
-        </div>
-
-        {/* Chat area */}
-        <div className="flex-1 overflow-y-auto space-y-4 pb-4 min-h-0">
-
-          {messages.length === 0 && (
-            <div className="text-center py-6">
-              <div className="w-16 h-16 bg-red-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                <span className="text-3xl">⚖️</span>
-              </div>
-              <h2 className="font-bold text-gray-900 mb-1">Ask anything about custody</h2>
-              <p className="text-sm text-gray-500 mb-6">I can explain procedures, forms, deadlines, and your rights — specific to your province.</p>
-
-              <div className="grid gap-2 max-w-lg mx-auto">
-                {SUGGESTED.map((q, i) => (
-                  <button key={i} onClick={() => send(q)}
-                    className="text-left px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm text-gray-700 hover:border-red-300 hover:bg-red-50 transition-colors">
-                    {q}
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {messages.map(msg => (
-            <div key={msg.id} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-              {msg.role === 'assistant' && (
-                <div className="w-8 h-8 bg-red-600 rounded-full flex items-center justify-center flex-shrink-0 mr-3 mt-1">
-                  <span className="text-white text-xs font-bold">AI</span>
-                </div>
-              )}
-              <div className={`max-w-[85%] px-4 py-3 rounded-2xl text-sm leading-relaxed whitespace-pre-wrap ${
-                msg.role === 'user'
-                  ? 'bg-red-600 text-white rounded-br-md'
-                  : 'bg-white border border-gray-200 text-gray-800 rounded-bl-md shadow-sm'
-              }`}>
-                {msg.content}
-              </div>
-            </div>
-          ))}
-
-          {sending && (
-            <div className="flex justify-start">
-              <div className="w-8 h-8 bg-red-600 rounded-full flex items-center justify-center flex-shrink-0 mr-3">
-                <span className="text-white text-xs font-bold">AI</span>
-              </div>
-              <div className="bg-white border border-gray-200 rounded-2xl rounded-bl-md px-4 py-3 shadow-sm">
-                <div className="flex gap-1 items-center h-5">
-                  <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-                  <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-                  <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
-                </div>
-              </div>
-            </div>
-          )}
-
-          {error && (
-            <div className="bg-red-50 border border-red-200 rounded-xl px-4 py-3 text-sm text-red-700 flex items-start gap-2">
-              <span className="flex-shrink-0">⚠️</span>
+        {/* Main chat area */}
+        <div className="flex-1 flex flex-col overflow-hidden">
+          {/* Chat header */}
+          <div className="bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <button onClick={() => setShowSidebar(v => !v)} className="sm:hidden w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center text-sm">
+                ☰
+              </button>
               <div>
-                {error}
-                {error.includes('Upgrade') && (
-                  <Link href="/pricing" className="block mt-1 text-red-600 font-medium hover:underline">View plans →</Link>
-                )}
+                <h1 className="text-sm font-bold text-gray-900">Foresight AI</h1>
+                <p className="text-xs text-gray-500">
+                  {profile?.jurisdiction?.replace(/_/g, ' ') || 'Saskatchewan'} · {profile?.case_status?.replace(/_/g, ' ') || 'Family Law'}
+                </p>
               </div>
             </div>
-          )}
-
-          <div ref={endRef} />
-        </div>
-
-        {/* Input */}
-        <div className="pt-3 border-t border-gray-200">
-          {(isBronze && remaining <= 0) ? (
-            <div className="text-center py-4">
-              <p className="text-sm text-gray-600 mb-3">You have used all 5 free questions.</p>
-              <Link href="/pricing" className="inline-block px-6 py-3 bg-red-600 hover:bg-red-700 text-white rounded-xl font-semibold text-sm">
-                Upgrade to Silver — 500 questions/month
-              </Link>
-            </div>
-          ) : (
-            <div className="flex items-end gap-2">
-              <textarea
-                value={input}
-                onChange={e => setInput(e.target.value)}
-                onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(); } }}
-                placeholder="Ask about custody procedures, forms, your rights..."
-                rows={2}
-                className="flex-1 px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:border-red-400 resize-none"
-              />
-              <button onClick={() => send()} disabled={!input.trim() || sending}
-                className="w-11 h-11 bg-red-600 hover:bg-red-700 disabled:opacity-40 text-white rounded-xl flex items-center justify-center flex-shrink-0 transition-colors">
-                <svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor">
-                  <path d="M2.94 3.19a1 1 0 0 1 1.15-.33l12 5a1 1 0 0 1 0 1.84l-12 5a1 1 0 0 1-1.37-1.15L4.08 10 2.72 6.45a1 1 0 0 1 .22-1.26Z"/>
-                </svg>
+            <div className="flex items-center gap-2">
+              {isBronze ? (
+                <div className="text-right">
+                  <span className="text-xs font-semibold text-gray-700">{remaining} / 5</span>
+                  <span className="text-xs text-gray-400 ml-1">free</span>
+                  <Link href="/pricing" className="block text-[10px] text-red-600 hover:underline">Upgrade →</Link>
+                </div>
+              ) : (
+                <span className="text-xs text-gray-400 capitalize">{profile?.tier}</span>
+              )}
+              <button onClick={startNewConversation} className="px-3 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-xs font-medium">
+                New
               </button>
             </div>
-          )}
-          <p className="text-[10px] text-gray-400 mt-2 text-center">Press Enter to send · Shift+Enter for new line</p>
-        </div>
+          </div>
 
+          {/* Disclaimer */}
+          <div className="bg-amber-50 border-b border-amber-200 px-4 py-2">
+            <p className="text-xs text-amber-700"><strong>Educational guidance only.</strong> Not legal advice. Consult a lawyer for advice specific to your situation.</p>
+          </div>
+
+          {/* Messages */}
+          <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4">
+            {messages.length === 0 && (
+              <div className="text-center py-8">
+                <span className="text-4xl block mb-3">🤖</span>
+                <p className="font-semibold text-gray-900 mb-1">Ask me anything about your case</p>
+                <p className="text-sm text-gray-500 mb-6">I know your jurisdiction, case type, and upcoming dates.</p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-w-xl mx-auto">
+                  {SUGGESTIONS.map((s, i) => (
+                    <button key={i} onClick={() => setInput(s)}
+                      className="text-left text-xs bg-white border border-gray-200 hover:border-red-300 text-gray-600 rounded-xl px-3 py-2.5 transition-colors">
+                      💬 {s}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {messages.map(msg => (
+              <div key={msg.id} className={`flex gap-3 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                {msg.role === 'assistant' && (
+                  <div className="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center text-sm flex-shrink-0 mt-1">🤖</div>
+                )}
+                <div className={`max-w-[80%] rounded-2xl px-4 py-3 text-sm leading-relaxed ${
+                  msg.role === 'user'
+                    ? 'bg-red-600 text-white rounded-tr-sm'
+                    : msg.isError
+                    ? 'bg-amber-50 border border-amber-200 text-amber-800'
+                    : 'bg-white border border-gray-200 text-gray-800 rounded-tl-sm'
+                }`}>
+                  <p className="whitespace-pre-wrap">{msg.content}</p>
+                </div>
+                {msg.role === 'user' && (
+                  <div className="w-8 h-8 bg-red-600 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0 mt-1">
+                    {profile?.full_name?.[0] || 'U'}
+                  </div>
+                )}
+              </div>
+            ))}
+
+            {sending && (
+              <div className="flex gap-3 justify-start">
+                <div className="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center text-sm flex-shrink-0">🤖</div>
+                <div className="bg-white border border-gray-200 rounded-2xl rounded-tl-sm px-4 py-3">
+                  <div className="flex gap-1">
+                    <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                    <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                    <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                  </div>
+                </div>
+              </div>
+            )}
+            <div ref={endRef} />
+          </div>
+
+          {/* Input */}
+          <div className="bg-white border-t border-gray-200 px-4 py-3">
+            <div className="flex gap-2">
+              <input
+                type="text"
+                value={input}
+                onChange={e => setInput(e.target.value)}
+                onKeyDown={e => e.key === 'Enter' && !e.shiftKey && sendMessage()}
+                placeholder="Ask about your case, rights, forms, or procedures..."
+                className="flex-1 px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-red-400 focus:bg-white transition-colors"
+              />
+              <button onClick={sendMessage} disabled={!input.trim() || sending}
+                className="px-4 py-2.5 bg-red-600 hover:bg-red-700 text-white rounded-xl text-sm font-semibold disabled:opacity-40 transition-colors">
+                {sending ? '...' : 'Ask'}
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
