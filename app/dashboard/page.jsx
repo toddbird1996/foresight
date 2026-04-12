@@ -90,7 +90,7 @@ export default function Dashboard() {
         {userProfile && <SmartStatusBanner profile={userProfile} />}
 
         {/* Document Checklist */}
-        {userProfile?.case_status && userProfile.case_status !== 'no_case' && (
+        {userProfile && (
           <DocChecklist
             profile={userProfile}
             checklist={checklist}
@@ -373,7 +373,8 @@ const COLOUR_MAP = {
 };
 
 function SmartStatusBanner({ profile }) {
-  const cfg = STATUS_CONFIG[profile.case_status];
+  const status = profile.case_status || 'no_case';
+  const cfg = STATUS_CONFIG[status];
   if (!cfg) return null;
   const c = COLOUR_MAP[cfg.colour] || COLOUR_MAP.blue;
 
