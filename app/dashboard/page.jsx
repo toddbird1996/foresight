@@ -17,6 +17,7 @@ export default function Dashboard() {
   const [actionPlan, setActionPlan] = useState(null);
   const [userProfile, setUserProfile] = useState(null);
   const [upcomingDeadlines, setUpcomingDeadlines] = useState([]);
+  const [checklist, setChecklist] = useState({});
 
 
   useEffect(() => {
@@ -28,7 +29,7 @@ export default function Dashboard() {
 
         const { data: profile } = await supabase
           .from("users")
-          .select("onboarding_completed, action_plan, full_name, case_status, case_guide_step, guide_dismissed")
+          .select("onboarding_completed, action_plan, full_name, case_status, case_type, jurisdiction, case_guide_step, guide_dismissed, ai_trial_used, tier")
           .eq("id", user.id)
           .single();
 
@@ -37,6 +38,15 @@ export default function Dashboard() {
         }
         if (profile?.action_plan) setActionPlan(profile.action_plan);
         if (profile) setUserProfile(profile);
+
+        // Fetch document checklist progress
+        const { data: checklistData } = await supabase
+          .from('document_checklist')
+          .select('item_key, checked')
+          .eq('user_id', user.id);
+        const checkMap = {};
+        (checklistData || []).forEach(r => { checkMap[r.item_key] = r.checked; });
+        setChecklist(checkMap);
 
         // Fetch upcoming deadlines (next 14 days, not completed)
         const today = new Date().toISOString().split('T')[0];
@@ -75,6 +85,27 @@ export default function Dashboard() {
       <main className="max-w-6xl mx-auto px-4 py-6">
         {/* AI Question Bar */}
         <QuestionBar />
+
+        {/* Smart Status Banner */}
+        {userProfile && <SmartStatusBanner profile={userProfile} />}
+
+        {/* Document Checklist */}
+        {userProfile?.case_status && userProfile.case_status !== 'no_case' && (
+          <DocChecklist
+            profile={userProfile}
+            checklist={checklist}
+            userId={user?.id}
+            onToggle={async (key, val) => {
+              setChecklist(prev => ({ ...prev, [key]: val }));
+              const { data: existing } = await supabase.from('document_checklist').select('id').eq('user_id', user.id).eq('item_key', key).single();
+              if (existing) {
+                await supabase.from('document_checklist').update({ checked: val, checked_at: val ? new Date().toISOString() : null }).eq('id', existing.id);
+              } else {
+                await supabase.from('document_checklist').insert({ user_id: user.id, item_key: key, checked: val, checked_at: val ? new Date().toISOString() : null });
+              }
+            }}
+          />
+        )}
 
         {/* Case Guide - Step by Step Walkthrough */}
         {user && <CaseGuide userId={user.id} currentStep={userProfile?.case_guide_step || 0} dismissed={userProfile?.guide_dismissed || false} caseStatus={userProfile?.case_status} />}
@@ -263,6 +294,305 @@ export default function Dashboard() {
       }
 
 /* ============================================ */
+
+// ─── Smart Case Status Banner ──────────────────────────────────────────────────
+const STATUS_CONFIG = {
+  no_case: {
+    colour: 'blue',
+    icon: '🔍',
+    headline: 'Start by understanding your options.',
+    action: 'Read the Filing Guide to see what to expect and which situation applies to you.',
+    link: '/filing',
+    linkLabel: 'Open Filing Guide →',
+  },
+  preparing: {
+    colour: 'amber',
+    icon: '📝',
+    headline: 'You're preparing to file.',
+    action: 'Your next step is to get your document checklist together. See exactly what you need below.',
+    link: '/court-forms',
+    linkLabel: 'Get Court Forms →',
+  },
+  filed: {
+    colour: 'purple',
+    icon: '📋',
+    headline: 'Your application is filed.',
+    action: 'Now you need to serve the other party. Check the filing guide for exact service requirements.',
+    link: '/filing',
+    linkLabel: 'View Service Steps →',
+  },
+  waiting_hearing: {
+    colour: 'red',
+    icon: '⏳',
+    headline: 'You have a hearing coming up.',
+    action: 'Review the Judge Insight tips to make sure you're presenting yourself as well as possible.',
+    link: '/judge-insight',
+    linkLabel: 'Court Tips →',
+  },
+  mediation: {
+    colour: 'green',
+    icon: '🤝',
+    headline: 'You're in mediation.',
+    action: 'Use the Co-Parent Messenger to keep communication documented and professional.',
+    link: '/coparent',
+    linkLabel: 'Open Co-Parent Chat →',
+  },
+  responding: {
+    colour: 'orange',
+    icon: '📩',
+    headline: 'You've been served — time to respond.',
+    action: 'You have 30 days to file an Answer. Read the filing guide for your situation now.',
+    link: '/filing',
+    linkLabel: 'See Response Steps →',
+  },
+  cps: {
+    colour: 'red',
+    icon: '🛡️',
+    headline: 'CPS is involved in your case.',
+    action: 'Know your rights immediately. The Rights page explains what investigators can and cannot do.',
+    link: '/rights',
+    linkLabel: 'Your Rights →',
+  },
+  modification: {
+    colour: 'purple',
+    icon: '🔄',
+    headline: 'You're changing an existing order.',
+    action: 'Open the Filing Guide and select "Change an Existing Order" to see the variation steps.',
+    link: '/filing',
+    linkLabel: 'Variation Steps →',
+  },
+};
+
+const COLOUR_MAP = {
+  blue:   { bg: 'bg-blue-50 border-blue-200',   icon: 'bg-blue-100', text: 'text-blue-900',  sub: 'text-blue-700',  btn: 'bg-blue-600 hover:bg-blue-700' },
+  amber:  { bg: 'bg-amber-50 border-amber-200',  icon: 'bg-amber-100', text: 'text-amber-900', sub: 'text-amber-700', btn: 'bg-amber-600 hover:bg-amber-700' },
+  purple: { bg: 'bg-purple-50 border-purple-200', icon: 'bg-purple-100', text: 'text-purple-900', sub: 'text-purple-700', btn: 'bg-purple-600 hover:bg-purple-700' },
+  red:    { bg: 'bg-red-50 border-red-200',      icon: 'bg-red-100',  text: 'text-red-900',   sub: 'text-red-700',   btn: 'bg-red-600 hover:bg-red-700' },
+  green:  { bg: 'bg-green-50 border-green-200',  icon: 'bg-green-100', text: 'text-green-900', sub: 'text-green-700', btn: 'bg-green-600 hover:bg-green-700' },
+  orange: { bg: 'bg-orange-50 border-orange-200', icon: 'bg-orange-100', text: 'text-orange-900', sub: 'text-orange-700', btn: 'bg-orange-600 hover:bg-orange-700' },
+};
+
+function SmartStatusBanner({ profile }) {
+  const cfg = STATUS_CONFIG[profile.case_status];
+  if (!cfg) return null;
+  const c = COLOUR_MAP[cfg.colour] || COLOUR_MAP.blue;
+
+  return (
+    <div className={`mb-5 border rounded-2xl p-4 flex items-start gap-4 ${c.bg}`}>
+      <div className={`w-11 h-11 rounded-xl flex items-center justify-center text-2xl flex-shrink-0 ${c.icon}`}>
+        {cfg.icon}
+      </div>
+      <div className="flex-1 min-w-0">
+        <p className={`font-semibold text-sm mb-0.5 ${c.text}`}>{cfg.headline}</p>
+        <p className={`text-xs leading-relaxed mb-3 ${c.sub}`}>{cfg.action}</p>
+        <Link
+          href={cfg.link}
+          className={`inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-semibold text-white transition-colors ${c.btn}`}
+        >
+          {cfg.linkLabel}
+        </Link>
+      </div>
+    </div>
+  );
+}
+
+// ─── Document Checklist ────────────────────────────────────────────────────────
+const DOC_CHECKLISTS = {
+  default: [
+    { key: 'doc_id', label: 'Government-issued photo ID (driver's licence or passport)', category: 'Identity' },
+    { key: 'doc_children_bc', label: 'Birth certificate(s) for each child', category: 'Children' },
+    { key: 'doc_children_school', label: 'School information for each child (name, grade, address)', category: 'Children' },
+    { key: 'doc_separation_date', label: 'Written record of your exact separation date', category: 'Relationship' },
+    { key: 'doc_t1_returns', label: '3 years of T1 tax returns and Notices of Assessment', category: 'Financial' },
+    { key: 'doc_pay_stubs', label: '3 months of recent pay stubs', category: 'Financial' },
+    { key: 'doc_bank_statements', label: '3 months of bank statements for all accounts', category: 'Financial' },
+    { key: 'doc_address_proof', label: 'Proof of your current address (utility bill, lease)', category: 'Housing' },
+    { key: 'doc_other_address', label: 'Other parent's full name and current address', category: 'Other Party' },
+  ],
+  divorce: [
+    { key: 'doc_marriage_cert', label: 'Original marriage certificate', category: 'Marriage' },
+    { key: 'doc_id', label: 'Government-issued photo ID', category: 'Identity' },
+    { key: 'doc_children_bc', label: 'Birth certificate(s) for each child', category: 'Children' },
+    { key: 'doc_separation_date', label: 'Written record of your exact separation date', category: 'Relationship' },
+    { key: 'doc_t1_returns', label: '3 years of T1 tax returns and Notices of Assessment', category: 'Financial' },
+    { key: 'doc_pay_stubs', label: '3 months of recent pay stubs', category: 'Financial' },
+    { key: 'doc_bank_statements', label: '3 months of bank statements', category: 'Financial' },
+    { key: 'doc_assets_list', label: 'List of all assets: home, vehicles, savings, investments', category: 'Property' },
+    { key: 'doc_debts_list', label: 'List of all debts: mortgage, loans, credit cards', category: 'Property' },
+    { key: 'doc_address_proof', label: 'Proof of your current address', category: 'Housing' },
+    { key: 'doc_other_address', label: 'Other spouse's full name and current address', category: 'Other Party' },
+    { key: 'doc_kids_sake', label: 'For Kids' Sake course certificate (if children involved)', category: 'Required Courses' },
+  ],
+  custody: [
+    { key: 'doc_id', label: 'Government-issued photo ID', category: 'Identity' },
+    { key: 'doc_children_bc', label: 'Birth certificate(s) for each child', category: 'Children' },
+    { key: 'doc_children_school', label: 'School name, grade, and address for each child', category: 'Children' },
+    { key: 'doc_children_doctor', label: 'Children's doctor name and contact info', category: 'Children' },
+    { key: 'doc_current_schedule', label: 'Written record of current parenting arrangement (if any)', category: 'Parenting' },
+    { key: 'doc_t1_returns', label: '3 years of T1 tax returns and Notices of Assessment', category: 'Financial' },
+    { key: 'doc_pay_stubs', label: '3 months of recent pay stubs', category: 'Financial' },
+    { key: 'doc_address_proof', label: 'Proof of your current address', category: 'Housing' },
+    { key: 'doc_other_address', label: 'Other parent's full name and current address', category: 'Other Party' },
+    { key: 'doc_kids_sake', label: 'For Kids' Sake course certificate', category: 'Required Courses' },
+    { key: 'doc_incidents', label: 'Any police reports, medical records, or texts relevant to your case', category: 'Evidence' },
+  ],
+  support: [
+    { key: 'doc_id', label: 'Government-issued photo ID', category: 'Identity' },
+    { key: 'doc_children_bc', label: 'Birth certificate(s) for each child', category: 'Children' },
+    { key: 'doc_t1_returns', label: '3 years of T1 tax returns and Notices of Assessment — yours', category: 'Financial (You)' },
+    { key: 'doc_pay_stubs', label: '3 months of recent pay stubs — yours', category: 'Financial (You)' },
+    { key: 'doc_t1_other', label: 'Other parent's most recent T1 return (if available)', category: 'Financial (Other)' },
+    { key: 'doc_child_expenses', label: 'Receipts for child expenses: daycare, activities, medical', category: 'Expenses' },
+    { key: 'doc_existing_order', label: 'Copy of any existing support order (if varying)', category: 'Existing Orders' },
+  ],
+  variation: [
+    { key: 'doc_existing_order', label: 'Full copy of the existing court order you want to change', category: 'Existing Order' },
+    { key: 'doc_court_file_num', label: 'Court file number from the original order', category: 'Existing Order' },
+    { key: 'doc_change_evidence', label: 'Evidence of the significant change in circumstances', category: 'Change Evidence' },
+    { key: 'doc_id', label: 'Government-issued photo ID', category: 'Identity' },
+    { key: 'doc_t1_returns', label: '3 years of T1 tax returns and Notices of Assessment', category: 'Financial' },
+    { key: 'doc_pay_stubs', label: '3 months of recent pay stubs', category: 'Financial' },
+    { key: 'doc_other_address', label: 'Other party's full name and current address', category: 'Other Party' },
+  ],
+  protection: [
+    { key: 'doc_id', label: 'Government-issued photo ID', category: 'Identity' },
+    { key: 'doc_children_bc', label: 'Birth certificate(s) for each child', category: 'Children' },
+    { key: 'doc_incident_log', label: 'Detailed written log of all concerning incidents (dates, what happened)', category: 'Evidence' },
+    { key: 'doc_police_reports', label: 'Any police reports filed', category: 'Evidence' },
+    { key: 'doc_medical_records', label: 'Medical records related to injuries or assessments', category: 'Evidence' },
+    { key: 'doc_texts_emails', label: 'Printed or screenshot copies of relevant texts and emails', category: 'Evidence' },
+    { key: 'doc_witnesses', label: 'Names and contact info of any witnesses', category: 'Evidence' },
+    { key: 'doc_address_proof', label: 'Proof of your current safe address', category: 'Housing' },
+  ],
+};
+
+const CATEGORY_ICONS = {
+  'Identity': '🪪',
+  'Children': '👧',
+  'Marriage': '💍',
+  'Relationship': '📅',
+  'Financial': '💰',
+  'Financial (You)': '💰',
+  'Financial (Other)': '💵',
+  'Housing': '🏠',
+  'Property': '🏡',
+  'Other Party': '👤',
+  'Required Courses': '📜',
+  'Parenting': '🤝',
+  'Evidence': '📁',
+  'Existing Order': '⚖️',
+  'Existing Orders': '⚖️',
+  'Change Evidence': '🔄',
+  'Expenses': '🧾',
+};
+
+function DocChecklist({ profile, checklist, userId, onToggle }) {
+  const [open, setOpen] = useState(false);
+  const items = DOC_CHECKLISTS[profile.case_type] || DOC_CHECKLISTS.default;
+  const checked = items.filter(i => checklist[i.key]).length;
+  const total = items.length;
+  const pct = total > 0 ? Math.round((checked / total) * 100) : 0;
+
+  // Group by category
+  const grouped = {};
+  items.forEach(item => {
+    if (!grouped[item.category]) grouped[item.category] = [];
+    grouped[item.category].push(item);
+  });
+
+  const caseLabels = {
+    divorce: 'Divorce',
+    custody: 'Parenting / Custody',
+    support: 'Child Support',
+    protection: 'Child Protection (CPS)',
+    variation: 'Variation of Order',
+    default: 'Family Law',
+  };
+
+  return (
+    <div className="mb-5 bg-white border border-gray-200 rounded-2xl overflow-hidden">
+      {/* Header — always visible */}
+      <button
+        onClick={() => setOpen(v => !v)}
+        className="w-full flex items-center gap-3 p-4 text-left hover:bg-gray-50 transition-colors"
+      >
+        <div className="w-10 h-10 bg-emerald-50 rounded-xl flex items-center justify-center text-xl flex-shrink-0">
+          📂
+        </div>
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2 mb-1">
+            <p className="font-semibold text-gray-900 text-sm">Document Checklist</p>
+            <span className="text-xs text-gray-400 font-normal">
+              {caseLabels[profile.case_type] || 'Family Law'}
+            </span>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="flex-1 h-1.5 bg-gray-100 rounded-full overflow-hidden">
+              <div
+                className="h-full bg-emerald-500 rounded-full transition-all duration-500"
+                style={{ width: `${pct}%` }}
+              />
+            </div>
+            <span className={`text-xs font-semibold flex-shrink-0 ${pct === 100 ? 'text-emerald-600' : 'text-gray-500'}`}>
+              {checked}/{total} {pct === 100 ? '✅' : ''}
+            </span>
+          </div>
+        </div>
+        <span className="text-gray-400 text-sm flex-shrink-0">{open ? '▲' : '▼'}</span>
+      </button>
+
+      {/* Expanded checklist */}
+      {open && (
+        <div className="border-t border-gray-100 divide-y divide-gray-50">
+          {pct === 100 && (
+            <div className="px-4 py-3 bg-emerald-50">
+              <p className="text-emerald-700 text-sm font-medium">
+                🎉 You have everything! You're ready to move to the next step.
+              </p>
+            </div>
+          )}
+          {Object.entries(grouped).map(([category, catItems]) => (
+            <div key={category} className="px-4 py-3">
+              <div className="flex items-center gap-1.5 mb-2">
+                <span className="text-sm">{CATEGORY_ICONS[category] || '📋'}</span>
+                <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">{category}</p>
+              </div>
+              <div className="space-y-2">
+                {catItems.map(item => {
+                  const isChecked = !!checklist[item.key];
+                  return (
+                    <button
+                      key={item.key}
+                      onClick={() => onToggle(item.key, !isChecked)}
+                      className="w-full flex items-start gap-3 text-left group"
+                    >
+                      <div className={`w-5 h-5 rounded border-2 flex items-center justify-center flex-shrink-0 mt-0.5 transition-colors ${
+                        isChecked
+                          ? 'bg-emerald-500 border-emerald-500 text-white'
+                          : 'border-gray-300 group-hover:border-emerald-400'
+                      }`}>
+                        {isChecked && <span className="text-[10px] font-bold">✓</span>}
+                      </div>
+                      <span className={`text-sm leading-snug ${isChecked ? 'line-through text-gray-400' : 'text-gray-700'}`}>
+                        {item.label}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          ))}
+          <div className="px-4 py-3 bg-gray-50">
+            <p className="text-xs text-gray-400">
+              ✓ Tap each item as you gather it. Your progress saves automatically.
+            </p>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 /* QUESTION BAR - AI Quick Ask */
 /* ============================================ */
 function QuestionBar() {
