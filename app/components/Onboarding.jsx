@@ -134,6 +134,7 @@ export default function OnboardingFlow({ user, onComplete }) {
         full_name: data.fullName.trim(),
         jurisdiction: data.jurisdiction,
         case_status: data.caseStatus,
+        case_type: data.caseType,
         legal_support: data.legalSupport,
         num_children: parseInt(data.numChildren) || null,
         children_ages: data.childrenAges,
