@@ -469,7 +469,7 @@ const HEARING_PREP_ITEMS = [
   // Documents — all Required
   { key: 'hp_binder', label: 'Organize all documents into a tabbed binder', category: 'Documents', mandatory: true, detail: 'Tab and label chronologically. Bring 3 copies of everything — one for you, one for the judge, one for the other party.' },
   { key: 'hp_filed_docs', label: 'Review every document you have filed', category: 'Documents', mandatory: true, detail: 'Know your affidavits, financial statements, and any exhibits inside out. The judge will have read them.' },
-  { key: 'hp_other_docs', label: 'Review the other party's filed documents', category: 'Documents', mandatory: true, detail: 'Note every point you disagree with and prepare a calm, evidence-backed response for each one.' },
+  { key: 'hp_other_docs', label: "Review the other party's filed documents", category: 'Documents', mandatory: true, detail: "Note every point you disagree with and prepare a calm, evidence-backed response for each one." },
   { key: 'hp_evidence', label: 'Organize your supporting evidence', category: 'Documents', mandatory: true, detail: 'Texts, emails, photos, police reports, school records, medical records — tabbed and ready to hand up.' },
   // Preparation — mix
   { key: 'hp_outline', label: 'Write bullet-point notes of your key arguments', category: 'Preparation', mandatory: true, detail: 'Do not write a script — judges dislike reading. Bullet points keep you on track when nervous.' },
