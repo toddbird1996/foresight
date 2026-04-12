@@ -22,7 +22,7 @@ export default function AIPage() {
       if (!user) { router.push('/auth/login'); return; }
       setUser(user);
       const { data: profile } = await supabase.from('users')
-        .select('full_name, tier, jurisdiction, monthly_ai_used')
+        .select('full_name, tier, jurisdiction, monthly_ai_used, ai_trial_used, daily_queries_used')
         .eq('id', user.id).single();
       setProfile(profile);
       setLoading(false);
@@ -34,11 +34,13 @@ export default function AIPage() {
     endRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  const tierLimits = { bronze: 5, silver: 500, gold: 2000 };
-  const limit = tierLimits[profile?.tier] || 5;
-  const used = profile?.monthly_ai_used || 0;
-  const remaining = Math.max(0, limit - used);
   const isBronze = profile?.tier === 'bronze';
+  const trialUsed = profile?.ai_trial_used || 0;
+  const dailyUsed = profile?.daily_queries_used || 0;
+  const tierLimits = { silver: 500, gold: 2000 };
+  const limit = isBronze ? 5 : (tierLimits[profile?.tier] || 500);
+  const used = isBronze ? trialUsed : dailyUsed;
+  const remaining = Math.max(0, limit - used);
 
   const SUGGESTED = [
     'What forms do I need to file for custody in ' + (profile?.jurisdiction || 'my province') + '?',
@@ -90,7 +92,7 @@ export default function AIPage() {
       } else {
         setMessages(prev => [...prev, { role: 'assistant', content: data.content, id: Date.now() }]);
         // Update local usage count
-        setProfile(prev => prev ? { ...prev, monthly_ai_used: (prev.monthly_ai_used || 0) + 1 } : prev);
+        setProfile(prev => prev ? { ...prev, ai_trial_used: isBronze ? (prev.ai_trial_used || 0) + 1 : prev.ai_trial_used, daily_queries_used: !isBronze ? (prev.daily_queries_used || 0) + 1 : prev.daily_queries_used } : prev);
       }
     } catch (e) {
       setError('Network error. Please check your connection and try again.');
