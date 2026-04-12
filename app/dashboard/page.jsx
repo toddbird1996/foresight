@@ -271,7 +271,19 @@ function QuestionBar() {
   const [loading, setLoading] = useState(false);
   const [showAnswer, setShowAnswer] = useState(false);
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const [currentUser, setCurrentUser] = useState(null);
+  const [currentProfile, setCurrentProfile] = useState(null);
   const inputRef = useRef(null);
+
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (user) {
+        setCurrentUser(user);
+        supabase.from('users').select('jurisdiction, tier, ai_trial_used, daily_queries_used').eq('id', user.id).single()
+          .then(({ data }) => setCurrentProfile(data));
+      }
+    });
+  }, []);
 
   const suggestions = [
     'How do I file for custody?',
@@ -295,7 +307,7 @@ function QuestionBar() {
       const response = await fetch('/api/ai/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: q, userId: user?.id, jurisdiction: userProfile?.jurisdiction }),
+        body: JSON.stringify({ message: q, userId: currentUser?.id, jurisdiction: currentProfile?.jurisdiction }),
       });
       const data = await response.json();
       if (data.upgradeRequired) {
