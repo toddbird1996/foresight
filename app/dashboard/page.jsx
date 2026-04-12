@@ -473,7 +473,7 @@ const HEARING_PREP_ITEMS = [
   { key: 'hp_evidence', label: 'Organize your supporting evidence', category: 'Documents', mandatory: true, detail: 'Texts, emails, photos, police reports, school records, medical records — tabbed and ready to hand up.' },
   // Preparation — mix
   { key: 'hp_outline', label: 'Write bullet-point notes of your key arguments', category: 'Preparation', mandatory: true, detail: 'Do not write a script — judges dislike reading. Bullet points keep you on track when nervous.' },
-  { key: 'hp_responses', label: 'Prepare responses to the other party's likely arguments', category: 'Preparation', mandatory: true, detail: 'Think through what they will say. Prepare short, factual, evidence-backed responses for each point.' },
+  { key: 'hp_responses', label: "Prepare responses to the other party's likely arguments", category: 'Preparation', mandatory: true, detail: 'Think through what they will say. Prepare short, factual, evidence-backed responses for each point.' },
   { key: 'hp_practice', label: 'Practice speaking your key points out loud', category: 'Preparation', mandatory: true, detail: 'Hearing yourself say it out loud is very different from reading it. Do this at least twice.' },
   { key: 'hp_court_tips', label: 'Read the Judge Insight tips', category: 'Preparation', mandatory: true, link: '/judge-insight', linkLabel: 'Court Tips' },
   { key: 'hp_childcare', label: 'Arrange childcare for the day', category: 'Logistics', mandatory: true, detail: 'Children must not be in court waiting areas. Arrange care in advance — not the morning of.' },
