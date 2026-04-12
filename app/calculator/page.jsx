@@ -1,6 +1,7 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { supabase } from '../../lib/supabaseClient';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import PageTitle from '../components/PageTitle';
@@ -42,11 +43,40 @@ function calculateSupport(income, numChildren) {
 }
 
 export default function CalculatorPage() {
+  const [user, setUser] = useState(null);
+  const [savedCalcs, setSavedCalcs] = useState([]);
+  const [showSaved, setShowSaved] = useState(false);
   const [income, setIncome] = useState('');
   const [numChildren, setNumChildren] = useState('1');
   const [arrangement, setArrangement] = useState('sole');
   const [otherIncome, setOtherIncome] = useState('');
   const [result, setResult] = useState(null);
+
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (user) {
+        setUser(user);
+        supabase.from('support_calculations').select('*').eq('user_id', user.id).order('created_at', { ascending: false }).limit(5)
+          .then(({ data }) => setSavedCalcs(data || []));
+      }
+    });
+  }, []);
+
+  const saveCalculation = async () => {
+    if (!result || !user) return;
+    await supabase.from('support_calculations').insert({
+      user_id: user.id,
+      paying_income: result.income,
+      receiving_income: arrangement === 'shared' ? parseInt((otherIncome || '0').replace(/[^0-9]/g,'')) || 0 : null,
+      num_children: result.children,
+      arrangement: result.arrangement,
+      monthly_amount: result.monthly,
+      annual_amount: result.annual,
+    });
+    const { data } = await supabase.from('support_calculations').select('*').eq('user_id', user.id).order('created_at', { ascending: false }).limit(5);
+    setSavedCalcs(data || []);
+    alert('Calculation saved to your case file.');
+  };
 
   const calculate = () => {
     const annualIncome = parseInt(income.replace(/[^0-9]/g, '')) || 0;
