@@ -1,41 +1,60 @@
 'use client';
 import Link from 'next/link';
+import Header from '../components/Header';
 
 export default function PrivacyPage() {
   return (
     <div className="min-h-screen bg-gray-50">
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-40">
-        <div className="max-w-3xl mx-auto px-4 py-4 flex items-center gap-3">
-          <Link href="/" className="text-gray-400 hover:text-red-600">←</Link>
-          <h1 className="text-lg font-bold text-gray-900">Privacy Policy</h1>
+      <Header />
+      <main className="max-w-3xl mx-auto px-4 py-10">
+        <div className="bg-white border border-gray-200 rounded-2xl p-6 sm:p-8 space-y-6">
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900 mb-2">Privacy Policy</h1>
+            <p className="text-sm text-gray-500">Last updated: January 2025</p>
+          </div>
+
+          <section className="space-y-3">
+            <h2 className="text-lg font-semibold text-gray-900">Information We Collect</h2>
+            <p className="text-sm text-gray-700 leading-relaxed">We collect information you provide when creating an account (name, email), completing onboarding (jurisdiction, case type, family situation), and using the app (case files, documents, messages, incident log entries, and calendar events). We also collect usage data to improve the service.</p>
+          </section>
+
+          <section className="space-y-3">
+            <h2 className="text-lg font-semibold text-gray-900">How We Use Your Information</h2>
+            <ul className="text-sm text-gray-700 space-y-1 leading-relaxed">
+              <li>• To provide and personalize the Foresight service</li>
+              <li>• To give the AI assistant context about your case</li>
+              <li>• To send deadline reminders and notifications you have enabled</li>
+              <li>• To improve the platform based on usage patterns</li>
+              <li>• We never sell your personal information to third parties</li>
+            </ul>
+          </section>
+
+          <section className="space-y-3">
+            <h2 className="text-lg font-semibold text-gray-900">Your Data and Legal Proceedings</h2>
+            <div className="bg-blue-50 border border-blue-200 rounded-xl p-3">
+              <p className="text-sm text-blue-800 leading-relaxed">Your incident log, case notes, and documents are private and visible only to you. We do not share this information with courts, the other party in your case, or any third party without your explicit consent or a valid legal order requiring us to do so.</p>
+            </div>
+          </section>
+
+          <section className="space-y-3">
+            <h2 className="text-lg font-semibold text-gray-900">Data Storage</h2>
+            <p className="text-sm text-gray-700 leading-relaxed">Your data is stored on Supabase servers in Canada (ca-central-1). We use industry-standard security practices including row-level security to ensure only you can access your data.</p>
+          </section>
+
+          <section className="space-y-3">
+            <h2 className="text-lg font-semibold text-gray-900">Your Rights</h2>
+            <p className="text-sm text-gray-700 leading-relaxed">You have the right to access, correct, or delete your data at any time. To request deletion of your account and all associated data, contact us at the email below. We will process requests within 30 days.</p>
+          </section>
+
+          <section className="space-y-3">
+            <h2 className="text-lg font-semibold text-gray-900">Contact</h2>
+            <p className="text-sm text-gray-700">Questions about this policy: <a href="mailto:info@foresight-app.ca" className="text-red-600 hover:underline">info@foresight-app.ca</a></p>
+          </section>
+
+          <div className="pt-4 border-t border-gray-100">
+            <Link href="/dashboard" className="text-red-600 text-sm font-medium hover:underline">← Back to Dashboard</Link>
+          </div>
         </div>
-      </header>
-      <main className="max-w-3xl mx-auto px-4 py-8 text-gray-900 text-sm leading-relaxed space-y-4">
-        <p className="text-gray-500 text-sm">Last updated: March 2026</p>
-
-        <h2>1. Information We Collect</h2>
-        <p>When you create an account, we collect your name, email address, and province. When you use the platform, we store your case information, uploaded documents, AI chat history, co-parent messages, and filing progress. We do not sell, share, or distribute your personal information to third parties.</p>
-
-        <h2>2. How We Use Your Information</h2>
-        <p>Your information is used solely to provide and improve Foresight's services, including personalized filing guides, AI responses, and case management. Your case data is private and only accessible to you.</p>
-
-        <h2>3. Data Storage & Security</h2>
-        <p>All data is stored securely on Supabase infrastructure in Canada (Central region). Documents are stored in encrypted storage buckets. We use Row Level Security (RLS) to ensure users can only access their own data. All connections use HTTPS encryption.</p>
-
-        <h2>4. Co-Parent Messenger</h2>
-        <p>Messages sent through the Co-Parent Messenger are permanent, timestamped, and cannot be edited or deleted. Both parties in a conversation can view all messages. Messages may be exported as court-ready documents by either party.</p>
-
-        <h2>5. AI Features</h2>
-        <p>When you use AI features, your questions and context are sent to our AI provider (Anthropic) for processing. AI responses are generated based on your input and publicly available legal information. We do not use your data to train AI models.</p>
-
-        <h2>6. Your Rights</h2>
-        <p>You can request to download or delete your account data at any time by contacting us. Deleting your account will remove your profile, cases, documents, and AI chat history. Co-parent messages are retained as they constitute a shared record.</p>
-
-        <h2>7. Cookies</h2>
-        <p>We use essential cookies for authentication and session management. We do not use advertising or tracking cookies.</p>
-
-        <h2>8. Contact</h2>
-        <p>For privacy questions, contact us at <strong>privacy@foresight.com</strong>.</p>
       </main>
     </div>
   );
