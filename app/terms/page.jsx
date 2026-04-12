@@ -1,50 +1,68 @@
 'use client';
 import Link from 'next/link';
+import Header from '../components/Header';
 
 export default function TermsPage() {
   return (
     <div className="min-h-screen bg-gray-50">
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-40">
-        <div className="max-w-3xl mx-auto px-4 py-4 flex items-center gap-3">
-          <Link href="/" className="text-gray-400 hover:text-red-600">←</Link>
-          <h1 className="text-lg font-bold text-gray-900">Terms of Service</h1>
+      <Header />
+      <main className="max-w-3xl mx-auto px-4 py-10">
+        <div className="bg-white border border-gray-200 rounded-2xl p-6 sm:p-8 space-y-6">
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900 mb-2">Terms of Service</h1>
+            <p className="text-sm text-gray-500">Last updated: January 2025</p>
+          </div>
+
+          <div className="bg-gray-50 border border-gray-200 rounded-xl p-4">
+            <p className="text-sm text-gray-700">By using Foresight, you agree to these terms. Please read them carefully. If you disagree, do not use the service.</p>
+          </div>
+
+          <section className="space-y-3">
+            <h2 className="text-lg font-semibold text-gray-900">1. What Foresight Provides</h2>
+            <p className="text-sm text-gray-700 leading-relaxed">Foresight is a self-help platform providing general legal information, procedural guides, document tools, and AI-powered assistance for parents navigating family law in Canada. We are not a law firm. Use of this platform does not create a lawyer-client relationship.</p>
+          </section>
+
+          <section className="space-y-3">
+            <h2 className="text-lg font-semibold text-gray-900">2. Acceptable Use</h2>
+            <p className="text-sm text-gray-700 leading-relaxed mb-2">You agree to use Foresight only for lawful purposes. You must not:</p>
+            <ul className="text-sm text-gray-700 space-y-1 leading-relaxed">
+              <li>• Use the platform to harass, intimidate, or harm any person</li>
+              <li>• Share your account with others</li>
+              <li>• Attempt to circumvent security measures</li>
+              <li>• Upload content that is illegal, harmful, or violates others rights</li>
+              <li>• Use the AI assistant to obtain advice for harming children or other parties</li>
+            </ul>
+          </section>
+
+          <section className="space-y-3">
+            <h2 className="text-lg font-semibold text-gray-900">3. Subscriptions and Billing</h2>
+            <p className="text-sm text-gray-700 leading-relaxed">Free accounts (Bronze) include limited trial access to AI features. Paid plans (Silver: $9.99/month CAD, Gold: $19.99/month CAD) are billed monthly and may be cancelled at any time. We do not offer refunds for partial months. Pricing may change with 30 days notice.</p>
+          </section>
+
+          <section className="space-y-3">
+            <h2 className="text-lg font-semibold text-gray-900">4. Limitation of Liability</h2>
+            <p className="text-sm text-gray-700 leading-relaxed">Foresight is provided as-is without warranty. We are not responsible for outcomes in your legal proceedings, errors in AI-generated content, or decisions you make based on information from this platform. Your use of this service is at your own risk.</p>
+          </section>
+
+          <section className="space-y-3">
+            <h2 className="text-lg font-semibold text-gray-900">5. Termination</h2>
+            <p className="text-sm text-gray-700 leading-relaxed">We may suspend or terminate accounts that violate these terms. You may delete your account at any time from Settings.</p>
+          </section>
+
+          <section className="space-y-3">
+            <h2 className="text-lg font-semibold text-gray-900">6. Governing Law</h2>
+            <p className="text-sm text-gray-700 leading-relaxed">These terms are governed by the laws of Saskatchewan, Canada. Any disputes will be resolved in the courts of Saskatchewan.</p>
+          </section>
+
+          <section className="space-y-3">
+            <h2 className="text-lg font-semibold text-gray-900">7. Contact</h2>
+            <p className="text-sm text-gray-700">Questions: <a href="mailto:info@foresight-app.ca" className="text-red-600 hover:underline">info@foresight-app.ca</a></p>
+          </section>
+
+          <div className="pt-4 border-t border-gray-100">
+            <Link href="/dashboard" className="text-red-600 text-sm font-medium hover:underline">← Back to Dashboard</Link>
+          </div>
         </div>
-      </header>
-      <main className="max-w-3xl mx-auto px-4 py-8 text-gray-900 text-sm leading-relaxed space-y-4">
-        <p className="text-gray-500 text-sm">Last updated: March 2026</p>
-
-        <h2>1. About Foresight</h2>
-        <p>Foresight is an educational platform that provides information and tools to help parents navigate custody and family court proceedings in Canada. By using Foresight, you agree to these terms.</p>
-
-        <h2>2. Not Legal Advice</h2>
-        <p><strong>Foresight does not provide legal advice.</strong> All information, AI responses, filing guides, court form descriptions, and rights information are for educational purposes only. They do not constitute legal advice and should not be relied upon as a substitute for professional legal counsel. We strongly recommend consulting a lawyer for your specific situation.</p>
-
-        <h2>3. Accounts</h2>
-        <p>You must be 18 or older to create an account. You are responsible for maintaining the security of your account credentials. You agree to provide accurate information during registration and keep it up to date.</p>
-
-        <h2>4. Subscription Plans</h2>
-        <p>We offer free (Bronze) and paid (Silver, Gold) subscription plans. Features and usage limits vary by plan. Prices are in Canadian dollars (CAD) and are subject to change with 30 days' notice. Paid subscriptions can be cancelled at any time.</p>
-
-        <h2>5. AI Features</h2>
-        <p>AI-generated content is provided for informational purposes. It may contain errors or outdated information. AI responses do not create an attorney-client relationship. You are solely responsible for decisions made based on AI-generated content.</p>
-
-        <h2>6. Co-Parent Messenger</h2>
-        <p>Messages are permanent and cannot be edited or deleted after sending. Both parties can export the full conversation. By using this feature, you consent to your messages being stored and potentially used in legal proceedings by either party.</p>
-
-        <h2>7. User Content</h2>
-        <p>You retain ownership of all documents, notes, and content you upload. You grant Foresight a limited license to store and process your content solely for the purpose of providing our services. We will not share your content with third parties except as required by law.</p>
-
-        <h2>8. Acceptable Use</h2>
-        <p>You agree not to use Foresight to harass, threaten, or intimidate any person, upload illegal content, misrepresent your identity, or attempt to access other users' data.</p>
-
-        <h2>9. Limitation of Liability</h2>
-        <p>Foresight is provided "as is" without warranties. We are not liable for any decisions made based on information provided through our platform. Our total liability is limited to the amount you've paid in subscription fees in the preceding 12 months.</p>
-
-        <h2>10. Changes</h2>
-        <p>We may update these terms from time to time. Continued use of the platform after changes constitutes acceptance of the new terms.</p>
-
-        <h2>11. Contact</h2>
-        <p>Questions about these terms? Contact us at <strong>legal@foresight.com</strong>.</p>
       </main>
     </div>
   );
