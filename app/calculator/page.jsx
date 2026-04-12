@@ -64,6 +64,7 @@ export default function CalculatorPage() {
 
   const saveCalculation = async () => {
     if (!result || !user) return;
+    try {
     await supabase.from('support_calculations').insert({
       user_id: user.id,
       paying_income: result.income,
@@ -76,6 +77,7 @@ export default function CalculatorPage() {
     const { data } = await supabase.from('support_calculations').select('*').eq('user_id', user.id).order('created_at', { ascending: false }).limit(5);
     setSavedCalcs(data || []);
     alert('Calculation saved to your case file.');
+    } catch (err) { console.error('Save error:', err); }
   };
 
   const calculate = () => {
