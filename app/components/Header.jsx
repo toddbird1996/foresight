@@ -65,7 +65,9 @@ export default function Header() {
               {link.label}
             </Link>
           ))}
-          <Link href="/emergency" className="px-3 py-1.5 rounded-lg text-sm text-red-600 font-medium hover:bg-red-50">🚨 SOS</Link>
+          <Link href="/incident-log" className="px-3 py-1.5 rounded-lg text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-50">Log</Link>
+            <Link href="/lawyers" className="px-3 py-1.5 rounded-lg text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-50">Help</Link>
+            <Link href="/emergency" className="px-3 py-1.5 rounded-lg text-sm text-red-600 font-medium hover:bg-red-50">🚨 SOS</Link>
           <div className="w-px h-6 bg-gray-200 mx-1" />
           <Link href="/profile" className="px-3 py-1.5 rounded-lg text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-50">Profile</Link>
           <button onClick={handleLogout} className="px-3 py-1.5 rounded-lg text-sm text-gray-500 hover:text-red-600 hover:bg-gray-50">Logout</button>
@@ -142,6 +144,7 @@ export default function Header() {
                 { href: '/calculator', label: 'Calculator', icon: '🧮' },
                 { href: '/programs', label: 'Programs', icon: '🛡️' },
                 { href: '/glossary', label: 'Legal Glossary', icon: '📖' },
+                { href: '/lawyers', label: 'Legal Help', icon: '⚖️' },
               ].map(link => (
                 <Link key={link.href} href={link.href} onClick={() => setMenuOpen(false)}
                   className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-gray-700 hover:bg-gray-50">
