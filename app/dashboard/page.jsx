@@ -441,7 +441,7 @@ const DOC_CHECKLISTS = {
     { key: 'doc_children_bc', label: 'Birth certificate(s) for each child', category: 'Children' },
     { key: 'doc_t1_returns', label: '3 years of T1 tax returns and Notices of Assessment — yours', category: 'Financial (You)' },
     { key: 'doc_pay_stubs', label: '3 months of recent pay stubs — yours', category: 'Financial (You)' },
-    { key: 'doc_t1_other', label: 'Other parent's most recent T1 return (if available)', category: 'Financial (Other)' },
+    { key: 'doc_t1_other', label: "Other parent's most recent T1 return (if available)", category: 'Financial (Other)' },
     { key: 'doc_child_expenses', label: 'Receipts for child expenses: daycare, activities, medical', category: 'Expenses' },
     { key: 'doc_existing_order', label: 'Copy of any existing support order (if varying)', category: 'Existing Orders' },
   ],
@@ -452,7 +452,7 @@ const DOC_CHECKLISTS = {
     { key: 'doc_id', label: 'Government-issued photo ID', category: 'Identity' },
     { key: 'doc_t1_returns', label: '3 years of T1 tax returns and Notices of Assessment', category: 'Financial' },
     { key: 'doc_pay_stubs', label: '3 months of recent pay stubs', category: 'Financial' },
-    { key: 'doc_other_address', label: 'Other party's full name and current address', category: 'Other Party' },
+    { key: 'doc_other_address', label: "Other party's full name and current address", category: 'Other Party' },
   ],
   protection: [
     { key: 'doc_id', label: 'Government-issued photo ID', category: 'Identity' },
