@@ -58,6 +58,7 @@ export default function Header() {
             { href: '/coparent', label: 'Co-Parent' },
             { href: '/programs', label: 'Programs' },
             { href: '/rights', label: 'Rights' },
+            { href: '/glossary', label: 'Glossary' },
           ].map(link => (
             <Link key={link.href} href={link.href}
               className={`px-3 py-1.5 rounded-lg text-sm transition-colors ${link.highlight ? 'text-red-600 font-medium hover:bg-red-50' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'}`}>
@@ -140,6 +141,7 @@ export default function Header() {
                 { href: '/judge-insight', label: 'Court Tips', icon: '🏛️' },
                 { href: '/calculator', label: 'Calculator', icon: '🧮' },
                 { href: '/programs', label: 'Programs', icon: '🛡️' },
+                { href: '/glossary', label: 'Legal Glossary', icon: '📖' },
               ].map(link => (
                 <Link key={link.href} href={link.href} onClick={() => setMenuOpen(false)}
                   className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-gray-700 hover:bg-gray-50">
