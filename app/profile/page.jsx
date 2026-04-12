@@ -18,6 +18,8 @@ export default function ProfilePage() {
   const [fullName, setFullName] = useState("");
   const [phone, setPhone] = useState("");
   const [selectedJurisdiction, setSelectedJurisdiction] = useState("");
+  const [caseStatus, setCaseStatus] = useState('');
+  const [caseType, setCaseType] = useState('');
 
   const [emailReminders, setEmailReminders] = useState(true);
   const [weeklyDigest, setWeeklyDigest] = useState(true);
@@ -52,6 +54,8 @@ export default function ProfilePage() {
       setFullName(data.full_name || "");
       setPhone(data.phone || "");
       setSelectedJurisdiction(data.jurisdiction || "saskatchewan");
+      setCaseStatus(data.case_status || '');
+      setCaseType(data.case_type || '');
     }
   };
 
@@ -75,6 +79,8 @@ export default function ProfilePage() {
         full_name: fullName,
         phone: phone,
         jurisdiction: selectedJurisdiction,
+        case_status: caseStatus,
+        case_type: caseType,
         updated_at: new Date().toISOString(),
       })
       .eq("id", user.id);
@@ -179,6 +185,33 @@ export default function ProfilePage() {
                   placeholder="Enter your phone number"
                   className="w-full p-3 bg-white border border-gray-300 rounded-lg focus:outline-none focus:border-red-500"
                 />
+              </div>
+              <div>
+                <label className="block text-sm text-gray-600 mb-1">Case Status</label>
+                <select value={caseStatus} onChange={e => setCaseStatus(e.target.value)}
+                  className="w-full p-3 bg-white border border-gray-300 rounded-lg focus:outline-none focus:border-red-500">
+                  <option value="">Not set</option>
+                  <option value="no_case">No case yet — gathering information</option>
+                  <option value="preparing">Preparing to file</option>
+                  <option value="filed">Application filed</option>
+                  <option value="waiting_hearing">Waiting for court hearing</option>
+                  <option value="mediation">In mediation</option>
+                  <option value="responding">Responding to papers served</option>
+                  <option value="cps">CPS / child protection involved</option>
+                  <option value="modification">Modifying an existing order</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm text-gray-600 mb-1">Case Type</label>
+                <select value={caseType} onChange={e => setCaseType(e.target.value)}
+                  className="w-full p-3 bg-white border border-gray-300 rounded-lg focus:outline-none focus:border-red-500">
+                  <option value="">Not set</option>
+                  <option value="custody">Custody / Parenting</option>
+                  <option value="divorce">Divorce</option>
+                  <option value="support">Child Support</option>
+                  <option value="protection">Child Protection (CPS)</option>
+                  <option value="variation">Variation of Order</option>
+                </select>
               </div>
               <div className="flex gap-3">
                 <button
