@@ -384,7 +384,7 @@ const WALKTHROUGH = {
 };
 
 function CaseWalkthroughBanner({ profile }) {
-  const [expanded, setExpanded] = useState(true);
+  const [expanded, setExpanded] = useState(false);
   const status = profile.case_status || 'no_case';
   const data = WALKTHROUGH[status];
   if (!data) return null;
@@ -490,7 +490,7 @@ const HEARING_CATEGORY_ICONS = { 'Documents': '📁', 'Preparation': '📝', 'Lo
 
 function HearingPrepChecklist({ deadlines, userId }) {
   const [checklist, setChecklist] = useState({});
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false);
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
