@@ -56,6 +56,7 @@ export default function Header() {
             { href: '/court-forms', label: 'Forms' },
             { href: '/community', label: 'Community' },
             { href: '/coparent', label: 'Co-Parent Chat' },
+            { href: '/schedule-builder', label: 'Schedule' },
             { href: '/programs', label: 'Programs' },
             { href: '/rights', label: 'Rights' },
             { href: '/glossary', label: 'Glossary' },
