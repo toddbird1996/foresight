@@ -43,6 +43,7 @@ export default function ProgramsPage() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
+  const [situationFilter, setSituationFilter] = useState('');
   const [selectedTarget, setSelectedTarget] = useState('all');
   const [expanded, setExpanded] = useState(null);
   const [userJurisdiction, setUserJurisdiction] = useState('saskatchewan');
@@ -59,6 +60,17 @@ export default function ProgramsPage() {
     };
     init();
   }, []);
+
+  const SITUATION_FILTERS = {
+    no_case:         { label: 'Getting Started', categories: ['legal','parenting','financial'] },
+    preparing:       { label: 'Preparing to File', categories: ['legal','financial','parenting','housing'] },
+    filed:           { label: 'Filed', categories: ['legal','financial','counseling','support'] },
+    waiting_hearing: { label: 'Waiting for Hearing', categories: ['legal','counseling','support','financial'] },
+    mediation:       { label: 'In Mediation', categories: ['legal','parenting','counseling'] },
+    responding:      { label: 'Responding to Papers', categories: ['legal','financial','support'] },
+    cps:             { label: 'CPS Involved', categories: ['legal','support','crisis','counseling','housing'] },
+    modification:    { label: 'Modifying Order', categories: ['legal','financial','parenting'] },
+  };
 
   const fetchPrograms = async () => {
     const { data, error } = await supabase
@@ -78,13 +90,15 @@ export default function ProgramsPage() {
     programs.some(p => p.target_group === t)
   )];
 
+  const situationData = SITUATION_FILTERS[situationFilter];
   const filtered = programs.filter(p => {
     const matchSearch = !search ||
       p.name?.toLowerCase().includes(search.toLowerCase()) ||
       p.description?.toLowerCase().includes(search.toLowerCase());
+    const matchSituation = !situationData || situationData.categories.includes(p.category);
     const matchCat = selectedCategory === 'all' || p.category === selectedCategory;
     const matchTarget = selectedTarget === 'all' || p.target_group === selectedTarget;
-    return matchSearch && matchCat && matchTarget;
+    return matchSearch && matchCat && matchTarget && matchSituation;
   });
 
   if (loading) return (
@@ -108,6 +122,23 @@ export default function ProgramsPage() {
           placeholder="Search programs, services, support..."
           className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-red-400 mb-4"
         />
+
+        {/* Situation filter */}
+        <div className="mb-3">
+          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Filter by situation</p>
+          <div className="flex gap-2 overflow-x-auto pb-1">
+            <button onClick={() => setSituationFilter('')}
+              className={`flex-shrink-0 px-3 py-1.5 rounded-full text-xs font-semibold transition-colors ${!situationFilter ? 'bg-red-600 text-white' : 'bg-white border border-gray-200 text-gray-600 hover:border-red-300'}`}>
+              All Programs
+            </button>
+            {Object.entries(SITUATION_FILTERS).map(([key, val]) => (
+              <button key={key} onClick={() => setSituationFilter(situationFilter === key ? '' : key)}
+                className={`flex-shrink-0 px-3 py-1.5 rounded-full text-xs font-semibold transition-colors ${situationFilter === key ? 'bg-red-600 text-white' : 'bg-white border border-gray-200 text-gray-600 hover:border-red-300'}`}>
+                {val.label}
+              </button>
+            ))}
+          </div>
+        </div>
 
         {/* Category filter */}
         <div className="flex gap-2 mb-3 overflow-x-auto pb-1">
