@@ -335,7 +335,7 @@ function QuestionBar() {
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleAsk()}
-              placeholder="Ask about custody, court, or your rights..."
+              placeholder="Unsure of what to do next? Just Ask AI"
               className="w-full py-2.5 px-4 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:border-red-400 focus:bg-white transition-colors"
             />
           </div>
