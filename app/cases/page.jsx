@@ -500,7 +500,10 @@ function CaseFilingProgress({ caseData, user }) {
 
   const fetchFilingData = async () => {
     if (!caseData.jurisdiction_id) return;
-    const { data: phasesData } = await supabase.from('filing_phases').select('*').eq('jurisdiction_id', caseData.jurisdiction_id).order('display_order');
+    // Map case type to situation
+    const situationMap = { 'divorce': 'divorce', 'custody': 'parenting', 'support': 'parenting', 'protection': 'parenting', 'variation': 'variation' };
+    const sit = situationMap[caseData.case_type] || 'divorce';
+    const { data: phasesData } = await supabase.from('filing_phases').select('*').eq('jurisdiction_id', caseData.jurisdiction_id).eq('situation', sit).order('display_order');
     const phaseIds = (phasesData || []).map(p => p.id);
     const { data: stepsData } = await supabase.from('filing_steps').select('*').in('phase_id', phaseIds).order('display_order');
     const { data: progressData } = await supabase.from('user_progress').select('*').eq('user_id', user.id);
