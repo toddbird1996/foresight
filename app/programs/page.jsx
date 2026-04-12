@@ -119,6 +119,30 @@ export default function ProgramsPage() {
 
       <main className="max-w-4xl mx-auto px-4 py-6">
 
+        {/* Province selector */}
+        <div className="flex items-center gap-2 bg-white border border-gray-200 rounded-xl px-4 py-2.5">
+          <span className="text-sm">📍</span>
+          <select
+            value={userJurisdiction}
+            onChange={async e => {
+              const jid = e.target.value;
+              setUserJurisdiction(jid);
+              setPrograms([]);
+              setLoading(true);
+              await fetchPrograms(jid);
+            }}
+            className="flex-1 text-sm text-gray-900 bg-transparent outline-none font-medium"
+          >
+            <option value="saskatchewan">Saskatchewan</option>
+            <option value="alberta">Alberta</option>
+            <option value="bc">British Columbia</option>
+            <option value="ontario">Ontario</option>
+            <option value="manitoba">Manitoba</option>
+            <option value="nova_scotia">Nova Scotia</option>
+            <option value="new_brunswick">New Brunswick</option>
+          </select>
+        </div>
+
         {/* Search */}
         <input
           type="text"
