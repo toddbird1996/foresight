@@ -83,6 +83,11 @@ export default function Dashboard() {
 
 
         {/* Case Guide - Step by Step Walkthrough */}
+        {/* Hearing Prep Checklist - auto-surfaces when hearing deadline within 14 days */}
+        {user && upcomingDeadlines.some(d => d.event_type === 'court' || d.event_type === 'hearing' || (d.title && (d.title.toLowerCase().includes('hearing') || d.title.toLowerCase().includes('trial') || d.title.toLowerCase().includes('court') || d.title.toLowerCase().includes('jcc')))) && (
+          <HearingPrepChecklist deadlines={upcomingDeadlines} userId={user.id} />
+        )}
+
         {user && <CaseGuide userId={user.id} currentStep={userProfile?.case_guide_step || 0} dismissed={userProfile?.guide_dismissed || false} caseStatus={userProfile?.case_status} />}
 
         {/* Welcome */}
@@ -451,6 +456,157 @@ function CaseWalkthroughBanner({ profile }) {
             <span className="text-xs text-gray-500">Required steps</span>
             <span className="w-3 h-3 rounded-full bg-gray-300 flex-shrink-0 ml-2" />
             <span className="text-xs text-gray-500">Optional but recommended</span>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+
+// ─── Hearing Prep Checklist ────────────────────────────────────────────────────
+const HEARING_PREP_ITEMS = [
+  // Documents — all Required
+  { key: 'hp_binder', label: 'Organize all documents into a tabbed binder', category: 'Documents', mandatory: true, detail: 'Tab and label chronologically. Bring 3 copies of everything — one for you, one for the judge, one for the other party.' },
+  { key: 'hp_filed_docs', label: 'Review every document you have filed', category: 'Documents', mandatory: true, detail: 'Know your affidavits, financial statements, and any exhibits inside out. The judge will have read them.' },
+  { key: 'hp_other_docs', label: 'Review the other party's filed documents', category: 'Documents', mandatory: true, detail: 'Note every point you disagree with and prepare a calm, evidence-backed response for each one.' },
+  { key: 'hp_evidence', label: 'Organize your supporting evidence', category: 'Documents', mandatory: true, detail: 'Texts, emails, photos, police reports, school records, medical records — tabbed and ready to hand up.' },
+  // Preparation — mix
+  { key: 'hp_outline', label: 'Write bullet-point notes of your key arguments', category: 'Preparation', mandatory: true, detail: 'Do not write a script — judges dislike reading. Bullet points keep you on track when nervous.' },
+  { key: 'hp_responses', label: 'Prepare responses to the other party's likely arguments', category: 'Preparation', mandatory: true, detail: 'Think through what they will say. Prepare short, factual, evidence-backed responses for each point.' },
+  { key: 'hp_practice', label: 'Practice speaking your key points out loud', category: 'Preparation', mandatory: true, detail: 'Hearing yourself say it out loud is very different from reading it. Do this at least twice.' },
+  { key: 'hp_court_tips', label: 'Read the Judge Insight tips', category: 'Preparation', mandatory: true, link: '/judge-insight', linkLabel: 'Court Tips' },
+  { key: 'hp_childcare', label: 'Arrange childcare for the day', category: 'Logistics', mandatory: true, detail: 'Children must not be in court waiting areas. Arrange care in advance — not the morning of.' },
+  { key: 'hp_route', label: 'Plan your route and parking', category: 'Logistics', mandatory: true, detail: 'Arrive at least 30 minutes early. Courthouses have security lines. Being late is not excusable.' },
+  { key: 'hp_outfit', label: 'Prepare your court outfit', category: 'Logistics', mandatory: true, detail: 'Business casual minimum. Clean, pressed, professional. No hats, no graphic t-shirts.' },
+  { key: 'hp_phone_off', label: 'Plan to turn your phone completely off in court', category: 'Logistics', mandatory: true, detail: 'Not silent — off. A ringing phone in a courtroom is one of the fastest ways to irritate a judge.' },
+  // Optional
+  { key: 'hp_legal_aid', label: 'Visit Summary Advice Counsel at the courthouse', category: 'Legal Support', mandatory: false, detail: 'Free legal advice available at most SK courthouses before your hearing. Arrive 45 min early.' },
+  { key: 'hp_support', label: 'Arrange a support person to attend with you', category: 'Logistics', mandatory: false, detail: 'A trusted adult can sit in the gallery for moral support. They cannot speak for you but knowing someone is there helps.' },
+  { key: 'hp_water', label: 'Bring water and a snack', category: 'Logistics', mandatory: false, detail: 'Hearings can run long. Stay hydrated and maintain your energy.' },
+];
+
+const HEARING_CATEGORY_ICONS = { 'Documents': '📁', 'Preparation': '📝', 'Logistics': '🗓️', 'Legal Support': '⚖️' };
+
+function HearingPrepChecklist({ deadlines, userId }) {
+  const [checklist, setChecklist] = useState({});
+  const [open, setOpen] = useState(true);
+  const [loaded, setLoaded] = useState(false);
+
+  useEffect(() => {
+    const load = async () => {
+      const { data } = await supabase.from('document_checklist').select('item_key, checked').eq('user_id', userId).like('item_key', 'hp_%');
+      const map = {};
+      (data || []).forEach(r => { map[r.item_key] = r.checked; });
+      setChecklist(map);
+      setLoaded(true);
+    };
+    load();
+  }, [userId]);
+
+  const toggle = async (key, val) => {
+    setChecklist(prev => ({ ...prev, [key]: val }));
+    const { data: existing } = await supabase.from('document_checklist').select('id').eq('user_id', userId).eq('item_key', key).single();
+    if (existing) {
+      await supabase.from('document_checklist').update({ checked: val, checked_at: val ? new Date().toISOString() : null }).eq('id', existing.id);
+    } else {
+      await supabase.from('document_checklist').insert({ user_id: userId, item_key: key, checked: val, checked_at: val ? new Date().toISOString() : null });
+    }
+  };
+
+  // Find the soonest hearing deadline
+  const hearingDeadline = deadlines.find(d =>
+    d.event_type === 'court' || d.event_type === 'hearing' ||
+    (d.title && (d.title.toLowerCase().includes('hearing') || d.title.toLowerCase().includes('trial') || d.title.toLowerCase().includes('court') || d.title.toLowerCase().includes('jcc')))
+  );
+  if (!hearingDeadline) return null;
+
+  const daysLeft = Math.ceil((new Date(hearingDeadline.due_date) - new Date()) / 86400000);
+  const isUrgent = daysLeft <= 7;
+  const total = HEARING_PREP_ITEMS.length;
+  const done = HEARING_PREP_ITEMS.filter(i => checklist[i.key]).length;
+  const pct = Math.round((done / total) * 100);
+
+  // Group items
+  const grouped = {};
+  HEARING_PREP_ITEMS.forEach(item => {
+    if (!grouped[item.category]) grouped[item.category] = [];
+    grouped[item.category].push(item);
+  });
+
+  return (
+    <div className={`mb-5 border-2 rounded-2xl overflow-hidden ${isUrgent ? 'border-red-400 bg-red-50' : 'border-amber-300 bg-amber-50'}`}>
+      {/* Header */}
+      <button onClick={() => setOpen(v => !v)} className="w-full flex items-center gap-3 p-4 text-left">
+        <div className={`text-2xl flex-shrink-0`}>🏛️</div>
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2 mb-0.5 flex-wrap">
+            <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${isUrgent ? 'bg-red-200 text-red-800' : 'bg-amber-200 text-amber-800'}`}>
+              {isUrgent ? '🚨 Urgent' : '⏰ Upcoming'} — {daysLeft === 0 ? 'Today' : daysLeft === 1 ? 'Tomorrow' : `${daysLeft} days`}
+            </span>
+          </div>
+          <p className={`font-bold text-sm ${isUrgent ? 'text-red-900' : 'text-amber-900'}`}>
+            Hearing Prep — {hearingDeadline.title}
+          </p>
+          <div className="flex items-center gap-2 mt-1">
+            <div className="flex-1 h-1.5 bg-white/60 rounded-full overflow-hidden">
+              <div className={`h-full rounded-full transition-all duration-500 ${pct === 100 ? 'bg-green-500' : isUrgent ? 'bg-red-500' : 'bg-amber-500'}`} style={{ width: `${pct}%` }} />
+            </div>
+            <span className={`text-xs font-bold flex-shrink-0 ${pct === 100 ? 'text-green-700' : isUrgent ? 'text-red-700' : 'text-amber-700'}`}>{done}/{total}</span>
+          </div>
+        </div>
+        <span className={`text-lg flex-shrink-0 ${isUrgent ? 'text-red-700' : 'text-amber-700'}`}>{open ? '▲' : '▼'}</span>
+      </button>
+
+      {open && loaded && (
+        <div className="border-t border-white/40 px-4 pb-4 space-y-4 pt-3">
+          {pct === 100 && (
+            <div className="bg-green-100 border border-green-200 rounded-xl p-3">
+              <p className="text-green-800 text-sm font-semibold">🎉 You are fully prepared. Good luck in court.</p>
+            </div>
+          )}
+          {Object.entries(grouped).map(([category, items]) => (
+            <div key={category}>
+              <div className="flex items-center gap-1.5 mb-2">
+                <span className="text-sm">{HEARING_CATEGORY_ICONS[category] || '📋'}</span>
+                <p className="text-xs font-bold text-gray-600 uppercase tracking-wide">{category}</p>
+              </div>
+              <div className="space-y-2">
+                {items.map(item => {
+                  const isChecked = !!checklist[item.key];
+                  return (
+                    <div key={item.key} className="bg-white rounded-xl p-3 shadow-sm">
+                      <div className="flex items-start gap-3">
+                        <button
+                          onClick={() => toggle(item.key, !isChecked)}
+                          className={`w-5 h-5 rounded border-2 flex items-center justify-center flex-shrink-0 mt-0.5 transition-colors ${isChecked ? 'bg-green-500 border-green-500 text-white' : 'border-gray-300 hover:border-green-400'}`}
+                        >
+                          {isChecked && <span className="text-[10px] font-bold">✓</span>}
+                        </button>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 flex-wrap mb-0.5">
+                            <p className={`text-sm font-medium ${isChecked ? 'line-through text-gray-400' : 'text-gray-900'}`}>{item.label}</p>
+                            <span className={`text-[9px] font-bold uppercase px-1.5 py-0.5 rounded-full flex-shrink-0 ${item.mandatory ? 'bg-red-100 text-red-700' : 'bg-gray-100 text-gray-500'}`}>
+                              {item.mandatory ? 'Required' : 'Optional'}
+                            </span>
+                          </div>
+                          {item.detail && <p className="text-xs text-gray-500 leading-relaxed">{item.detail}</p>}
+                          {item.link && (
+                            <Link href={item.link} className="inline-flex items-center gap-1 mt-1.5 text-xs font-semibold text-red-600 hover:underline">
+                              {item.linkLabel} →
+                            </Link>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          ))}
+          <div className="flex items-center gap-4 pt-1">
+            <div className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-full bg-red-600 flex-shrink-0" /><span className="text-xs text-gray-500">Required</span></div>
+            <div className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-full bg-gray-300 flex-shrink-0" /><span className="text-xs text-gray-500">Optional</span></div>
           </div>
         </div>
       )}
