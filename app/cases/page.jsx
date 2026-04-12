@@ -261,11 +261,64 @@ function CaseDocuments({ caseData, user, userTier }) {
     if (!canUseAI) return;
     setScanning(doc.id + '-' + action);
     try {
-      const prompt = action === 'summarize'
-        ? `You are a legal document assistant for Foresight, a Canadian family law platform. A parent in ${caseData.jurisdiction_id?.replace(/_/g, ' ') || 'Canada'} has uploaded a document titled "${doc.file_name}" to their ${caseData.case_type} case. Based on the document name, explain what this type of document typically contains, its purpose in family law proceedings, key things to watch for, and any deadlines or action items they should be aware of. Be empathetic and thorough.`
-        : action === 'scan'
-        ? `You are a legal document analyst for Foresight. Analyze a document titled "${doc.file_name}" uploaded to a ${caseData.case_type} case in ${caseData.jurisdiction_id?.replace(/_/g, ' ') || 'Canada'}. Identify potential issues, missing information, red flags, and things a self-represented parent should verify. Note: you only have the filename. Provide guidance about what this type of document typically requires.`
-        : `You are a legal document comparator for Foresight. A parent uploaded "${doc.file_name}" in a ${caseData.case_type} case in ${caseData.jurisdiction_id?.replace(/_/g, ' ') || 'Canada'}. Compare what this document likely contains against standard court requirements for this jurisdiction. Note any typical deficiencies or areas needing attention.`;
+      // Try to fetch and read the actual file content
+      let fileContent = '';
+      if (doc.file_url) {
+        try {
+          const fileRes = await fetch(doc.file_url);
+          const blob = await fileRes.blob();
+          const fileType = doc.file_type || '';
+          
+          if (fileType.includes('text') || doc.file_name?.endsWith('.txt')) {
+            fileContent = await blob.text();
+            fileContent = fileContent.substring(0, 8000); // Limit to 8k chars
+          } else if (fileType.includes('pdf') || doc.file_name?.endsWith('.pdf')) {
+            // For PDFs, convert to base64 and send as document
+            const reader = new FileReader();
+            const base64 = await new Promise(resolve => {
+              reader.onload = () => resolve(reader.result.split(',')[1]);
+              reader.readAsDataURL(blob);
+            });
+            fileContent = `[PDF document — ${doc.file_name}. Base64 encoded for analysis.]`;
+          }
+        } catch (fetchErr) {
+          console.log('Could not fetch file content, using filename only');
+        }
+      }
+
+      const hasContent = fileContent.length > 50 && !fileContent.includes('[PDF document');
+      const jurisdiction = caseData.jurisdiction_id?.replace(/_/g, ' ') || 'Saskatchewan';
+      const caseType = caseData.case_type || 'custody';
+
+      let prompt;
+      if (action === 'summarize') {
+        prompt = hasContent
+          ? `You are a legal document assistant for Foresight. A self-represented parent in ${jurisdiction} has shared the following document from their ${caseType} case. Read it carefully and provide: 1) A plain-language summary of what this document says, 2) Key dates, deadlines, or obligations mentioned, 3) What actions the parent needs to take based on this document, 4) Anything they should discuss with a lawyer.
+
+Document filename: ${doc.file_name}
+
+Document content:
+${fileContent}`
+          : `You are a legal document assistant for Foresight. A parent in ${jurisdiction} has uploaded a document titled "${doc.file_name}" to their ${caseType} case. Based on the document name and type, explain: what this document typically contains, its purpose in family law proceedings, key things to watch for, and any deadlines or action items typically associated with this document type.`;
+      } else if (action === 'scan') {
+        prompt = hasContent
+          ? `You are a legal document analyst for Foresight. Review this ${caseType} case document from ${jurisdiction} and identify: 1) Any red flags or concerning language, 2) Missing information that should be present, 3) Deadlines or response requirements, 4) Anything the parent may have overlooked or misunderstood, 5) Whether the document appears to be properly completed.
+
+Document: ${doc.file_name}
+
+Content:
+${fileContent}`
+          : `You are a legal document analyst for Foresight. Analyze a document titled "${doc.file_name}" in a ${caseType} case in ${jurisdiction}. Identify: potential issues, missing information, red flags, and things a self-represented parent should verify. What does this type of document typically require to be valid and complete?`;
+      } else {
+        prompt = hasContent
+          ? `You are a legal document comparator for Foresight. Compare this ${caseType} document from ${jurisdiction} against standard court requirements. Identify: 1) Whether it meets court standards, 2) Any deficiencies that could cause the court to reject or question it, 3) Whether all required sections are present, 4) Anything that needs to be fixed before filing or responding.
+
+Document: ${doc.file_name}
+
+Content:
+${fileContent}`
+          : `You are a legal document comparator for Foresight. A parent uploaded "${doc.file_name}" in a ${caseType} case in ${jurisdiction}. Compare what this document likely contains against standard court requirements for this jurisdiction. Note typical deficiencies or areas needing attention.`;
+      }
 
       const response = await fetch('/api/ai/chat', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
