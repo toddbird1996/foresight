@@ -376,36 +376,15 @@ function SolutionSection() {
 
 function FeaturesSection() {
   const features = [
-    {
-      icon: '📋',
-      title: 'Step-by-Step Filing Guides',
-      description: 'Province-specific guides walk you through every form, every deadline, every step. Never wonder "what\'s next?" again.'
-    },
-    {
-      icon: '🤖',
-      title: '24/7 AI Legal Assistant',
-      description: 'Get instant answers to your custody questions. Our AI understands Canadian family law and speaks plain English.'
-    },
-    {
-      icon: '👥',
-      title: 'Parent Community',
-      description: 'Connect with thousands of parents going through the same thing. Share experiences, get advice, find support.'
-    },
-    {
-      icon: '🤝',
-      title: 'Mentor Matching',
-      description: 'Get paired with parents who\'ve successfully navigated their cases. Learn from their experience.'
-    },
-    {
-      icon: '📄',
-      title: 'Document Analysis',
-      description: 'Upload your documents for AI-powered review. Get suggestions to strengthen your filings.'
-    },
-    {
-      icon: '📅',
-      title: 'Deadline Tracking',
-      description: 'Never miss a court date or filing deadline. Get reminders via email, text, and push notifications.'
-    }
+    { icon: '📋', title: 'Step-by-Step Filing Guide', description: 'Saskatchewan-specific walkthroughs for divorce, parenting only, and variation of existing orders. Mandatory vs optional steps clearly marked.' },
+    { icon: '🤖', title: 'Context-Aware AI Assistant', description: 'Answers specific to your case. The AI knows your court file, case status, and upcoming deadlines before you even type your question.' },
+    { icon: '📓', title: 'Private Incident Log', description: 'Timestamped records of missed visits, court order violations, and welfare concerns. Exportable as evidence for affidavits and court proceedings.' },
+    { icon: '⚖️', title: 'Legal Help Directory', description: 'Saskatchewan directory of Legal Aid, pro bono services, flat-fee consultations, and family law firms — with guidance on what to use when.' },
+    { icon: '💬', title: 'Co-Parent Communication Score', description: 'The AI rates your message on tone, child-focus, and professionalism before you send it — and rewrites it if needed. Court-safe communication.' },
+    { icon: '📅', title: 'Parenting Schedule Builder', description: 'Design your proposed schedule on an interactive grid. Presets include 7/7, 5/2/2/5, and 2/2/3. See time split percentages and export as a document.' },
+    { icon: '📄', title: 'Document Analysis', description: 'Upload your court documents. The AI reads the actual content and tells you what it means, what deadlines it creates, and what you should watch for.' },
+    { icon: '🗺️', title: 'What Happens Next', description: 'After every major filing step, Foresight tells you exactly what to expect next — timelines, triggers, and how to prepare for the next phase.' },
+    { icon: '🧮', title: 'Child Support Calculator', description: 'Real federal guideline tables. Calculate sole, shared, and split custody scenarios for Saskatchewan and save results to your case file.' },
   ];
 
   return (
@@ -415,7 +394,7 @@ function FeaturesSection() {
           <h2 className="text-3xl sm:text-4xl font-bold mb-6 text-gray-900">
             Everything You Need to{' '}
             <span className="text-red-600">
-              Win Your Case
+              Navigate Your Custody Case
             </span>
           </h2>
           <p className="text-xl text-gray-600">
