@@ -874,5 +874,108 @@ export default {
   AdminLayout,
   AdminDashboard,
   AdminUsers,
-  AdminMentors
+  AdminMentors,
+  AdminPilot
 };
+
+
+// ── Pilot Monitor Component ────────────────────────────────────────────────────
+export function AdminPilot() {
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => { loadPilotData(); }, []);
+
+  const loadPilotData = async () => {
+    try {
+      const { data } = await supabase.from('users').select(
+        'id, email, full_name, tier, case_status, case_type, onboarding_completed, ai_trial_used, created_at'
+      ).order('created_at', { ascending: false });
+
+      const enriched = await Promise.all((data || []).map(async u => {
+        const [c, d2, s, inc, doc] = await Promise.all([
+          supabase.from('cases').select('*', { count: 'exact', head: true }).eq('user_id', u.id),
+          supabase.from('deadlines').select('*', { count: 'exact', head: true }).eq('user_id', u.id),
+          supabase.from('user_progress').select('*', { count: 'exact', head: true }).eq('user_id', u.id),
+          supabase.from('incident_log').select('*', { count: 'exact', head: true }).eq('user_id', u.id),
+          supabase.from('case_documents').select('*', { count: 'exact', head: true }).eq('user_id', u.id),
+        ]);
+        const score = (c.count||0)*10 + (d2.count||0)*5 + (s.count||0)*2 + (inc.count||0)*3 + (doc.count||0)*5;
+        return { ...u, c: c.count||0, d: d2.count||0, s: s.count||0, inc: inc.count||0, doc: doc.count||0, score };
+      }));
+      setUsers(enriched);
+    } catch (err) { console.error(err); }
+    setLoading(false);
+  };
+
+  const STATUS_C = {
+    waiting_hearing: 'bg-red-500/20 text-red-300',
+    preparing: 'bg-amber-500/20 text-amber-300',
+    filed: 'bg-purple-500/20 text-purple-300',
+    no_case: 'bg-gray-600/20 text-gray-400',
+    cps: 'bg-rose-500/20 text-rose-300',
+    mediation: 'bg-green-500/20 text-green-300',
+    responding: 'bg-orange-500/20 text-orange-300',
+    modification: 'bg-indigo-500/20 text-indigo-300',
+  };
+
+  if (loading) return <div className="flex items-center justify-center py-16"><div className="w-6 h-6 border-2 border-orange-500/30 border-t-orange-500 rounded-full animate-spin" /></div>;
+
+  return (
+    <div className="p-6 space-y-5">
+      <h1 className="text-xl font-bold text-white">Pilot Monitor</h1>
+      <div className="grid grid-cols-4 gap-3">
+        {[['Total Users', users.length], ['Onboarded', users.filter(u=>u.onboarding_completed).length], ['Active', users.filter(u=>u.score>0).length], ['Total Steps Done', users.reduce((s,u)=>s+u.s,0)]].map(([l,v]) => (
+          <div key={l} className="bg-slate-900 border border-slate-800 rounded-xl p-4 text-center">
+            <div className="text-2xl font-bold text-white">{v}</div>
+            <div className="text-xs text-slate-400 mt-1">{l}</div>
+          </div>
+        ))}
+      </div>
+      <div className="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden">
+        <div className="px-4 py-3 border-b border-slate-800 flex items-center justify-between">
+          <p className="text-sm font-semibold text-slate-200">Per-User Engagement</p>
+          <p className="text-xs text-slate-500">Score = cases×10 + deadlines×5 + steps×2 + incidents×3 + docs×5</p>
+        </div>
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead><tr className="border-b border-slate-800 text-[10px] text-slate-500 uppercase tracking-wide">
+              <th className="px-4 py-3 text-left">User</th>
+              <th className="px-4 py-3 text-left">Tier</th>
+              <th className="px-4 py-3 text-left">Status</th>
+              <th className="px-3 py-3 text-center">Cases</th>
+              <th className="px-3 py-3 text-center">Deadlines</th>
+              <th className="px-3 py-3 text-center">Steps</th>
+              <th className="px-3 py-3 text-center">Incidents</th>
+              <th className="px-3 py-3 text-center">Docs</th>
+              <th className="px-3 py-3 text-center">Score</th>
+              <th className="px-4 py-3 text-left">Joined</th>
+            </tr></thead>
+            <tbody className="divide-y divide-slate-800/50">
+              {users.map(u => (
+                <tr key={u.id} className="hover:bg-slate-800/30 transition-colors">
+                  <td className="px-4 py-3">
+                    <div className="font-medium text-white text-xs">{u.full_name || u.email.split('@')[0]}</div>
+                    <div className="text-[10px] text-slate-500">{u.email}</div>
+                  </td>
+                  <td className="px-4 py-3">
+                    <span className={`text-xs font-bold capitalize ${u.tier==='gold'?'text-yellow-400':u.tier==='silver'?'text-gray-300':'text-amber-600'}`}>{u.tier}</span>
+                  </td>
+                  <td className="px-4 py-3">
+                    {u.case_status ? <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${STATUS_C[u.case_status]||'bg-gray-500/20 text-gray-400'}`}>{u.case_status.replace(/_/g,' ')}</span> : <span className="text-slate-600 text-xs">—</span>}
+                  </td>
+                  {[u.c, u.d, u.s, u.inc, u.doc].map((v, i) => (
+                    <td key={i} className="px-3 py-3 text-center"><span className={`text-xs font-bold ${v>0?'text-white':'text-slate-600'}`}>{v}</span></td>
+                  ))}
+                  <td className="px-3 py-3 text-center"><span className={`text-sm font-black ${u.score>=20?'text-green-400':u.score>=5?'text-amber-400':'text-slate-600'}`}>{u.score}</span></td>
+                  <td className="px-4 py-3 text-[10px] text-slate-500">{new Date(u.created_at).toLocaleDateString('en-CA')}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  );
+}
+
