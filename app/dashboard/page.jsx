@@ -615,150 +615,52 @@ function HearingPrepChecklist({ deadlines, userId }) {
 }
 
 /* QUESTION BAR - AI Quick Ask */
-/* ============================================ */
 function QuestionBar() {
   const [query, setQuery] = useState('');
-  const [answer, setAnswer] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [showAnswer, setShowAnswer] = useState(false);
-  const [showSuggestions, setShowSuggestions] = useState(false);
-  const [currentUser, setCurrentUser] = useState(null);
-  const [currentProfile, setCurrentProfile] = useState(null);
-  const inputRef = useRef(null);
+  const router = useRouter();
 
-  useEffect(() => {
-    supabase.auth.getUser().then(({ data: { user } }) => {
-      if (user) {
-        setCurrentUser(user);
-        supabase.from('users').select('jurisdiction, tier, ai_trial_used, daily_queries_used').eq('id', user.id).single()
-          .then(({ data }) => setCurrentProfile(data));
-      }
-    });
-  }, []);
-
-  const suggestions = [
-    'How do I file for custody?',
-    'What is a parenting plan?',
-    'How does child support work?',
-    'What happens at a court hearing?',
-    'How do I respond to a filing?',
-    'What are my rights as a parent?',
-  ];
-
-  const handleAsk = async (question) => {
-    const q = question || query.trim();
-    if (!q) return;
-    setQuery(q);
-    setShowAnswer(true);
-    setShowSuggestions(false);
-    setLoading(true);
-    setAnswer('');
-
-    try {
-      const response = await fetch('/api/ai/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: q, userId: currentUser?.id, jurisdiction: currentProfile?.jurisdiction }),
-      });
-      const data = await response.json();
-      if (data.upgradeRequired) {
-        setAnswer('🔒 AI is a premium feature. Upgrade to Silver or Gold to ask unlimited questions!');
-      } else {
-        setAnswer(data.content || 'Sorry, I couldn\'t process that. Please try again.');
-      }
-    } catch (err) {
-      setAnswer('Sorry, the AI assistant is currently unavailable. Please try again later or visit our Filing Guide for help.');
-    }
-    setLoading(false);
+  const handleAsk = () => {
+    const q = query.trim();
+    router.push('/ai' + (q ? '?q=' + encodeURIComponent(q) : ''));
   };
 
+  const SUGGESTIONS = [
+    'What should I bring to my JCC?',
+    'How is child support calculated in Saskatchewan?',
+    'What does parenting time mean?',
+    'How do I respond to papers I was served?',
+  ];
+
   return (
-    <div className="mb-6">
-      <div className="bg-white border border-gray-200 rounded-2xl p-4 shadow-sm">
-        <div className="flex items-center gap-3">
-          <div className="w-9 h-9 bg-red-600 rounded-full flex items-center justify-center flex-shrink-0">
-            <span className="text-white text-sm font-bold">?</span>
-          </div>
-          <div className="flex-1 relative">
-            <input
-              ref={inputRef}
-              type="text"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && handleAsk()}
-              placeholder="Unsure of what to do next? Just Ask AI"
-              className="w-full py-2.5 px-4 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:border-red-400 focus:bg-white transition-colors"
-            />
-          </div>
+    <div className="mb-5">
+      <div className="flex items-center gap-2 bg-white border border-gray-200 rounded-xl px-4 py-2.5 focus-within:border-red-400 transition-colors">
+        <span className="text-base">💬</span>
+        <input
+          type="text"
+          value={query}
+          onChange={e => setQuery(e.target.value)}
+          onKeyDown={e => e.key === 'Enter' && handleAsk()}
+          placeholder="Unsure of what to do next? Just Ask AI"
+          className="flex-1 text-sm text-gray-900 placeholder-gray-400 bg-transparent outline-none"
+        />
+        <button
+          onClick={handleAsk}
+          className="px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white rounded-lg text-xs font-semibold transition-colors flex-shrink-0"
+        >
+          Ask →
+        </button>
+      </div>
+      <div className="flex gap-2 mt-2 overflow-x-auto pb-1">
+        {SUGGESTIONS.map((s, i) => (
           <button
-            onClick={() => handleAsk()}
-            disabled={!query.trim() || loading}
-            className="px-4 py-2.5 bg-red-600 hover:bg-red-700 text-white rounded-xl text-sm font-medium disabled:opacity-40 transition-colors flex-shrink-0"
+            key={i}
+            onClick={() => router.push('/ai?q=' + encodeURIComponent(s))}
+            className="flex-shrink-0 text-[11px] text-gray-500 bg-white border border-gray-200 rounded-full px-3 py-1 hover:border-red-300 hover:text-red-600 transition-colors"
           >
-            {loading ? '...' : 'Ask'}
+            {s}
           </button>
-        </div>
-
-        {/* Suggested Questions - collapsed behind toggle */}
-        {!showAnswer && (
-          <div className="mt-2">
-            <button onClick={() => setShowSuggestions(!showSuggestions)}
-              className="text-xs text-gray-400 hover:text-red-500 transition-colors flex items-center gap-1">
-              <span className={`transition-transform ${showSuggestions ? 'rotate-90' : ''}`}>▸</span>
-              Suggested questions
-            </button>
-            {showSuggestions && (
-              <div className="flex flex-wrap gap-2 mt-2">
-                {suggestions.map((s, i) => (
-                  <button key={i} onClick={() => { setQuery(s); handleAsk(s); }}
-                    className="px-3 py-1.5 bg-gray-50 hover:bg-red-50 border border-gray-200 hover:border-red-200 rounded-full text-xs text-gray-600 hover:text-red-600 transition-colors">
-                    {s}
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
-        )}
+        ))}
       </div>
-
-      {/* Answer Panel */}
-      {showAnswer && (
-        <div className="mt-3 bg-white border border-gray-200 rounded-2xl p-4 shadow-sm">
-          <div className="flex items-start gap-3">
-            <div className="w-7 h-7 bg-red-600 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0 mt-0.5">F</div>
-            <div className="flex-1 min-w-0">
-              {loading ? (
-                <div className="flex items-center gap-2 py-2">
-                  <div className="flex gap-1">
-                    <div className="w-2 h-2 bg-red-400 rounded-full animate-bounce" />
-                    <div className="w-2 h-2 bg-red-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }} />
-                    <div className="w-2 h-2 bg-red-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }} />
-                  </div>
-                  <span className="text-sm text-gray-400">Thinking...</span>
-                </div>
-              ) : (
-                <div className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">{answer}</div>
-              )}
-            </div>
-          </div>
-          {!loading && (
-            <div className="flex items-center justify-between mt-3 pt-3 border-t border-gray-100">
-              <p className="text-[10px] text-gray-400">This is general information, not legal advice.</p>
-              <div className="flex gap-2">
-                <button
-                  onClick={() => { setShowAnswer(false); setQuery(''); setAnswer(''); inputRef.current?.focus(); }}
-                  className="text-xs text-gray-500 hover:text-gray-700"
-                >
-                  Ask another →
-                </button>
-                <Link href="/cases" className="text-xs text-red-600 hover:text-red-700 font-medium">
-                  Open My Case →
-                </Link>
-              </div>
-            </div>
-          )}
-      </div>
-      )}
     </div>
   );
 }
