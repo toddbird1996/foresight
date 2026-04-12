@@ -182,17 +182,47 @@ function MessageThread({ conversation, user, onBack }) {
       const response = await fetch('/api/ai/chat', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          message: `Analyze this co-parent message for tone. If calm and child-focused respond EXACTLY: TONE: OK. If hostile/aggressive respond: TONE: WARNING\nISSUE: [explanation]\nREWRITE: [calmer version]. Be strict — courts view these. Message: "${input.trim()}"`,
+          message: `You are a co-parenting communication coach. Analyze this message for court-safety and co-parenting best practice. Respond ONLY in this exact JSON format with no other text:
+{
+  "score": <0-100 overall court-safety score>,
+  "rating": "<EXCELLENT|GOOD|CAUTION|WARNING>",
+  "tone": <0-100>,
+  "childFocus": <0-100>,
+  "factual": <0-100>,
+  "professional": <0-100>,
+  "issues": ["<specific issue 1 if any>", "<specific issue 2 if any>"],
+  "strengths": ["<strength 1 if any>"],
+  "rewrite": "<improved version only if score < 70, otherwise empty string>",
+  "sendOK": <true if score >= 70>
+}
+
+Message to analyze: "${input.trim().replace(/"/g, '\"')}"
+
+Scoring guide:
+- tone: 100=completely calm, 0=hostile/aggressive  
+- childFocus: 100=all about child needs, 0=personal attacks/grievances
+- factual: 100=facts only, 0=assumptions/accusations
+- professional: 100=business-like, 0=personal/emotional
+- Issues to flag: threats, ultimatums, guilt-tripping, badmouthing, ALL CAPS, sarcasm, bringing up past grievances unrelated to children`,
           userId: user.id
         }),
       });
       const data = await response.json();
-      const text = data.content || '';
-      if (text.includes('TONE: WARNING')) {
-        const issue = text.match(/ISSUE:\s*(.+)/)?.[1] || 'This message may appear hostile.';
-        const rewrite = text.match(/REWRITE:\s*([\s\S]+)/)?.[1]?.trim() || '';
-        setToneCheck({ warning: true, issue, rewrite });
-      } else {
+      try {
+        const text = (data.content || '').trim();
+        const jsonStr = text.startsWith('{') ? text : text.match(/\{[\s\S]+\}/)?.[0] || '{}';
+        const analysis = JSON.parse(jsonStr);
+        if (analysis.sendOK) {
+          setToneCheck({ ok: true, score: analysis.score, rating: analysis.rating, tone: analysis.tone, childFocus: analysis.childFocus, factual: analysis.factual, professional: analysis.professional, strengths: analysis.strengths || [], issues: [] });
+          // Auto-send if excellent/good
+          if (analysis.rating === 'EXCELLENT' || analysis.rating === 'GOOD') {
+            await sendMessage(input.trim());
+          }
+        } else {
+          setToneCheck({ warning: true, score: analysis.score, rating: analysis.rating, tone: analysis.tone, childFocus: analysis.childFocus, factual: analysis.factual, professional: analysis.professional, issues: analysis.issues || [], rewrite: analysis.rewrite || '', issue: (analysis.issues || []).join(' ') });
+        }
+      } catch (parseErr) {
+        // Fallback to simple check if JSON parse fails
         await sendMessage(input.trim());
       }
     } catch (err) {
