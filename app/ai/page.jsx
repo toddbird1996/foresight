@@ -102,7 +102,7 @@ export default function AIPage() {
       // Call AI
       const res = await fetch('/api/ai/chat', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: q, userId: user.id, jurisdiction: profile?.jurisdiction || 'saskatchewan' })
+        body: JSON.stringify({ message: q, userId: user.id, jurisdiction: profile?.jurisdiction || 'saskatchewan', history: messages.slice(-8).map(m => ({ role: m.role, content: m.content })) })
       });
       const data = await res.json();
 
