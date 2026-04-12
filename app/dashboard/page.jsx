@@ -74,6 +74,20 @@ export default function Dashboard() {
       <Header />
 
       <main className="max-w-6xl mx-auto px-4 py-6">
+        {/* Welcome */}
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <h2 className="text-2xl font-bold text-gray-900 mb-1">
+              {userProfile?.full_name ? `Welcome back, ${userProfile.full_name.split(' ')[0]}!` : 'Welcome back!'}
+            </h2>
+            <p className="text-gray-600">Manage your custody case from one place.</p>
+          </div>
+          <Link href="/progress" className="hidden sm:flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-xl hover:border-red-300 transition-colors">
+            <span className="text-sm">📊</span>
+            <span className="text-sm text-gray-600 font-medium">My Progress</span>
+          </Link>
+        </div>
+
         {/* AI Question Bar */}
         <QuestionBar />
 
@@ -90,19 +104,7 @@ export default function Dashboard() {
 
         {user && <CaseGuide userId={user.id} currentStep={userProfile?.case_guide_step || 0} dismissed={userProfile?.guide_dismissed || false} caseStatus={userProfile?.case_status} />}
 
-        {/* Welcome */}
-        <div className="flex items-center justify-between mb-6">
-          <div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-1">
-              {userProfile?.full_name ? `Welcome back, ${userProfile.full_name.split(' ')[0]}!` : 'Welcome back!'}
-            </h2>
-            <p className="text-gray-600">Manage your custody case from one place.</p>
-          </div>
-          <Link href="/progress" className="hidden sm:flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-xl hover:border-red-300 transition-colors">
-            <span className="text-sm">📊</span>
-            <span className="text-sm text-gray-600 font-medium">My Progress</span>
-          </Link>
-        </div>
+
 
         {/* Getting Started Guide - only for users who haven't started a case */}
         {(!actionPlan || actionPlan.length === 0) && (!userProfile?.case_status || userProfile.case_status === 'no_case' || userProfile.case_status === 'preparing') && (
