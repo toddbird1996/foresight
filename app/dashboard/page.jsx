@@ -421,7 +421,7 @@ const DOC_CHECKLISTS = {
     { key: 'doc_debts_list', label: 'List of all debts: mortgage, loans, credit cards', category: 'Property' },
     { key: 'doc_address_proof', label: 'Proof of your current address', category: 'Housing' },
     { key: 'doc_other_address', label: "Other spouse's full name and current address", category: 'Other Party' },
-    { key: 'doc_kids_sake', label: 'For Kids' Sake course certificate (if children involved)', category: 'Required Courses' },
+    { key: 'doc_kids_sake', label: "For Kids' Sake course certificate (if children involved)", category: 'Required Courses' },
   ],
   custody: [
     { key: 'doc_id', label: 'Government-issued photo ID', category: 'Identity' },
@@ -433,7 +433,7 @@ const DOC_CHECKLISTS = {
     { key: 'doc_pay_stubs', label: '3 months of recent pay stubs', category: 'Financial' },
     { key: 'doc_address_proof', label: 'Proof of your current address', category: 'Housing' },
     { key: 'doc_other_address', label: "Other parent's full name and current address", category: 'Other Party' },
-    { key: 'doc_kids_sake', label: 'For Kids' Sake course certificate', category: 'Required Courses' },
+    { key: 'doc_kids_sake', label: "For Kids' Sake course certificate", category: 'Required Courses' },
     { key: 'doc_incidents', label: 'Any police reports, medical records, or texts relevant to your case', category: 'Evidence' },
   ],
   support: [
