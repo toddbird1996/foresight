@@ -52,6 +52,8 @@ export default function DocumentsPage() {
   const [showUpload, setShowUpload] = useState(false);
   const [uploadForm, setUploadForm] = useState({ category: 'other', description: '' });
   const [dragOver, setDragOver] = useState(false);
+  const [scanning, setScanning] = useState(null);
+  const [scanResult, setScanResult] = useState(null);
   const fileRef = useRef(null);
 
   useEffect(() => {
@@ -60,7 +62,7 @@ export default function DocumentsPage() {
       if (!user) { router.push('/auth/login'); return; }
       setUser(user);
       const { data: profile } = await supabase.from('users')
-        .select('full_name, tier, storage_used_bytes')
+        .select('full_name, tier, storage_used_bytes, pdf_trial_used, monthly_pdf_scans_used')
         .eq('id', user.id).single();
       setProfile(profile);
       await fetchDocs(user.id);
@@ -91,7 +93,6 @@ export default function DocumentsPage() {
     setError('');
 
     try {
-      const ext = file.name.split('.').pop();
       const path = `${user.id}/${Date.now()}-${file.name.replace(/[^a-zA-Z0-9._-]/g, '_')}`;
 
       setUploadProgress(30);
@@ -115,7 +116,6 @@ export default function DocumentsPage() {
         description: uploadForm.description,
       });
 
-      // Update storage usage
       await supabase.from('users').update({
         storage_used_bytes: (profile?.storage_used_bytes || 0) + file.size
       }).eq('id', user.id);
@@ -134,6 +134,43 @@ export default function DocumentsPage() {
     setUploadProgress(0);
   };
 
+  const handleScan = async (doc) => {
+    setScanning(doc.id);
+    setScanResult(null);
+    setError('');
+
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      const res = await fetch('/api/documents/scan', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ documentId: doc.id, userId: user.id })
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        if (data.upgradeRequired) {
+          setError(data.message || 'Upgrade required to scan more documents.');
+        } else {
+          setError(data.error || 'Scan failed.');
+        }
+        return;
+      }
+
+      setScanResult({ docId: doc.id, analysis: data.analysis });
+      await fetchDocs(user.id);
+      // Refresh profile to update scan counts
+      const { data: updatedProfile } = await supabase.from('users')
+        .select('full_name, tier, storage_used_bytes, pdf_trial_used, monthly_pdf_scans_used')
+        .eq('id', user.id).single();
+      setProfile(updatedProfile);
+    } catch (e) {
+      setError('Scan failed: ' + e.message);
+    }
+    setScanning(null);
+  };
+
   const handleDelete = async (doc) => {
     if (!confirm(`Delete "${doc.name}"? This cannot be undone.`)) return;
     if (doc.storage_path) {
@@ -145,6 +182,22 @@ export default function DocumentsPage() {
     }).eq('id', user.id);
     setProfile(prev => prev ? { ...prev, storage_used_bytes: Math.max(0, (prev.storage_used_bytes || 0) - (doc.file_size || 0)) } : prev);
     setDocs(prev => prev.filter(d => d.id !== doc.id));
+    if (scanResult?.docId === doc.id) setScanResult(null);
+  };
+
+  const getScanLabel = () => {
+    if (!profile) return 'Scan';
+    if (profile.tier === 'bronze') {
+      const used = profile.pdf_trial_used || 0;
+      return used >= 1 ? 'Trial Used' : `Scan (${1 - used} trial left)`;
+    }
+    return 'Scan with AI';
+  };
+
+  const canScan = () => {
+    if (!profile) return false;
+    if (profile.tier === 'bronze') return (profile.pdf_trial_used || 0) < 1;
+    return true;
   };
 
   const storageLimitMB = profile?.tier === 'gold' ? Infinity : profile?.tier === 'silver' ? 10240 : 2048;
@@ -194,11 +247,29 @@ export default function DocumentsPage() {
                 style={{ width: `${storagePercent}%`, backgroundColor: storagePercent > 90 ? '#dc2626' : '#ef4444' }} />
             </div>
           )}
+          {profile?.tier === 'bronze' && (
+            <p className="text-xs text-gray-400 mt-2">
+              🔍 PDF Scan trial: {profile.pdf_trial_used || 0}/1 used
+              {(profile.pdf_trial_used || 0) >= 1 && <span className="text-orange-500 ml-1">— <a href="/pricing" className="underline">Upgrade to scan more</a></span>}
+            </p>
+          )}
         </div>
 
         {/* Alerts */}
         {error && <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm mb-4">{error}</div>}
         {success && <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-xl text-sm mb-4">✓ {success}</div>}
+
+        {/* Scan result panel */}
+        {scanResult && (
+          <div className="bg-blue-50 border border-blue-200 rounded-xl p-5 mb-5">
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="font-semibold text-blue-900">🤖 AI Document Analysis</h3>
+              <button onClick={() => setScanResult(null)} className="text-blue-400 hover:text-blue-600 text-sm">✕</button>
+            </div>
+            <div className="text-sm text-blue-800 whitespace-pre-wrap leading-relaxed">{scanResult.analysis}</div>
+            <p className="text-xs text-blue-500 mt-3">This is legal information, not legal advice. Consult a qualified lawyer for advice specific to your situation.</p>
+          </div>
+        )}
 
         {/* Upload panel */}
         {showUpload && (
@@ -208,7 +279,6 @@ export default function DocumentsPage() {
               <button onClick={() => setShowUpload(false)} className="text-gray-400 hover:text-gray-600">✕</button>
             </div>
 
-            {/* Drop zone */}
             <div
               onDrop={e => { e.preventDefault(); setDragOver(false); const f = e.dataTransfer.files[0]; if (f) handleUpload(f); }}
               onDragOver={e => { e.preventDefault(); setDragOver(true); }}
@@ -298,32 +368,57 @@ export default function DocumentsPage() {
             {filtered.map(doc => {
               const ft = FILE_TYPES[doc.file_type] || { icon: '📄', label: 'File' };
               const cat = CATEGORIES.find(c => c.id === doc.category);
+              const isScanning = scanning === doc.id;
+              const wasScanned = doc.ai_scanned;
               return (
-                <div key={doc.id} className="bg-white border border-gray-200 rounded-xl p-4 flex items-center gap-4 hover:border-gray-300 transition-colors">
-                  <div className="text-3xl flex-shrink-0">{ft.icon}</div>
-                  <div className="flex-1 min-w-0">
-                    <div className="font-medium text-sm text-gray-900 truncate">{doc.name}</div>
-                    <div className="flex items-center gap-2 mt-0.5 text-xs text-gray-500">
-                      {cat && <span>{cat.icon} {cat.label}</span>}
-                      <span>·</span>
-                      <span>{formatBytes(doc.file_size)}</span>
-                      <span>·</span>
-                      <span>{timeAgo(doc.created_at)}</span>
+                <div key={doc.id} className="bg-white border border-gray-200 rounded-xl p-4 hover:border-gray-300 transition-colors">
+                  <div className="flex items-center gap-4">
+                    <div className="text-3xl flex-shrink-0">{ft.icon}</div>
+                    <div className="flex-1 min-w-0">
+                      <div className="font-medium text-sm text-gray-900 truncate">{doc.name}</div>
+                      <div className="flex items-center gap-2 mt-0.5 text-xs text-gray-500">
+                        {cat && <span>{cat.icon} {cat.label}</span>}
+                        <span>·</span>
+                        <span>{formatBytes(doc.file_size)}</span>
+                        <span>·</span>
+                        <span>{timeAgo(doc.created_at)}</span>
+                        {wasScanned && <span className="text-green-600">· ✓ Scanned</span>}
+                      </div>
+                      {doc.description && <p className="text-xs text-gray-400 mt-0.5 truncate">{doc.description}</p>}
                     </div>
-                    {doc.description && <p className="text-xs text-gray-400 mt-0.5 truncate">{doc.description}</p>}
+                    <div className="flex items-center gap-2 flex-shrink-0">
+                      {doc.file_url && (
+                        <a href={doc.file_url} target="_blank" rel="noopener noreferrer"
+                          className="px-3 py-1.5 bg-gray-100 hover:bg-gray-200 rounded-lg text-xs font-medium text-gray-700">
+                          View
+                        </a>
+                      )}
+                      <button
+                        onClick={() => canScan() ? handleScan(doc) : setError('Upgrade to scan more documents.')}
+                        disabled={isScanning}
+                        className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+                          isScanning ? 'bg-blue-50 text-blue-400 cursor-wait' :
+                          canScan() ? 'bg-blue-50 hover:bg-blue-100 text-blue-700' :
+                          'bg-gray-100 text-gray-400 cursor-not-allowed'
+                        }`}>
+                        {isScanning ? '⏳ Scanning...' : wasScanned ? '🔄 Re-scan' : `🤖 ${getScanLabel()}`}
+                      </button>
+                      <button onClick={() => handleDelete(doc)}
+                        className="px-3 py-1.5 text-red-500 hover:bg-red-50 rounded-lg text-xs font-medium">
+                        Delete
+                      </button>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-2 flex-shrink-0">
-                    {doc.file_url && (
-                      <a href={doc.file_url} target="_blank" rel="noopener noreferrer"
-                        className="px-3 py-1.5 bg-gray-100 hover:bg-gray-200 rounded-lg text-xs font-medium text-gray-700">
-                        View
-                      </a>
-                    )}
-                    <button onClick={() => handleDelete(doc)}
-                      className="px-3 py-1.5 text-red-500 hover:bg-red-50 rounded-lg text-xs font-medium">
-                      Delete
-                    </button>
-                  </div>
+                  {/* Show previous scan results inline */}
+                  {wasScanned && doc.ai_insights?.[0]?.analysis && scanResult?.docId !== doc.id && (
+                    <div className="mt-3 pt-3 border-t border-gray-100">
+                      <button
+                        onClick={() => setScanResult({ docId: doc.id, analysis: doc.ai_insights[0].analysis })}
+                        className="text-xs text-blue-600 hover:underline">
+                        View previous AI analysis →
+                      </button>
+                    </div>
+                  )}
                 </div>
               );
             })}
