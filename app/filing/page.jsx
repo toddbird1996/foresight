@@ -46,6 +46,75 @@ const KIT_INFO = {
   },
 };
 
+
+// ─── What Happens Next ────────────────────────────────────────────────────────
+const WHAT_NEXT = {
+  divorce: {
+    'Phase 1: Preparation': { time: '1–2 weeks', next: 'Once you have your kit and documents ready, you will complete your Petition and Affidavit. The self-help kit includes step-by-step instructions for each form.' },
+    'Phase 2: Filing': { time: '1 day', next: 'After filing, the court assigns your file number. You then have 30 days to serve the other party through a third person — not yourself.' },
+    'Phase 3: Service': { time: '1–7 days', next: 'Once served, file your Affidavit of Service with the court. The response period clock starts from the date of service.' },
+    'Phase 4: Response Period': { time: '30 days', next: 'If the other party files an Answer, you will receive a copy. If not, after 30 days you can apply to note them in default and proceed.' },
+    'Phase 5: Case Conference': { time: '4–8 weeks to schedule', next: 'If you reach an agreement at the JCC, a consent order can be drafted on the spot. If not, a hearing date will be set.' },
+    'Phase 6: Resolution': { time: 'Varies', next: 'A consent order is signed by both parties and approved by the judge — usually within a few weeks. A trial can take 6–18 months to schedule.' },
+  },
+  parenting: {
+    'Phase 1: Preparation': { time: '1–2 weeks', next: 'Complete the For Kids Sake course first — you cannot file without the certificate. Then request your kit from the Family Law Information Centre.' },
+    'Phase 2: File Your Application': { time: '1 day', next: 'After filing, you will receive a court file number. You must serve the other parent within a reasonable time — 30 days is the response deadline.' },
+    'Phase 3: Serve the Other Parent': { time: '1–7 days', next: 'File proof of service immediately after. The other parent has 30 days from the service date to file their Answer.' },
+    'Phase 4: Response Period': { time: '30 days', next: 'Review their Answer carefully. Note every point of disagreement — these become the issues for your JCC. You can file a Reply if needed.' },
+    'Phase 5: Case Conference': { time: '4–8 weeks to schedule', next: 'Most parenting cases settle at or after the JCC. Come prepared with a specific parenting schedule proposal and financial disclosure.' },
+    'Phase 6: Resolution': { time: 'Varies', next: 'A consent order is legally binding once a judge signs it. Keep copies accessible — schools, employers, and enforcement agencies may need to see it.' },
+  },
+  variation: {
+    'Phase 1: Confirm Grounds to Vary': { time: '1 day', next: 'If you confirm grounds exist, your next step is the Variation Kit — the forms are different from a new application. Do not use the wrong forms.' },
+    'Phase 2: Get the Kit and Prepare': { time: '3–5 days', next: 'Complete the Application to Vary and your Affidavit of Changed Circumstances. Both must be sworn before a Commissioner for Oaths before filing.' },
+    'Phase 3: File Your Variation Application': { time: '1 day', next: 'After filing, you must serve the other party. The 30-day response clock starts from service, same as a new application.' },
+    'Phase 4: Serve and Wait': { time: '30 days', next: 'If they agree to the variation, you can file a consent variation order without a hearing. If they oppose, a JCC will be scheduled.' },
+    'Phase 5: Case Conference and New Order': { time: '4–8 weeks to schedule', next: 'The new order supersedes the old one on the issues it addresses. Notify the Maintenance Enforcement Office if child support is changing.' },
+  },
+};
+
+function WhatHappensNext({ phases, situation }) {
+  const [open, setOpen] = useState(false);
+  if (!phases.length) return null;
+
+  // Find current phase - last one with any progress, or first incomplete
+  const nextData = WHAT_NEXT[situation] || {};
+
+  return (
+    <div className="bg-blue-50 border border-blue-200 rounded-2xl overflow-hidden">
+      <button onClick={() => setOpen(v => !v)} className="w-full flex items-center gap-3 p-4 text-left hover:bg-blue-100/50 transition-colors">
+        <span className="text-xl flex-shrink-0">🗺️</span>
+        <div className="flex-1">
+          <p className="font-semibold text-blue-900 text-sm">What Happens at Each Phase</p>
+          <p className="text-xs text-blue-700">Timeline and what to expect after each step</p>
+        </div>
+        <span className="text-blue-600 text-sm flex-shrink-0">{open ? '▲' : '▼'}</span>
+      </button>
+      {open && (
+        <div className="border-t border-blue-200 divide-y divide-blue-100">
+          {phases.map((phase, i) => {
+            const info = nextData[phase.name];
+            if (!info) return null;
+            return (
+              <div key={i} className="px-4 py-3">
+                <div className="flex items-start gap-3">
+                  <div className="w-6 h-6 rounded-full bg-blue-600 flex items-center justify-center text-white text-xs font-bold flex-shrink-0 mt-0.5">{i+1}</div>
+                  <div>
+                    <p className="text-xs font-semibold text-blue-900">{phase.name}</p>
+                    <p className="text-[11px] text-blue-600 mb-1">⏱ Typical duration: {info.time}</p>
+                    <p className="text-xs text-blue-800 leading-relaxed">{info.next}</p>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function FilingGuidePage() {
   const router = useRouter();
   const [user, setUser] = useState(null);
@@ -260,6 +329,8 @@ export default function FilingGuidePage() {
             )}
           </div>
         )}
+
+        {phases.length > 0 && <WhatHappensNext phases={phases} situation={situation} />}
 
         {/* ── Phases and steps ─────────────────────────────────────────────── */}
         {phases.length === 0 ? (
