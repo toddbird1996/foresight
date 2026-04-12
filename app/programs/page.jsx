@@ -50,16 +50,16 @@ export default function ProgramsPage() {
 
   useEffect(() => {
     const init = async () => {
-      // Get user's jurisdiction
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
         const { data: profile } = await supabase.from('users').select('jurisdiction').eq('id', user.id).single();
         if (profile?.jurisdiction) {
-        setUserJurisdiction(profile.jurisdiction);
-        await fetchPrograms(profile.jurisdiction);
-      } else {
-        await fetchPrograms();
+          setUserJurisdiction(profile.jurisdiction);
+          await fetchPrograms(profile.jurisdiction);
+          return;
+        }
       }
+      await fetchPrograms();
     };
     init();
   }, []);
