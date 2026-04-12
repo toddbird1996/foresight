@@ -7,10 +7,12 @@ import dynamic from 'next/dynamic';
 const AdminDashboard = dynamic(() => import('../components/AdminDashboard').then(m => ({ default: m.AdminDashboard || m.default })), { ssr: false });
 const AdminUsers = dynamic(() => import('../components/AdminDashboard').then(m => ({ default: m.AdminUsers })), { ssr: false });
 const AdminPilot = dynamic(() => import('../components/AdminDashboard').then(m => ({ default: m.AdminPilot })), { ssr: false });
+const AnalyticsDashboard = dynamic(() => import('../components/AnalyticsDashboard').then(m => ({ default: m.AnalyticsDashboard || m.default })), { ssr: false });
 
 const TABS = [
   { id: 'overview', label: '📊 Overview' },
   { id: 'pilot', label: '🧪 Pilot Monitor' },
+  { id: 'analytics', label: '📈 Analytics' },
   { id: 'users', label: '👥 Users' },
 ];
 
@@ -78,6 +80,7 @@ export default function AdminPage() {
       <div className="max-w-7xl mx-auto">
         {activeTab === 'overview' && <AdminDashboard />}
         {activeTab === 'pilot' && <AdminPilot />}
+        {activeTab === 'analytics' && <AnalyticsDashboard />}
         {activeTab === 'users' && <AdminUsers />}
       </div>
     </div>
