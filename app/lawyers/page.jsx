@@ -185,7 +185,7 @@ export default function LawyersPage() {
         {/* Submit a lawyer */}
         <div className="bg-gray-50 border border-gray-200 rounded-xl p-4 text-center">
           <p className="text-sm text-gray-600 mb-1">Know a SK family lawyer who helps self-represented parents?</p>
-          <a href="mailto:toddbird1996@outlook.com?subject=Lawyer Directory Submission"
+          <a href="mailto:info@foresight-app.ca?subject=Lawyer Directory Submission"
             className="text-red-600 text-sm font-medium hover:underline">
             Suggest an addition →
           </a>
