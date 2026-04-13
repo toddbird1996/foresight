@@ -394,10 +394,23 @@ ${fileContent}`
                     {doc.file_type?.includes('pdf') ? '📕' : doc.file_type?.includes('image') ? '🖼️' : '📄'}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <div className="font-medium text-gray-900 text-sm truncate">{doc.file_name}</div>
+                    {editingDocId === doc.id ? (
+                      <div className="flex items-center gap-1.5">
+                        <input autoFocus type="text" value={editName} onChange={e => setEditName(e.target.value)}
+                          onKeyDown={e => { if (e.key === 'Enter') saveRename(doc.id); if (e.key === 'Escape') setEditingDocId(null); }}
+                          className="flex-1 text-sm border border-red-300 rounded px-2 py-0.5 outline-none focus:border-red-500 min-w-0" />
+                        <button onClick={() => saveRename(doc.id)} className="text-green-600 hover:text-green-700 text-xs font-semibold px-1.5 py-0.5 bg-green-50 rounded">Save</button>
+                        <button onClick={() => setEditingDocId(null)} className="text-gray-400 hover:text-gray-600 text-xs px-1 py-0.5">✕</button>
+                      </div>
+                    ) : (
+                      <div className="font-medium text-gray-900 text-sm truncate">{doc.file_name}</div>
+                    )}
                     <div className="text-xs text-gray-400">{formatSize(doc.file_size)} • {new Date(doc.created_at).toLocaleDateString()}</div>
                   </div>
-                  <button onClick={() => deleteDocument(doc.id)} className="text-gray-400 hover:text-red-600 text-xs p-1">🗑</button>
+                  <div className="flex items-center gap-1 flex-shrink-0">
+                    <button onClick={() => startRename(doc)} title="Rename" className="text-gray-400 hover:text-blue-600 text-xs p-1">✏️</button>
+                    <button onClick={() => deleteDocument(doc.id)} title="Delete" className="text-gray-400 hover:text-red-600 text-xs p-1">🗑</button>
+                  </div>
                 </div>
                 {canUseAI && (
                   <div className="flex gap-2 mt-2 pl-13">
