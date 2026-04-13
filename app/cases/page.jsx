@@ -224,6 +224,8 @@ function CaseDocuments({ caseData, user, userTier }) {
   const [uploading, setUploading] = useState(false);
   const [scanning, setScanning] = useState(null);
   const [expandedDoc, setExpandedDoc] = useState(null);
+  const [editingDocId, setEditingDocId] = useState(null);
+  const [editName, setEditName] = useState('');
   const fileInputRef = useRef(null);
   const canUseAI = true; // All tiers get some AI (Bronze: 5 trial, Silver: 500/mo, Gold: 2000/mo)
 
@@ -339,6 +341,19 @@ ${fileContent}`
     if (!confirm('Delete this document?')) return;
     await supabase.from('case_documents').delete().eq('id', docId);
     setDocuments(prev => prev.filter(d => d.id !== docId));
+  };
+
+  const startRename = (doc) => {
+    setEditingDocId(doc.id);
+    setEditName(doc.file_name);
+  };
+
+  const saveRename = async (docId) => {
+    const name = editName.trim();
+    if (!name) return;
+    await supabase.from('case_documents').update({ file_name: name }).eq('id', docId);
+    setDocuments(prev => prev.map(d => d.id === docId ? { ...d, file_name: name } : d));
+    setEditingDocId(null);
   };
 
   const formatSize = (bytes) => {
