@@ -77,28 +77,16 @@ function SignupForm() {
       }
     }
 
-    setSuccess(true);
+    // Sign in immediately — no email confirmation required
+    const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
+    if (signInError) {
+      // Fallback: redirect to login if sign-in fails
+      router.push('/auth/login?signup=success');
+    } else {
+      router.push('/dashboard');
+    }
     setLoading(false);
   };
-
-  if (success) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-        <div className="w-full max-w-sm text-center">
-          <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <span className="text-3xl text-green-600">✓</span>
-          </div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Check your email</h2>
-          <p className="text-gray-500 mb-2">We sent a confirmation link to</p>
-          <p className="font-semibold text-gray-900 mb-6">{email}</p>
-          <p className="text-sm text-gray-400 mb-6">Click the link in that email to activate your account. Check your spam folder if you don't see it within a few minutes.</p>
-          <Link href="/auth/login" className="inline-block px-6 py-3 bg-red-600 hover:bg-red-700 text-white rounded-xl font-semibold">
-            Go to Login
-          </Link>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
