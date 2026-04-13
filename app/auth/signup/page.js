@@ -30,25 +30,25 @@ function SignupForm() {
       password,
       options: {
         data: { full_name: fullName },
-        emailRedirectTo: `${window.location.origin}/auth/callback`,
+        emailRedirectTo: `${typeof window !== 'undefined' ? window.location.origin : 'https://foresight-eta-three.vercel.app'}/auth/callback`,
       },
     });
 
     if (signUpError) { setError(signUpError.message); setLoading(false); return; }
 
     if (data.user) {
-      // Create user profile row
-      const { error: profileError } = await supabase.from('users').insert({
+      // Upsert user profile (trigger may have already created a partial row)
+      const { error: profileError } = await supabase.from('users').upsert({
         id: data.user.id,
         email,
         full_name: fullName,
         tier: 'bronze',
         jurisdiction: 'saskatchewan',
-        referred_by: null, // will be set below if ref code found
-      });
+        referral_code: data.user.id.replace(/-/g, '').substring(0, 8).toUpperCase(),
+      }, { onConflict: 'id' });
 
-      if (profileError && profileError.code !== '23505') {
-        console.warn('Profile creation warning:', profileError.message);
+      if (profileError) {
+        console.warn('Profile upsert warning:', profileError.message);
       }
 
       // Handle referral code
