@@ -14,6 +14,7 @@ export default function Dashboard() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [showOnboarding, setShowOnboarding] = useState(false);
+  const [showGettingStarted, setShowGettingStarted] = useState(false);
   const [actionPlan, setActionPlan] = useState(null);
   const [userProfile, setUserProfile] = useState(null);
   const [upcomingDeadlines, setUpcomingDeadlines] = useState([]);
@@ -106,23 +107,63 @@ export default function Dashboard() {
 
 
 
-        {/* Getting Started Guide - only for users who haven't started a case */}
-        {(!actionPlan || actionPlan.length === 0) && (!userProfile?.case_status || userProfile.case_status === 'no_case' || userProfile.case_status === 'preparing') && (
-          <div className="mb-6 bg-gradient-to-r from-red-600 to-red-700 rounded-2xl p-5 text-white">
-            <h3 className="font-bold text-lg mb-1">Start Your Custody Journey</h3>
-            <p className="text-red-100 text-sm mb-4">Follow these steps to build your case. Foresight will guide you through each one.</p>
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+        {/* Getting Started Prompt — dismissible */}
+        {showGettingStarted && (
+          <div className="mb-6 bg-gradient-to-br from-red-600 to-red-700 rounded-2xl p-5 text-white relative shadow-lg">
+            {/* Close button */}
+            <button
+              onClick={async () => {
+                setShowGettingStarted(false);
+                await supabase.from('users').update({ guide_dismissed: true }).eq('id', user.id);
+              }}
+              className="absolute top-3 right-3 w-7 h-7 bg-white/20 hover:bg-white/30 rounded-full flex items-center justify-center text-white/80 hover:text-white transition-all text-sm font-bold"
+              title="Dismiss"
+            >✕</button>
+
+            <div className="flex items-start gap-3 mb-4">
+              <div className="text-3xl">🧭</div>
+              <div>
+                <h3 className="font-bold text-lg leading-tight">
+                  {userProfile?.full_name ? `Welcome, ${userProfile.full_name.split(' ')[0]}!` : 'Welcome to Foresight!'}
+                </h3>
+                <p className="text-red-100 text-sm mt-0.5">Here's how to get started — follow these steps at your own pace.</p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-4">
               {[
-                { step: '1', label: 'Learn Your Rights', link: '/rights' },
-                { step: '2', label: 'Read Filing Guide', link: '/filing' },
-                { step: '3', label: 'Get Court Forms', link: '/court-forms' },
-                { step: '4', label: 'Start Your Case', link: '/cases' },
+                { step: '1', emoji: '⚖️', label: 'Know Your Rights', desc: 'Understand what you're entitled to', link: '/rights' },
+                { step: '2', emoji: '📋', label: 'Filing Guide', desc: 'Step-by-step process for SK courts', link: '/filing' },
+                { step: '3', emoji: '📄', label: 'Court Forms', desc: 'Get the official SK forms', link: '/court-forms' },
+                { step: '4', emoji: '💼', label: 'Start Your Case', desc: 'Create your case and upload docs', link: '/cases' },
               ].map(s => (
-                <Link key={s.step} href={s.link} className="bg-white/10 hover:bg-white/20 rounded-xl p-3 text-center transition-colors">
-                  <div className="text-lg font-bold mb-0.5">{s.step}</div>
-                  <div className="text-xs text-red-100">{s.label}</div>
+                <Link key={s.step} href={s.link}
+                  className="bg-white/10 hover:bg-white/25 rounded-xl p-3 transition-all border border-white/10 hover:border-white/30">
+                  <div className="text-xl mb-1">{s.emoji}</div>
+                  <div className="text-xs font-bold text-white">{s.label}</div>
+                  <div className="text-[10px] text-red-200 mt-0.5 leading-tight">{s.desc}</div>
                 </Link>
               ))}
+            </div>
+
+            <div className="flex flex-wrap gap-2">
+              <Link href="/ai" className="flex items-center gap-1.5 px-3 py-1.5 bg-white/15 hover:bg-white/25 rounded-full text-xs font-semibold transition-all">
+                🤖 Ask AI a question
+              </Link>
+              <Link href="/programs" className="flex items-center gap-1.5 px-3 py-1.5 bg-white/15 hover:bg-white/25 rounded-full text-xs font-semibold transition-all">
+                🏛️ Browse SK Programs
+              </Link>
+              <Link href="/community" className="flex items-center gap-1.5 px-3 py-1.5 bg-white/15 hover:bg-white/25 rounded-full text-xs font-semibold transition-all">
+                👥 Join the Community
+              </Link>
+              <button
+                onClick={async () => {
+                  setShowGettingStarted(false);
+                  await supabase.from('users').update({ guide_dismissed: true }).eq('id', user.id);
+                }}
+                className="flex items-center gap-1.5 px-3 py-1.5 bg-white/10 hover:bg-white/20 rounded-full text-xs font-medium text-red-200 hover:text-white transition-all">
+                Dismiss
+              </button>
             </div>
           </div>
         )}
