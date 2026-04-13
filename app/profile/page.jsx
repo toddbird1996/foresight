@@ -346,7 +346,7 @@ export default function ProfilePage() {
               <div className="flex items-center justify-between mb-5">
                 <div>
                   <h3 className="font-bold text-gray-900 text-base">{tierEmoji[tier]} {tier.charAt(0).toUpperCase() + tier.slice(1)} Plan</h3>
-                  <p className="text-xs text-gray-500 mt-0.5">{tier === 'bronze' ? 'Free tier — limited usage' : tier === 'silver' ? '$9.99/month' : '$19.99/month'}</p>
+                  <p className="text-xs text-gray-500 mt-0.5">{tier === 'bronze' ? 'Free tier — limited usage' : tier === 'silver' ? '$19.99/month CAD' : '$29.99/month CAD'}</p>
                 </div>
                 <Link href="/pricing" className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-xl text-sm font-bold transition-colors">
                   {tier === 'bronze' ? 'Upgrade ↑' : 'Manage'}
@@ -415,7 +415,7 @@ export default function ProfilePage() {
                 ))}
                 <div className="grid grid-cols-4 gap-2 text-xs pt-1">
                   <span />
-                  {['Free', '$9.99/mo', '$19.99/mo'].map(p => (
+                  {['Free', '$19.99/mo CAD', '$29.99/mo CAD'].map(p => (
                     <span key={p} className="text-center text-gray-400 font-medium">{p}</span>
                   ))}
                 </div>
