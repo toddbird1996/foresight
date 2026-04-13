@@ -30,7 +30,7 @@ function LoginForm() {
     if (!email.trim()) { setError('Enter your email address first'); return; }
     setLoading(true);
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${window.location.origin}/auth/callback`,
+      redirectTo: `${typeof window !== 'undefined' ? window.location.origin : 'https://foresight-eta-three.vercel.app'}/auth/callback`,
     });
     if (error) { setError(error.message); }
     else { setResetSent(true); }
