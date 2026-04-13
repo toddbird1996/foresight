@@ -48,6 +48,152 @@ const KIT_INFO = {
 
 
 
+// ── Partial Agreement on Consent Order ───────────────────────────────────────
+function PartialAgreementPanel() {
+  const [open, setOpen] = useState(false);
+  const [chosen, setChosen] = useState(null);
+
+  const OPTIONS = [
+    {
+      id: 'adjourn',
+      icon: '⏸️',
+      color: 'blue',
+      title: 'Adjourn and keep negotiating',
+      when: 'You agree on most things but one or two issues remain unresolved and you believe a short break could lead to full agreement.',
+      steps: [
+        'Ask the judge to adjourn the matter to a set date — usually 2 to 4 weeks.',
+        'Use the time to negotiate the remaining issues directly, through lawyers, or via Family Justice Services.',
+        'If you reach agreement on the outstanding points, prepare and submit the full consent order before the adjourned date.',
+        'If not, the judge will proceed with the contested issues at the adjourned date.',
+      ],
+      tip: 'Judges generally support adjournments when parties are close to agreement. Be specific about what you still need to resolve.',
+      color_class: 'blue',
+    },
+    {
+      id: 'split',
+      icon: '✂️',
+      color: 'green',
+      title: 'Consent on agreed issues, contest the rest',
+      when: 'You agree on some issues (e.g., child support amount) but not others (e.g., parenting schedule). You can consent on the settled issues and let the judge decide the rest.',
+      steps: [
+        'Tell the judge which specific issues you have agreed on and which remain in dispute.',
+        'File a partial consent order covering only the agreed issues.',
+        'The contested issues will be scheduled for a hearing where each side presents evidence.',
+        'The judge makes the final decision on the disputed issues only.',
+      ],
+      tip: 'This approach saves time and money. Issues you agree on are resolved immediately — you only go to a hearing for what you genuinely cannot agree on.',
+      color_class: 'green',
+    },
+    {
+      id: 'without_prejudice',
+      icon: '🔒',
+      color: 'amber',
+      title: 'Negotiate without prejudice',
+      when: 'You want to make compromise offers to settle without those offers being used against you in court if negotiations fail.',
+      steps: [
+        'Clearly label any written offers or discussions as "Without Prejudice."',
+        'This means the other party cannot show the judge what you offered if you do not reach a deal.',
+        'Use a neutral mediator through Family Justice Services (1-866-933-5972) — free in Saskatchewan.',
+        'If you settle, draft the consent order and present it to the judge.',
+        'If not, return to court for a hearing on the outstanding issues.',
+      ],
+      tip: 'Without prejudice negotiations are protected — what you say or offer cannot be used as evidence of an admission if the talks break down.',
+      color_class: 'amber',
+    },
+    {
+      id: 'interim',
+      icon: '⏳',
+      color: 'purple',
+      title: 'Get an interim order while you negotiate',
+      when: 'There is urgency — children need a temporary arrangement in place while the full dispute is being resolved.',
+      steps: [
+        'Ask the judge for an interim order covering the immediate and urgent issues.',
+        'Interim orders are temporary — they stay in place until a final order is made.',
+        'Continue negotiating or go to a hearing for a final resolution.',
+        'The interim order does not prejudge the final outcome.',
+      ],
+      tip: 'Interim orders are common when parents cannot agree on immediate parenting arrangements. They give stability to the children while the main dispute is worked out.',
+      color_class: 'purple',
+    },
+  ];
+
+  const COLS = {
+    blue:   { outer: 'bg-blue-50 border-blue-200',   title: 'text-blue-900',   body: 'text-blue-800',   badge: 'bg-blue-100 text-blue-800' },
+    green:  { outer: 'bg-green-50 border-green-200',  title: 'text-green-900',  body: 'text-green-800',  badge: 'bg-green-100 text-green-800' },
+    amber:  { outer: 'bg-amber-50 border-amber-200',  title: 'text-amber-900',  body: 'text-amber-800',  badge: 'bg-amber-100 text-amber-800' },
+    purple: { outer: 'bg-purple-50 border-purple-200', title: 'text-purple-900', body: 'text-purple-800', badge: 'bg-purple-100 text-purple-800' },
+  };
+
+  const BTN_ACTIVE = {
+    blue:   'bg-blue-50 border-2 border-blue-400',
+    green:  'bg-green-50 border-2 border-green-400',
+    amber:  'bg-amber-50 border-2 border-amber-400',
+    purple: 'bg-purple-50 border-2 border-purple-400',
+  };
+
+  return (
+    <div className="border border-gray-200 rounded-xl overflow-hidden mt-1">
+      <button onClick={() => setOpen(v => !v)}
+        className="w-full flex items-center gap-2 px-3 py-2.5 bg-gray-50 hover:bg-gray-100 text-left transition-colors">
+        <span className="text-sm">🤔</span>
+        <div className="flex-1">
+          <p className="text-xs font-semibold text-gray-800">What if I only partially agree to the consent order?</p>
+          <p className="text-[10px] text-gray-500">Four paths when you agree on some terms but not all</p>
+        </div>
+        <span className="text-gray-400 text-xs">{open ? '▲' : '▼'}</span>
+      </button>
+
+      {open && (
+        <div className="p-3 bg-white space-y-3">
+          <p className="text-[11px] text-gray-600 leading-relaxed">
+            Partial agreement is common. You do not have to agree on everything before the JCC ends.
+            Pick the situation that fits:
+          </p>
+
+          <div className="grid grid-cols-2 gap-2">
+            {OPTIONS.map(opt => (
+              <button key={opt.id}
+                onClick={() => setChosen(chosen === opt.id ? null : opt.id)}
+                className={`flex items-start gap-2 p-2.5 rounded-xl border text-left transition-all ${
+                  chosen === opt.id
+                    ? BTN_ACTIVE[opt.color_class]
+                    : 'bg-white border-gray-200 hover:border-gray-300'
+                }`}>
+                <span className="text-base flex-shrink-0 mt-0.5">{opt.icon}</span>
+                <span className="text-[11px] font-semibold leading-tight text-gray-800">{opt.title}</span>
+              </button>
+            ))}
+          </div>
+
+          {chosen && (() => {
+            const opt = OPTIONS.find(o => o.id === chosen);
+            const col = COLS[opt.color_class];
+            return (
+              <div className={`${col.outer} border rounded-xl p-3 space-y-2`}>
+                <p className={`text-[11px] font-semibold ${col.title}`}>When to use this:</p>
+                <p className={`text-[11px] ${col.body} leading-relaxed`}>{opt.when}</p>
+                <p className={`text-[11px] font-semibold ${col.title} pt-1`}>Steps:</p>
+                <ol className="space-y-1.5">
+                  {opt.steps.map((s, i) => (
+                    <li key={i} className={`flex gap-1.5 text-[11px] ${col.body}`}>
+                      <span className="font-bold flex-shrink-0 w-3">{i + 1}.</span>
+                      <span className="leading-relaxed">{s}</span>
+                    </li>
+                  ))}
+                </ol>
+                <div className={`${col.badge} rounded-lg px-2.5 py-2 text-[11px] font-medium mt-1`}>
+                  💡 {opt.tip}
+                </div>
+              </div>
+            );
+          })()}
+        </div>
+      )}
+    </div>
+  );
+}
+
+
 // ── Consent Order Declined — What Now? ──────────────────────────────────────
 function ConsentOrderDeniedPanel() {
   const [open, setOpen] = useState(false);
@@ -464,7 +610,10 @@ export default function FilingGuidePage() {
                           )}
             {/* Consent order denial choices */}
             {(step.title?.toLowerCase().includes('consent order') || step.title?.toLowerCase().includes('negotiate consent')) && (
-              <ConsentOrderDeniedPanel />
+              <>
+                <PartialAgreementPanel />
+                <ConsentOrderDeniedPanel />
+              </>
             )}
                         </div>
 
