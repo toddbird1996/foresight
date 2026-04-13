@@ -5,9 +5,9 @@ import { supabase } from '../../lib/supabaseClient';
 import { useRouter } from 'next/navigation';
 
 const CATEGORIES = {
-  legal: { label: 'LEGAL SUPPORT', icon: '⚖️' },
+  legal: { label: 'LEGAL & CASE HELP', icon: '⚖️' },
   support: { label: 'SUPPORT GROUPS', icon: '💚' },
-  hobbies: { label: 'HOBBY GROUPS', icon: '🎮' },
+  hobbies: { label: 'INTERESTS', icon: '🎮' },
 };
 
 export default function CommunityPage() {
@@ -18,7 +18,7 @@ export default function CommunityPage() {
   const [channels, setChannels] = useState([]);
   const [activeChannel, setActiveChannel] = useState(null);
   const [showSidebar, setShowSidebar] = useState(false);
-  const [view, setView] = useState('chat'); // chat or posts
+  const [view, setView] = useState('posts'); // posts, chat, or mentors
 
   useEffect(() => {
     const init = async () => {
@@ -131,17 +131,17 @@ export default function CommunityPage() {
             <span className="text-xs text-gray-500 max-w-[200px] truncate">{activeChannel?.description}</span>
           </div>
           <div className="flex items-center gap-1">
-            <button onClick={() => setView('chat')}
-              className={`px-3 py-1 rounded text-xs font-medium ${view === 'chat' ? 'bg-red-600 text-white' : 'text-gray-500 hover:text-red-600 hover:bg-red-50'}`}>
-              Chat
-            </button>
             <button onClick={() => setView('posts')}
               className={`px-3 py-1 rounded text-xs font-medium ${view === 'posts' ? 'bg-red-600 text-white' : 'text-gray-500 hover:text-red-600 hover:bg-red-50'}`}>
-              Posts
+              📝 Posts
+            </button>
+            <button onClick={() => setView('chat')}
+              className={`px-3 py-1 rounded text-xs font-medium ${view === 'chat' ? 'bg-red-600 text-white' : 'text-gray-500 hover:text-red-600 hover:bg-red-50'}`}>
+              💬 Chat
             </button>
             <button onClick={() => setView('mentors')}
               className={`px-3 py-1 rounded text-xs font-medium ${view === 'mentors' ? 'bg-red-600 text-white' : 'text-gray-500 hover:text-red-600 hover:bg-red-50'}`}>
-              Mentors
+              🤝 Mentors
             </button>
           </div>
         </div>
