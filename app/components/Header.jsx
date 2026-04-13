@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 export default function Header() {
   const router = useRouter();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [user, setUser] = useState(null);
   const [deadlineCount, setDeadlineCount] = useState(0);
   const [dmCount, setDmCount] = useState(0);
@@ -16,6 +17,9 @@ export default function Header() {
     supabase.auth.getUser().then(({ data: { user } }) => {
       setUser(user);
       if (user) {
+        // Check admin role
+        supabase.from('users').select('role').eq('id', user.id).single()
+          .then(({ data }) => { if (data?.role === 'admin') setIsAdmin(true); });
         const today = new Date().toISOString().split('T')[0];
         const week = new Date(Date.now() + 7 * 86400000).toISOString().split('T')[0];
         supabase.from('deadlines').select('*', { count: 'exact', head: true })
@@ -170,7 +174,13 @@ export default function Header() {
                 <span>{link.icon}</span>{link.label}
               </Link>
             ))}
-            <button onClick={() => { handleLogout(); setMenuOpen(false); }}
+            {isAdmin && (
+            <Link href="/admin" onClick={() => setMenuOpen(false)}
+              className="w-full flex items-center gap-2 px-4 py-3 bg-gray-900 text-white rounded-xl text-sm font-bold mb-2">
+              <span>⚙️</span> Admin Panel
+            </Link>
+          )}
+          <button onClick={() => { handleLogout(); setMenuOpen(false); }}
               className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-red-600 hover:bg-red-50">
               <span>🚪</span>Logout
             </button>
