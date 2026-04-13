@@ -132,7 +132,7 @@ export default function Dashboard() {
 
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-4">
               {[
-                { step: '1', emoji: '⚖️', label: 'Know Your Rights', desc: 'Understand what you're entitled to', link: '/rights' },
+                { step: '1', emoji: '⚖️', label: 'Know Your Rights', desc: "Understand what you're entitled to", link: '/rights' },
                 { step: '2', emoji: '📋', label: 'Filing Guide', desc: 'Step-by-step process for SK courts', link: '/filing' },
                 { step: '3', emoji: '📄', label: 'Court Forms', desc: 'Get the official SK forms', link: '/court-forms' },
                 { step: '4', emoji: '💼', label: 'Start Your Case', desc: 'Create your case and upload docs', link: '/cases' },
