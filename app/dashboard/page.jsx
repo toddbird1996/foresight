@@ -112,10 +112,7 @@ export default function Dashboard() {
           <div className="mb-6 bg-gradient-to-br from-red-600 to-red-700 rounded-2xl p-5 text-white relative shadow-lg">
             {/* Close button */}
             <button
-              onClick={async () => {
-                setShowGettingStarted(false);
-                await supabase.from('users').update({ guide_dismissed: true }).eq('id', user.id);
-              }}
+              onClick={() => setShowGettingStarted(false)}
               className="absolute top-3 right-3 w-7 h-7 bg-white/20 hover:bg-white/30 rounded-full flex items-center justify-center text-white/80 hover:text-white transition-all text-sm font-bold"
               title="Dismiss"
             >✕</button>
@@ -157,10 +154,7 @@ export default function Dashboard() {
                 👥 Join the Community
               </Link>
               <button
-                onClick={async () => {
-                  setShowGettingStarted(false);
-                  await supabase.from('users').update({ guide_dismissed: true }).eq('id', user.id);
-                }}
+                onClick={() => setShowGettingStarted(false)}
                 className="flex items-center gap-1.5 px-3 py-1.5 bg-white/10 hover:bg-white/20 rounded-full text-xs font-medium text-red-200 hover:text-white transition-all">
                 Dismiss
               </button>
