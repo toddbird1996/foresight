@@ -826,17 +826,12 @@ Be clear, specific, and helpful. Use plain language throughout. Do not provide l
                         </div>
                       </div>
                       <div className="p-4">
-                        {compareResult.split(/
-## /).map((section, idx) => {
+                        {compareResult.split('\n## ').map((section, idx) => {
                           if (!section.trim()) return null;
-                          const lines = section.split('
-');
-                          const rawHead = lines[0] || '';
-                          const heading = idx === 0 && !section.startsWith('#')
-                            ? null
-                            : rawHead.replace(/^#+ ?/, '');
-                          const body = heading ? lines.slice(1).join('
-') : section;
+                          const secLines = section.split('\n');
+                          const rawHead = secLines[0] || '';
+                          const heading = (idx === 0 && !section.startsWith('#')) ? null : rawHead.replace(/^#+ ?/, '');
+                          const body = heading ? secLines.slice(1).join('\n') : section;
 
                           const sectionColors = {
                             0: 'border-gray-200',
