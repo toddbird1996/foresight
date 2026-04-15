@@ -831,9 +831,10 @@ Be clear, specific, and helpful. Use plain language throughout. Do not provide l
                           if (!section.trim()) return null;
                           const lines = section.split('
 ');
+                          const rawHead = lines[0] || '';
                           const heading = idx === 0 && !section.startsWith('#')
                             ? null
-                            : lines[0].replace(/^#+\s*/, '');
+                            : rawHead.replace(/^#+ ?/, '');
                           const body = heading ? lines.slice(1).join('
 ') : section;
 
