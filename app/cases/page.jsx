@@ -235,6 +235,11 @@ function CaseDocuments({ caseData, user, userTier }) {
   const [dragging, setDragging] = useState(null); // docId being dragged
   const fileInputRef = useRef(null);
   const canUseAI = true;
+  const [compareDocA, setCompareDocA] = useState(null);
+  const [compareDocB, setCompareDocB] = useState(null);
+  const [comparing, setComparing] = useState(false);
+  const [compareResult, setCompareResult] = useState(null);
+  const [showCompare, setShowCompare] = useState(false);
 
   useEffect(() => { fetchDocuments(); }, [caseData.id]);
 
@@ -414,6 +419,77 @@ function CaseDocuments({ caseData, user, userTier }) {
       setExpandedDoc(doc.id);
     } catch (err) { console.error('AI error:', err); }
     setScanning(null);
+  };
+
+  // ── Compare Two Documents ──────────────────────────────────────────────────
+  const compareDocuments = async () => {
+    if (!compareDocA || !compareDocB) return;
+    setComparing(true);
+    setCompareResult(null);
+
+    // Fetch content of both documents
+    const fetchContent = async (doc) => {
+      if (!doc.file_url) return null;
+      try {
+        const res = await fetch(doc.file_url);
+        const blob = await res.blob();
+        if (doc.file_type?.includes('text') || doc.file_name?.endsWith('.txt')) {
+          const text = await blob.text();
+          return text.substring(0, 6000);
+        }
+        return null; // PDF/image — filename only
+      } catch { return null; }
+    };
+
+    const contentA = await fetchContent(compareDocA);
+    const contentB = await fetchContent(compareDocB);
+    const jurisdiction = caseData.jurisdiction_id?.replace(/_/g, ' ') || 'Saskatchewan';
+    const caseType = caseData.case_type || 'custody';
+
+    const hasA = contentA && contentA.length > 50;
+    const hasB = contentB && contentB.length > 50;
+
+    const prompt = `You are a family law document analyst for Foresight, helping a self-represented parent in ${jurisdiction} understand their ${caseType} case.
+
+The parent has uploaded two documents and wants to understand how they compare — what each party is saying, where they agree, where they conflict, and what it means for their case.
+
+Document A (labelled: "${compareDocA.file_name}"):
+${hasA ? contentA : '[Content could not be extracted — analyze based on document name and type]'}
+
+Document B (labelled: "${compareDocB.file_name}"):
+${hasB ? contentB : '[Content could not be extracted — analyze based on document name and type]'}
+
+Provide a clear, structured analysis covering:
+
+## 1. What Each Document Says
+Summarize the key positions, claims, or content of Document A and Document B separately in plain language.
+
+## 2. Where They Agree
+List any points, terms, or facts both documents appear to accept or align on.
+
+## 3. Where They Conflict
+List specific areas of disagreement, conflicting claims, or opposing positions. Be specific about what each party's position is.
+
+## 4. Key Issues for Court
+Identify the most important disputed points that a judge would focus on and explain why they matter.
+
+## 5. What the Parent Should Know
+Give practical, plain-language advice about what this comparison reveals — what is strong in their position, what needs addressing, and what they should discuss with a lawyer.
+
+Be clear, specific, and helpful. Use plain language throughout. Do not provide legal advice — provide legal information and guidance.`;
+
+    try {
+      const response = await fetch('/api/ai/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: prompt, userId: user.id, jurisdiction: caseData.jurisdiction_id })
+      });
+      const data = await response.json();
+      setCompareResult(data.content || 'Unable to compare documents.');
+    } catch (err) {
+      setCompareResult('Error comparing documents. Please try again.');
+    }
+    setComparing(false);
   };
 
   const formatSize = (bytes) => {
@@ -645,6 +721,152 @@ function CaseDocuments({ caseData, user, userTier }) {
             ))}
           </div>
         )}
+
+        {/* ── Compare Two Documents ──────────────────────────────────────────── */}
+        <div className="bg-white border border-gray-200 rounded-xl p-4">
+          <div className="flex items-center justify-between mb-3">
+            <div>
+              <h3 className="font-bold text-gray-900">⚖️ Compare Two Documents</h3>
+              <p className="text-xs text-gray-500 mt-0.5">Select your document and the other party's document — AI will analyze both and explain what they mean for your case</p>
+            </div>
+            <button onClick={() => { setShowCompare(v => !v); setCompareResult(null); }}
+              className="text-xs text-gray-400 hover:text-gray-600 px-2 py-1">
+              {showCompare ? '▲ Hide' : '▼ Show'}
+            </button>
+          </div>
+
+          {showCompare && (
+            <div className="space-y-4">
+              {documents.length < 2 ? (
+                <div className="text-center py-6 bg-gray-50 rounded-xl border-2 border-dashed border-gray-200">
+                  <p className="text-sm text-gray-500">Upload at least 2 documents to compare them</p>
+                </div>
+              ) : (
+                <>
+                  <div className="grid grid-cols-2 gap-3">
+                    {/* Doc A */}
+                    <div>
+                      <label className="block text-xs font-bold text-gray-600 uppercase tracking-wide mb-1.5">
+                        📄 Your Document
+                      </label>
+                      <select
+                        value={compareDocA?.id || ''}
+                        onChange={e => {
+                          const doc = documents.find(d => d.id === e.target.value);
+                          setCompareDocA(doc || null);
+                          setCompareResult(null);
+                        }}
+                        className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm bg-gray-50 focus:outline-none focus:border-blue-400"
+                      >
+                        <option value="">Select your document...</option>
+                        {documents.filter(d => d.id !== compareDocB?.id).map(doc => (
+                          <option key={doc.id} value={doc.id}>{doc.file_name}</option>
+                        ))}
+                      </select>
+                    </div>
+
+                    {/* Doc B */}
+                    <div>
+                      <label className="block text-xs font-bold text-gray-600 uppercase tracking-wide mb-1.5">
+                        📄 Other Party's Document
+                      </label>
+                      <select
+                        value={compareDocB?.id || ''}
+                        onChange={e => {
+                          const doc = documents.find(d => d.id === e.target.value);
+                          setCompareDocB(doc || null);
+                          setCompareResult(null);
+                        }}
+                        className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm bg-gray-50 focus:outline-none focus:border-red-400"
+                      >
+                        <option value="">Select their document...</option>
+                        {documents.filter(d => d.id !== compareDocA?.id).map(doc => (
+                          <option key={doc.id} value={doc.id}>{doc.file_name}</option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+
+                  {compareDocA && compareDocB && (
+                    <div className="bg-gray-50 rounded-xl p-3 flex items-center justify-between">
+                      <div className="text-xs text-gray-600">
+                        Comparing <span className="font-semibold text-blue-700">{compareDocA.file_name}</span>
+                        {' '}vs{' '}
+                        <span className="font-semibold text-red-700">{compareDocB.file_name}</span>
+                      </div>
+                      <button
+                        onClick={compareDocuments}
+                        disabled={comparing}
+                        className="px-5 py-2 bg-red-600 hover:bg-red-700 text-white rounded-xl text-sm font-bold disabled:opacity-40 transition-colors"
+                      >
+                        {comparing ? '⏳ Analyzing...' : '⚖️ Compare Now'}
+                      </button>
+                    </div>
+                  )}
+
+                  {comparing && (
+                    <div className="text-center py-8">
+                      <div className="w-8 h-8 border-2 border-red-200 border-t-red-600 rounded-full animate-spin mx-auto mb-3" />
+                      <p className="text-sm text-gray-500 font-medium">AI is reading both documents...</p>
+                      <p className="text-xs text-gray-400 mt-1">This takes about 15–30 seconds</p>
+                    </div>
+                  )}
+
+                  {compareResult && !comparing && (
+                    <div className="bg-gradient-to-b from-slate-50 to-white border border-slate-200 rounded-2xl overflow-hidden">
+                      <div className="bg-slate-800 px-4 py-3 flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <span className="text-lg">⚖️</span>
+                          <span className="text-white font-bold text-sm">AI Document Comparison</span>
+                        </div>
+                        <div className="flex items-center gap-3 text-xs">
+                          <span className="text-blue-300 font-medium truncate max-w-[120px]">{compareDocA?.file_name}</span>
+                          <span className="text-slate-400">vs</span>
+                          <span className="text-red-300 font-medium truncate max-w-[120px]">{compareDocB?.file_name}</span>
+                        </div>
+                      </div>
+                      <div className="p-4">
+                        {compareResult.split(/
+## /).map((section, idx) => {
+                          if (!section.trim()) return null;
+                          const lines = section.split('
+');
+                          const heading = idx === 0 && !section.startsWith('#')
+                            ? null
+                            : lines[0].replace(/^#+\s*/, '');
+                          const body = heading ? lines.slice(1).join('
+') : section;
+
+                          const sectionColors = {
+                            0: 'border-gray-200',
+                            1: 'border-blue-200 bg-blue-50',
+                            2: 'border-green-200 bg-green-50',
+                            3: 'border-red-200 bg-red-50',
+                            4: 'border-amber-200 bg-amber-50',
+                            5: 'border-purple-200 bg-purple-50',
+                          };
+                          const color = sectionColors[idx] || 'border-gray-200';
+
+                          return (
+                            <div key={idx} className={`mb-3 rounded-xl border p-3 ${color}`}>
+                              {heading && (
+                                <div className="font-bold text-gray-900 text-sm mb-2">{heading}</div>
+                              )}
+                              <div className="text-xs text-gray-700 whitespace-pre-wrap leading-relaxed">{body.trim()}</div>
+                            </div>
+                          );
+                        })}
+                        <p className="text-[10px] text-gray-400 mt-3 text-center">
+                          This is AI-generated analysis for educational purposes only — not legal advice. Always consult a lawyer for your specific situation.
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                </>
+              )}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
