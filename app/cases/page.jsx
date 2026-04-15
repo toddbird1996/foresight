@@ -217,7 +217,7 @@ function StatCard({ icon, label, value }) {
 }
 
 /* ============================================ */
-/* CASE DOCUMENTS */
+/* CASE DOCUMENTS — full featured               */
 /* ============================================ */
 function CaseDocuments({ caseData, user, userTier }) {
   const [documents, setDocuments] = useState([]);
@@ -226,103 +226,182 @@ function CaseDocuments({ caseData, user, userTier }) {
   const [expandedDoc, setExpandedDoc] = useState(null);
   const [editingDocId, setEditingDocId] = useState(null);
   const [editName, setEditName] = useState('');
+  const [viewingDoc, setViewingDoc] = useState(null);   // doc being previewed
+  const [editingContent, setEditingContent] = useState(null); // doc being text-edited
+  const [editContentText, setEditContentText] = useState('');
+  const [savingContent, setSavingContent] = useState(false);
+  const [noteDocId, setNoteDocId] = useState(null);
+  const [noteText, setNoteText] = useState('');
+  const [dragging, setDragging] = useState(null); // docId being dragged
   const fileInputRef = useRef(null);
-  const canUseAI = true; // All tiers get some AI (Bronze: 5 trial, Silver: 500/mo, Gold: 2000/mo)
+  const canUseAI = true;
 
   useEffect(() => { fetchDocuments(); }, [caseData.id]);
 
   const fetchDocuments = async () => {
-    const { data } = await supabase.from('case_documents').select('*').eq('case_id', caseData.id).order('created_at', { ascending: false });
+    const { data } = await supabase.from('case_documents').select('*')
+      .eq('case_id', caseData.id).order('display_order', { ascending: true });
     setDocuments(data || []);
   };
 
+  // ── Upload ────────────────────────────────────────────────────────────────
   const handleUpload = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
     setUploading(true);
     const filePath = `cases/${caseData.id}/${Date.now()}_${file.name}`;
     const { error: uploadError } = await supabase.storage.from('documents').upload(filePath, file);
+    const maxOrder = documents.length > 0 ? Math.max(...documents.map(d => d.display_order || 0)) + 1 : 0;
     if (!uploadError) {
       const { data: urlData } = supabase.storage.from('documents').getPublicUrl(filePath);
       await supabase.from('case_documents').insert({
         case_id: caseData.id, user_id: user.id, file_name: file.name, file_type: file.type,
-        file_size: file.size, file_url: urlData.publicUrl, storage_path: filePath
+        file_size: file.size, file_url: urlData.publicUrl, storage_path: filePath,
+        display_order: maxOrder,
       });
-      await fetchDocuments();
     } else {
-      // If storage bucket doesn't exist, save reference anyway
       await supabase.from('case_documents').insert({
-        case_id: caseData.id, user_id: user.id, file_name: file.name, file_type: file.type, file_size: file.size
+        case_id: caseData.id, user_id: user.id, file_name: file.name,
+        file_type: file.type, file_size: file.size, display_order: maxOrder,
       });
-      await fetchDocuments();
     }
+    await fetchDocuments();
     setUploading(false);
     if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
+  // ── Move order ────────────────────────────────────────────────────────────
+  const moveDoc = async (docId, direction) => {
+    const idx = documents.findIndex(d => d.id === docId);
+    if (direction === 'up' && idx === 0) return;
+    if (direction === 'down' && idx === documents.length - 1) return;
+    const swapIdx = direction === 'up' ? idx - 1 : idx + 1;
+    const newDocs = [...documents];
+    const tempOrder = newDocs[idx].display_order;
+    newDocs[idx] = { ...newDocs[idx], display_order: newDocs[swapIdx].display_order };
+    newDocs[swapIdx] = { ...newDocs[swapIdx], display_order: tempOrder };
+    setDocuments(newDocs.sort((a, b) => (a.display_order || 0) - (b.display_order || 0)));
+    await supabase.from('case_documents').update({ display_order: newDocs[idx].display_order }).eq('id', newDocs[idx].id);
+    await supabase.from('case_documents').update({ display_order: newDocs[swapIdx].display_order }).eq('id', newDocs[swapIdx].id);
+  };
+
+  // ── Rename ─────────────────────────────────────────────────────────────────
+  const startRename = (doc) => { setEditingDocId(doc.id); setEditName(doc.file_name); };
+  const saveRename = async (docId) => {
+    const name = editName.trim();
+    if (!name) return;
+    await supabase.from('case_documents').update({ file_name: name }).eq('id', docId);
+    setDocuments(prev => prev.map(d => d.id === docId ? { ...d, file_name: name } : d));
+    setEditingDocId(null);
+  };
+
+  // ── Delete ─────────────────────────────────────────────────────────────────
+  const deleteDocument = async (doc) => {
+    if (!confirm('Delete this document? This cannot be undone.')) return;
+    if (doc.storage_path) {
+      await supabase.storage.from('documents').remove([doc.storage_path]);
+    }
+    await supabase.from('case_documents').delete().eq('id', doc.id);
+    setDocuments(prev => prev.filter(d => d.id !== doc.id));
+  };
+
+  // ── Download ───────────────────────────────────────────────────────────────
+  const downloadDoc = async (doc) => {
+    if (doc.file_url) {
+      const a = document.createElement('a');
+      a.href = doc.file_url;
+      a.download = doc.file_name;
+      a.target = '_blank';
+      a.click();
+    } else if (doc.storage_path) {
+      const { data } = await supabase.storage.from('documents').createSignedUrl(doc.storage_path, 300);
+      if (data?.signedUrl) {
+        const a = document.createElement('a');
+        a.href = data.signedUrl;
+        a.download = doc.file_name;
+        a.click();
+      }
+    } else {
+      alert('No download URL available for this document.');
+    }
+  };
+
+  // ── View ───────────────────────────────────────────────────────────────────
+  const viewDoc = async (doc) => {
+    let url = doc.file_url;
+    if (!url && doc.storage_path) {
+      const { data } = await supabase.storage.from('documents').createSignedUrl(doc.storage_path, 300);
+      url = data?.signedUrl;
+    }
+    setViewingDoc({ ...doc, viewUrl: url });
+  };
+
+  // ── Text editor (for .txt / .doc content stored as text) ─────────────────
+  const openTextEditor = async (doc) => {
+    let content = doc.text_content || '';
+    if (!content && doc.file_url && (doc.file_type?.includes('text') || doc.file_name?.endsWith('.txt'))) {
+      try {
+        const res = await fetch(doc.file_url);
+        content = await res.text();
+      } catch {}
+    }
+    setEditingContent(doc);
+    setEditContentText(content || '');
+  };
+
+  const saveTextContent = async () => {
+    if (!editingContent) return;
+    setSavingContent(true);
+    await supabase.from('case_documents').update({
+      ai_summary: editContentText, // store edited text in ai_summary field as "notes/edited version"
+      updated_at: new Date().toISOString(),
+    }).eq('id', editingContent.id);
+    setDocuments(prev => prev.map(d => d.id === editingContent.id ? { ...d, ai_summary: editContentText } : d));
+    setSavingContent(false);
+    setEditingContent(null);
+  };
+
+  // ── Notes ──────────────────────────────────────────────────────────────────
+  const saveNote = async (docId) => {
+    await supabase.from('case_documents').update({ notes: noteText }).eq('id', docId);
+    setDocuments(prev => prev.map(d => d.id === docId ? { ...d, notes: noteText } : d));
+    setNoteDocId(null);
+  };
+
+  // ── AI Actions ─────────────────────────────────────────────────────────────
   const handleAIAction = async (doc, action) => {
     if (!canUseAI) return;
     setScanning(doc.id + '-' + action);
     try {
-      // Try to fetch and read the actual file content
       let fileContent = '';
       if (doc.file_url) {
         try {
           const fileRes = await fetch(doc.file_url);
           const blob = await fileRes.blob();
           const fileType = doc.file_type || '';
-          
           if (fileType.includes('text') || doc.file_name?.endsWith('.txt')) {
             fileContent = await blob.text();
-            fileContent = fileContent.substring(0, 8000); // Limit to 8k chars
-          } else if (fileType.includes('pdf') || doc.file_name?.endsWith('.pdf')) {
-            // For PDFs, convert to base64 and send as document
-            const reader = new FileReader();
-            const base64 = await new Promise(resolve => {
-              reader.onload = () => resolve(reader.result.split(',')[1]);
-              reader.readAsDataURL(blob);
-            });
-            fileContent = `[PDF document — ${doc.file_name}. Base64 encoded for analysis.]`;
+            fileContent = fileContent.substring(0, 8000);
           }
-        } catch (fetchErr) {
-          console.log('Could not fetch file content, using filename only');
-        }
+        } catch {}
       }
-
-      const hasContent = fileContent.length > 50 && !fileContent.includes('[PDF document');
+      const hasContent = fileContent.length > 50;
       const jurisdiction = caseData.jurisdiction_id?.replace(/_/g, ' ') || 'Saskatchewan';
       const caseType = caseData.case_type || 'custody';
-
       let prompt;
       if (action === 'summarize') {
         prompt = hasContent
-          ? `You are a legal document assistant for Foresight. A self-represented parent in ${jurisdiction} has shared the following document from their ${caseType} case. Read it carefully and provide: 1) A plain-language summary of what this document says, 2) Key dates, deadlines, or obligations mentioned, 3) What actions the parent needs to take based on this document, 4) Anything they should discuss with a lawyer.
-
-Document filename: ${doc.file_name}
-
-Document content:
-${fileContent}`
+          ? `You are a legal document assistant for Foresight. A self-represented parent in ${jurisdiction} has shared the following document from their ${caseType} case. Read it carefully and provide: 1) A plain-language summary of what this document says, 2) Key dates, deadlines, or obligations mentioned, 3) What actions the parent needs to take based on this document, 4) Anything they should discuss with a lawyer.\n\nDocument filename: ${doc.file_name}\n\nDocument content:\n${fileContent}`
           : `You are a legal document assistant for Foresight. A parent in ${jurisdiction} has uploaded a document titled "${doc.file_name}" to their ${caseType} case. Based on the document name and type, explain: what this document typically contains, its purpose in family law proceedings, key things to watch for, and any deadlines or action items typically associated with this document type.`;
       } else if (action === 'scan') {
         prompt = hasContent
-          ? `You are a legal document analyst for Foresight. Review this ${caseType} case document from ${jurisdiction} and identify: 1) Any red flags or concerning language, 2) Missing information that should be present, 3) Deadlines or response requirements, 4) Anything the parent may have overlooked or misunderstood, 5) Whether the document appears to be properly completed.
-
-Document: ${doc.file_name}
-
-Content:
-${fileContent}`
-          : `You are a legal document analyst for Foresight. Analyze a document titled "${doc.file_name}" in a ${caseType} case in ${jurisdiction}. Identify: potential issues, missing information, red flags, and things a self-represented parent should verify. What does this type of document typically require to be valid and complete?`;
+          ? `You are a legal document analyst for Foresight. Review this ${caseType} case document from ${jurisdiction} and identify: 1) Any red flags or concerning language, 2) Missing information that should be present, 3) Deadlines or response requirements, 4) Anything the parent may have overlooked or misunderstood, 5) Whether the document appears to be properly completed.\n\nDocument: ${doc.file_name}\n\nContent:\n${fileContent}`
+          : `You are a legal document analyst for Foresight. Analyze a document titled "${doc.file_name}" in a ${caseType} case in ${jurisdiction}. Identify: potential issues, missing information, red flags, and things a self-represented parent should verify.`;
       } else {
         prompt = hasContent
-          ? `You are a legal document comparator for Foresight. Compare this ${caseType} document from ${jurisdiction} against standard court requirements. Identify: 1) Whether it meets court standards, 2) Any deficiencies that could cause the court to reject or question it, 3) Whether all required sections are present, 4) Anything that needs to be fixed before filing or responding.
-
-Document: ${doc.file_name}
-
-Content:
-${fileContent}`
+          ? `You are a legal document comparator for Foresight. Compare this ${caseType} document from ${jurisdiction} against standard court requirements. Identify: 1) Whether it meets court standards, 2) Any deficiencies that could cause the court to reject it, 3) Whether all required sections are present, 4) Anything that needs to be fixed before filing.\n\nDocument: ${doc.file_name}\n\nContent:\n${fileContent}`
           : `You are a legal document comparator for Foresight. A parent uploaded "${doc.file_name}" in a ${caseType} case in ${jurisdiction}. Compare what this document likely contains against standard court requirements for this jurisdiction. Note typical deficiencies or areas needing attention.`;
       }
-
       const response = await fetch('/api/ai/chat', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ message: prompt, userId: user.id, jurisdiction: caseData.jurisdiction_id })
@@ -337,25 +416,6 @@ ${fileContent}`
     setScanning(null);
   };
 
-  const deleteDocument = async (docId) => {
-    if (!confirm('Delete this document?')) return;
-    await supabase.from('case_documents').delete().eq('id', docId);
-    setDocuments(prev => prev.filter(d => d.id !== docId));
-  };
-
-  const startRename = (doc) => {
-    setEditingDocId(doc.id);
-    setEditName(doc.file_name);
-  };
-
-  const saveRename = async (docId) => {
-    const name = editName.trim();
-    if (!name) return;
-    await supabase.from('case_documents').update({ file_name: name }).eq('id', docId);
-    setDocuments(prev => prev.map(d => d.id === docId ? { ...d, file_name: name } : d));
-    setEditingDocId(null);
-  };
-
   const formatSize = (bytes) => {
     if (!bytes) return '';
     if (bytes < 1024) return bytes + ' B';
@@ -363,83 +423,222 @@ ${fileContent}`
     return (bytes / 1048576).toFixed(1) + ' MB';
   };
 
+  const getDocIcon = (doc) => {
+    if (doc.file_type?.includes('pdf') || doc.file_name?.endsWith('.pdf')) return '📕';
+    if (doc.file_type?.includes('image')) return '🖼️';
+    if (doc.file_type?.includes('word') || doc.file_name?.match(/\.docx?$/)) return '📘';
+    if (doc.file_type?.includes('text') || doc.file_name?.endsWith('.txt')) return '📄';
+    return '📄';
+  };
+
+  const canView = (doc) => doc.file_url || doc.storage_path;
+  const canEdit = (doc) => doc.file_type?.includes('text') || doc.file_name?.endsWith('.txt');
+  const isPDF = (doc) => doc.file_type?.includes('pdf') || doc.file_name?.endsWith('.pdf');
+  const isImage = (doc) => doc.file_type?.includes('image');
+
   return (
     <div className="space-y-4">
+      {/* Document Viewer Modal */}
+      {viewingDoc && (
+        <div className="fixed inset-0 z-50 bg-black/70 flex items-center justify-center p-4" onClick={() => setViewingDoc(null)}>
+          <div className="bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] flex flex-col" onClick={e => e.stopPropagation()}>
+            <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200">
+              <div className="font-semibold text-gray-900 text-sm truncate flex-1">{getDocIcon(viewingDoc)} {viewingDoc.file_name}</div>
+              <div className="flex items-center gap-2 flex-shrink-0">
+                <button onClick={() => downloadDoc(viewingDoc)} className="px-3 py-1.5 bg-gray-100 hover:bg-gray-200 rounded-lg text-xs font-medium text-gray-700">⬇️ Download</button>
+                <button onClick={() => setViewingDoc(null)} className="w-8 h-8 bg-gray-100 hover:bg-gray-200 rounded-full flex items-center justify-center text-gray-600 font-bold">✕</button>
+              </div>
+            </div>
+            <div className="flex-1 overflow-auto p-2 bg-gray-50 rounded-b-2xl">
+              {viewingDoc.viewUrl ? (
+                isPDF(viewingDoc) ? (
+                  <iframe src={viewingDoc.viewUrl} className="w-full h-[70vh] rounded-xl border border-gray-200" title={viewingDoc.file_name} />
+                ) : isImage(viewingDoc) ? (
+                  <img src={viewingDoc.viewUrl} alt={viewingDoc.file_name} className="max-w-full max-h-[70vh] mx-auto rounded-xl shadow-sm" />
+                ) : (
+                  <div className="text-center py-12 text-gray-500">
+                    <div className="text-5xl mb-3">{getDocIcon(viewingDoc)}</div>
+                    <p className="text-sm mb-3">Preview not available for this file type.</p>
+                    <button onClick={() => downloadDoc(viewingDoc)} className="px-4 py-2 bg-red-600 text-white rounded-xl text-sm font-medium">⬇️ Download to view</button>
+                  </div>
+                )
+              ) : (
+                <div className="text-center py-12 text-gray-500">
+                  <div className="text-5xl mb-3">🔒</div>
+                  <p className="text-sm">File URL not available. Try re-uploading this document.</p>
+                </div>
+              )}
+            </div>
+            {/* Show AI summary in viewer if available */}
+            {viewingDoc.ai_summary && (
+              <div className="px-4 pb-4">
+                <div className="bg-blue-50 border border-blue-100 rounded-xl p-3 mt-2">
+                  <div className="text-xs font-bold text-blue-700 mb-1">📝 AI Summary</div>
+                  <p className="text-xs text-blue-800 leading-relaxed whitespace-pre-wrap line-clamp-4">{viewingDoc.ai_summary}</p>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Text Editor Modal */}
+      {editingContent && (
+        <div className="fixed inset-0 z-50 bg-black/70 flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full flex flex-col max-h-[90vh]">
+            <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200">
+              <div className="font-semibold text-gray-900 text-sm">✏️ Edit — {editingContent.file_name}</div>
+              <button onClick={() => setEditingContent(null)} className="w-8 h-8 bg-gray-100 hover:bg-gray-200 rounded-full flex items-center justify-center text-gray-600">✕</button>
+            </div>
+            <div className="flex-1 p-4 overflow-auto">
+              <textarea
+                value={editContentText}
+                onChange={e => setEditContentText(e.target.value)}
+                className="w-full h-[50vh] px-3 py-2 border border-gray-200 rounded-xl text-sm font-mono focus:outline-none focus:border-red-300 resize-none"
+                placeholder="Document content..."
+              />
+            </div>
+            <div className="px-4 pb-4 flex gap-3">
+              <button onClick={() => setEditingContent(null)} className="flex-1 py-2.5 border border-gray-200 text-gray-600 rounded-xl text-sm font-medium">Cancel</button>
+              <button onClick={saveTextContent} disabled={savingContent} className="flex-1 py-2.5 bg-red-600 hover:bg-red-700 text-white rounded-xl text-sm font-bold disabled:opacity-40">
+                {savingContent ? '⏳ Saving...' : '💾 Save Changes'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="bg-white border border-gray-200 rounded-xl p-4">
-        <div className="flex items-center justify-between mb-3">
-          <h3 className="font-semibold text-gray-900">Case Documents</h3>
+        <div className="flex items-center justify-between mb-4">
+          <div>
+            <h3 className="font-bold text-gray-900">Case Documents</h3>
+            <p className="text-xs text-gray-400 mt-0.5">{documents.length} file{documents.length !== 1 ? 's' : ''}</p>
+          </div>
           <button onClick={() => fileInputRef.current?.click()} disabled={uploading}
-            className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg text-sm font-medium disabled:opacity-40">
-            {uploading ? 'Uploading...' : '+ Upload Document'}
+            className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-xl text-sm font-bold disabled:opacity-40 transition-colors">
+            {uploading ? '⏳ Uploading...' : '+ Upload'}
           </button>
           <input ref={fileInputRef} type="file" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.txt" onChange={handleUpload} className="hidden" />
         </div>
-        {!canUseAI && (
-          <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 mb-3">
-            <p className="text-xs text-amber-700">🔒 <strong>AI document scanning</strong> — upgrade for more scans. Bronze includes 1 scan trial. <Link href="/pricing" className="text-red-600 underline">Upgrade</Link></p>
-          </div>
-        )}
+
         {documents.length === 0 ? (
-          <div className="text-center py-8 text-gray-400">
-            <span className="text-3xl block mb-2">📄</span>
-            <p className="text-sm">No documents uploaded yet.</p>
-            <p className="text-xs mt-1">Upload court forms, affidavits, orders, agreements, and more.</p>
+          <div className="text-center py-10 text-gray-400 border-2 border-dashed border-gray-200 rounded-xl">
+            <span className="text-4xl block mb-2">📄</span>
+            <p className="text-sm font-medium text-gray-500">No documents yet</p>
+            <p className="text-xs mt-1">Upload court forms, affidavits, orders, agreements, and more</p>
+            <button onClick={() => fileInputRef.current?.click()} className="mt-3 px-4 py-2 bg-red-50 text-red-600 rounded-xl text-sm font-semibold hover:bg-red-100 transition-colors">
+              Upload your first document
+            </button>
           </div>
         ) : (
-          <div className="space-y-3">
-            {documents.map(doc => (
-              <div key={doc.id} className="border border-gray-200 rounded-lg p-3">
-                <div className="flex items-start gap-3">
-                  <div className="w-10 h-10 bg-red-50 rounded-lg flex items-center justify-center text-lg flex-shrink-0">
-                    {doc.file_type?.includes('pdf') ? '📕' : doc.file_type?.includes('image') ? '🖼️' : '📄'}
+          <div className="space-y-2">
+            {documents.map((doc, idx) => (
+              <div key={doc.id} className="border border-gray-200 rounded-xl overflow-hidden hover:border-gray-300 transition-all">
+                {/* Document header row */}
+                <div className="flex items-start gap-3 p-3">
+                  {/* Order controls */}
+                  <div className="flex flex-col gap-0.5 flex-shrink-0 mt-1">
+                    <button onClick={() => moveDoc(doc.id, 'up')} disabled={idx === 0}
+                      className="w-5 h-5 flex items-center justify-center text-gray-300 hover:text-gray-600 disabled:opacity-20 text-xs leading-none">▲</button>
+                    <button onClick={() => moveDoc(doc.id, 'down')} disabled={idx === documents.length - 1}
+                      className="w-5 h-5 flex items-center justify-center text-gray-300 hover:text-gray-600 disabled:opacity-20 text-xs leading-none">▼</button>
                   </div>
+
+                  {/* Icon */}
+                  <div className="w-10 h-10 bg-gray-50 rounded-xl flex items-center justify-center text-xl flex-shrink-0 border border-gray-100">
+                    {getDocIcon(doc)}
+                  </div>
+
+                  {/* Name + metadata */}
                   <div className="flex-1 min-w-0">
                     {editingDocId === doc.id ? (
                       <div className="flex items-center gap-1.5">
                         <input autoFocus type="text" value={editName} onChange={e => setEditName(e.target.value)}
                           onKeyDown={e => { if (e.key === 'Enter') saveRename(doc.id); if (e.key === 'Escape') setEditingDocId(null); }}
-                          className="flex-1 text-sm border border-red-300 rounded px-2 py-0.5 outline-none focus:border-red-500 min-w-0" />
-                        <button onClick={() => saveRename(doc.id)} className="text-green-600 hover:text-green-700 text-xs font-semibold px-1.5 py-0.5 bg-green-50 rounded">Save</button>
-                        <button onClick={() => setEditingDocId(null)} className="text-gray-400 hover:text-gray-600 text-xs px-1 py-0.5">✕</button>
+                          className="flex-1 text-sm border border-red-300 rounded-lg px-2 py-1 outline-none focus:border-red-500 min-w-0" />
+                        <button onClick={() => saveRename(doc.id)} className="text-green-600 text-xs font-bold px-2 py-1 bg-green-50 rounded-lg">Save</button>
+                        <button onClick={() => setEditingDocId(null)} className="text-gray-400 text-xs px-1">✕</button>
                       </div>
                     ) : (
-                      <div className="font-medium text-gray-900 text-sm truncate">{doc.file_name}</div>
+                      <div className="font-semibold text-gray-900 text-sm truncate">{doc.file_name}</div>
                     )}
-                    <div className="text-xs text-gray-400">{formatSize(doc.file_size)} • {new Date(doc.created_at).toLocaleDateString()}</div>
+                    <div className="flex items-center gap-2 mt-0.5 text-xs text-gray-400">
+                      {doc.file_size && <span>{formatSize(doc.file_size)}</span>}
+                      <span>•</span>
+                      <span>{new Date(doc.created_at).toLocaleDateString('en-CA', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+                      {doc.ai_scanned && <span className="text-green-600 font-medium">• ✅ AI scanned</span>}
+                    </div>
+                    {doc.notes && (
+                      <div className="mt-1 text-xs text-amber-700 bg-amber-50 px-2 py-1 rounded-lg">{doc.notes}</div>
+                    )}
                   </div>
+
+                  {/* Action buttons */}
                   <div className="flex items-center gap-1 flex-shrink-0">
-                    <button onClick={() => startRename(doc)} title="Rename" className="text-gray-400 hover:text-blue-600 text-xs p-1">✏️</button>
-                    <button onClick={() => deleteDocument(doc.id)} title="Delete" className="text-gray-400 hover:text-red-600 text-xs p-1">🗑</button>
+                    {canView(doc) && (
+                      <button onClick={() => viewDoc(doc)} title="View" className="w-7 h-7 flex items-center justify-center text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors text-sm">👁️</button>
+                    )}
+                    <button onClick={() => downloadDoc(doc)} title="Download" className="w-7 h-7 flex items-center justify-center text-gray-400 hover:text-green-600 hover:bg-green-50 rounded-lg transition-colors text-sm">⬇️</button>
+                    <button onClick={() => startRename(doc)} title="Rename" className="w-7 h-7 flex items-center justify-center text-gray-400 hover:text-purple-600 hover:bg-purple-50 rounded-lg transition-colors text-sm">✏️</button>
+                    <button onClick={() => { setNoteDocId(doc.id); setNoteText(doc.notes || ''); }} title="Add note" className="w-7 h-7 flex items-center justify-center text-gray-400 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition-colors text-sm">📌</button>
+                    {canEdit(doc) && (
+                      <button onClick={() => openTextEditor(doc)} title="Edit document" className="w-7 h-7 flex items-center justify-center text-gray-400 hover:text-orange-600 hover:bg-orange-50 rounded-lg transition-colors text-sm">📝</button>
+                    )}
+                    <button onClick={() => deleteDocument(doc)} title="Delete" className="w-7 h-7 flex items-center justify-center text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors text-sm">🗑️</button>
                   </div>
                 </div>
+
+                {/* Note editor inline */}
+                {noteDocId === doc.id && (
+                  <div className="px-3 pb-3 pt-1 border-t border-gray-100 bg-amber-50">
+                    <textarea value={noteText} onChange={e => setNoteText(e.target.value)}
+                      placeholder="Add a note about this document..."
+                      rows={2} className="w-full px-3 py-2 bg-white border border-amber-200 rounded-xl text-xs focus:outline-none focus:border-amber-400 resize-none" />
+                    <div className="flex gap-2 mt-2">
+                      <button onClick={() => setNoteDocId(null)} className="flex-1 py-1.5 text-xs text-gray-500 border border-gray-200 rounded-lg">Cancel</button>
+                      <button onClick={() => saveNote(doc.id)} className="flex-1 py-1.5 text-xs font-bold bg-amber-500 text-white rounded-lg hover:bg-amber-600">Save Note</button>
+                    </div>
+                  </div>
+                )}
+
+                {/* AI action buttons */}
                 {canUseAI && (
-                  <div className="flex gap-2 mt-2 pl-13">
-                    {['summarize', 'scan', 'compare'].map(action => (
-                      <button key={action} onClick={() => handleAIAction(doc, action)} disabled={scanning === doc.id + '-' + action}
-                        className={`px-2.5 py-1 rounded text-xs font-medium disabled:opacity-40 ${
-                          action === 'summarize' ? 'bg-blue-50 text-blue-700 hover:bg-blue-100' :
-                          action === 'scan' ? 'bg-green-50 text-green-700 hover:bg-green-100' :
-                          'bg-purple-50 text-purple-700 hover:bg-purple-100'
-                        }`}>
-                        {scanning === doc.id + '-' + action ? '⏳ Working...' :
-                          action === 'summarize' ? '📝 Summarize' : action === 'scan' ? '🔍 Scan' : '⚖️ Compare'}
+                  <div className="px-3 pb-3 pt-1 border-t border-gray-100 flex gap-2 flex-wrap">
+                    {[
+                      { action: 'summarize', label: '📝 Summarize', color: 'bg-blue-50 text-blue-700 hover:bg-blue-100 border-blue-100' },
+                      { action: 'scan', label: '🔍 Scan for Issues', color: 'bg-green-50 text-green-700 hover:bg-green-100 border-green-100' },
+                      { action: 'compare', label: '⚖️ Compare to Standards', color: 'bg-purple-50 text-purple-700 hover:bg-purple-100 border-purple-100' },
+                    ].map(({ action, label, color }) => (
+                      <button key={action} onClick={() => handleAIAction(doc, action)}
+                        disabled={scanning === doc.id + '-' + action}
+                        className={`px-3 py-1.5 rounded-lg text-xs font-semibold border disabled:opacity-40 transition-colors ${color}`}>
+                        {scanning === doc.id + '-' + action ? '⏳ Working...' : label}
                       </button>
                     ))}
-                    <button onClick={() => setExpandedDoc(expandedDoc === doc.id ? null : doc.id)} className="px-2 py-1 text-xs text-gray-500 hover:text-gray-700">
-                      {(doc.ai_summary || doc.ai_comparison) ? (expandedDoc === doc.id ? '▲ Hide' : '▼ Show AI') : ''}
-                    </button>
+                    {(doc.ai_summary || doc.ai_comparison) && (
+                      <button onClick={() => setExpandedDoc(expandedDoc === doc.id ? null : doc.id)}
+                        className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-gray-50 text-gray-600 hover:bg-gray-100 border border-gray-200 ml-auto">
+                        {expandedDoc === doc.id ? '▲ Hide AI' : '▼ Show AI Results'}
+                      </button>
+                    )}
                   </div>
                 )}
-                {expandedDoc === doc.id && doc.ai_summary && (
-                  <div className="mt-3 bg-blue-50 rounded-lg p-3">
-                    <div className="text-xs font-medium text-blue-700 mb-1">📝 AI Summary</div>
-                    <p className="text-xs text-blue-800 whitespace-pre-wrap leading-relaxed">{doc.ai_summary}</p>
-                  </div>
-                )}
-                {expandedDoc === doc.id && doc.ai_comparison && (
-                  <div className="mt-2 bg-purple-50 rounded-lg p-3">
-                    <div className="text-xs font-medium text-purple-700 mb-1">⚖️ AI Comparison</div>
-                    <p className="text-xs text-purple-800 whitespace-pre-wrap leading-relaxed">{doc.ai_comparison}</p>
+
+                {/* AI results */}
+                {expandedDoc === doc.id && (
+                  <div className="border-t border-gray-100 space-y-2 p-3">
+                    {doc.ai_summary && (
+                      <div className="bg-blue-50 rounded-xl p-3">
+                        <div className="text-xs font-bold text-blue-700 mb-1.5">📝 AI Summary</div>
+                        <p className="text-xs text-blue-800 whitespace-pre-wrap leading-relaxed">{doc.ai_summary}</p>
+                      </div>
+                    )}
+                    {doc.ai_comparison && (
+                      <div className="bg-purple-50 rounded-xl p-3">
+                        <div className="text-xs font-bold text-purple-700 mb-1.5">⚖️ Standards Comparison</div>
+                        <p className="text-xs text-purple-800 whitespace-pre-wrap leading-relaxed">{doc.ai_comparison}</p>
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
