@@ -76,12 +76,12 @@ export default function Header() {
           <div className="w-px h-6 bg-gray-200 mx-1" />
           <Link href="/profile" className="px-3 py-1.5 rounded-lg text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-50">Profile</Link>
           <button onClick={handleLogout} className="px-3 py-1.5 rounded-lg text-sm text-gray-500 hover:text-red-600 hover:bg-gray-50">Logout</button>
+        </nav>
           {isAdmin && (
-            <Link href="/admin" className="px-3 py-1.5 rounded-lg text-xs font-bold bg-gray-900 text-white hover:bg-gray-700 transition-colors">
+            <Link href="/admin" className="hidden md:flex px-3 py-1.5 rounded-lg text-xs font-bold bg-red-900 text-white hover:bg-red-800 transition-colors items-center gap-1">
               ⚙️ Admin
             </Link>
           )}
-        </nav>
 
         {/* Mobile - secondary menu (links not in bottom tabs) */}
         <div className="md:hidden flex items-center gap-2">
