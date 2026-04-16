@@ -81,7 +81,7 @@ If the user asks about preparation, deadlines, or what to do next — factor in 
 
 export async function POST(request) {
   try {
-    const { message, jurisdiction = 'saskatchewan', userId, history = [] } = await request.json();
+    const { message, jurisdiction = 'saskatchewan', userId, history = [], imageBase64, imageMimeType } = await request.json();
 
     if (!message) return NextResponse.json({ error: 'Message is required' }, { status: 400 });
     if (!userId) return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
@@ -149,12 +149,18 @@ export async function POST(request) {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
       body: JSON.stringify({
-        model: 'gpt-4o-mini',
+        model: imageBase64 ? 'gpt-4o' : 'gpt-4o-mini',
         max_tokens: 1024,
         messages: [
           { role: 'system', content: systemPrompt },
           ...history.slice(-8).map(m => ({ role: m.role, content: m.content })),
-          { role: 'user', content: message }
+          { role: 'user', content: imageBase64
+            ? [
+                { type: 'text', text: message },
+                { type: 'image_url', image_url: { url: `data:${imageMimeType || 'image/jpeg'};base64,${imageBase64}`, detail: 'high' } }
+              ]
+            : message
+          }
         ]
       })
     });
