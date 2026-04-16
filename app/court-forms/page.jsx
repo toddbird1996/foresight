@@ -405,7 +405,7 @@ export default function CourtFormsPage() {
                       rel="noopener noreferrer"
                       className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg text-sm font-medium flex-shrink-0 whitespace-nowrap"
                     >
-                      📄 Download
+                      {form.form_url?.includes('#/categories') ? '🔗 View on Publications SK' : '📄 Download'}
                     </a>
                   )}
                 </div>
