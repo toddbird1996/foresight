@@ -572,7 +572,9 @@ export default function FilingGuidePage() {
 
               {/* Steps */}
               <div className="divide-y divide-gray-100">
-                {(phase.steps || []).map(step => {
+                {(phase.steps || []).map((step, stepIdx) => {
+                  const isResolutionPhase = phase.name?.toLowerCase().includes('resolution');
+                  const isOrStep = isResolutionPhase && stepIdx === 1; // "OR" before second step
                   const isExpanded = expandedStep === step.id;
                   const isDone = progress[step.id];
                   const hasTips = step.tips && step.tips.length > 0;
@@ -580,7 +582,15 @@ export default function FilingGuidePage() {
                   const hasExtra = hasTips || hasForms;
 
                   return (
-                    <div key={step.id} className={isDone ? 'bg-green-50' : 'bg-white'}>
+                    <React.Fragment key={step.id}>
+                    {isOrStep && (
+                      <div className="flex items-center gap-3 px-4 py-2 bg-gray-50 border-t border-b border-dashed border-gray-200">
+                        <div className="flex-1 h-px bg-gray-200" />
+                        <span className="text-xs font-bold text-gray-400 uppercase tracking-widest px-2">— OR —</span>
+                        <div className="flex-1 h-px bg-gray-200" />
+                      </div>
+                    )}
+                    <div className={isDone ? 'bg-green-50' : 'bg-white'}>
                       <div className="flex items-start gap-3 p-4">
                         {/* Checkbox */}
                         <button
@@ -656,6 +666,7 @@ export default function FilingGuidePage() {
                         </div>
                       )}
                     </div>
+                    </React.Fragment>
                   );
                 })}
               </div>
