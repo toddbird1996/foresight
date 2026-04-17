@@ -169,7 +169,7 @@ export async function POST(request) {
     if (!response.ok) {
       const err = await response.json();
       console.error('OpenAI Error:', err);
-      return NextResponse.json({ error: 'AI request failed' }, { status: 500 });
+      return NextResponse.json({ error: 'AI request failed', detail: err?.error?.message || JSON.stringify(err), code: err?.error?.code || err?.error?.type }, { status: 500 });
     }
 
     const data = await response.json();
