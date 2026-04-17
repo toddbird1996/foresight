@@ -474,39 +474,116 @@ This is for a ${caseType} case in ${jurisdiction}.`;
     setScanning(doc.id + '-' + action);
     try {
       let fileContent = '';
+      let imageBase64 = null;
+      let imageMimeType = null;
       const url = await getDocUrl(doc);
+
       if (url) {
         try {
           const fileRes = await fetch(url);
           const blob = await fileRes.blob();
-          if (doc.file_type?.includes('text') || doc.file_name?.endsWith('.txt')) {
+          const fileType = doc.file_type || '';
+
+          if (fileType.includes('text') || doc.file_name?.endsWith('.txt')) {
+            // Plain text — read directly
             fileContent = await blob.text();
-            fileContent = fileContent.substring(0, 8000);
+            fileContent = fileContent.substring(0, 10000);
+          } else if (fileType.includes('pdf') || doc.file_name?.endsWith('.pdf') ||
+                     fileType.includes('image') || doc.file_name?.match(/\.(jpg|jpeg|png|webp|heic)$/i)) {
+            // PDF or image — convert to base64 and use vision
+            const reader = new FileReader();
+            imageBase64 = await new Promise((resolve, reject) => {
+              reader.onload = () => resolve(reader.result.split(',')[1]);
+              reader.onerror = reject;
+              reader.readAsDataURL(blob);
+            });
+            imageMimeType = fileType || (doc.file_name?.endsWith('.pdf') ? 'application/pdf' : 'image/jpeg');
           }
-        } catch {}
+        } catch (fetchErr) { console.error('File fetch error:', fetchErr); }
       }
-      // Also check notes field for scanned docs
-      if (!fileContent && doc.notes) fileContent = doc.notes.substring(0, 8000);
-      const hasContent = fileContent.length > 50;
+
+      // Fall back to notes for digitally scanned docs
+      if (!fileContent && !imageBase64 && doc.notes) {
+        fileContent = doc.notes.substring(0, 10000);
+      }
+
+      const hasContent = fileContent.length > 50 || imageBase64;
       const jurisdiction = caseData.jurisdiction_id?.replace(/_/g, ' ') || 'Saskatchewan';
       const caseType = caseData.case_type || 'custody';
-      let prompt;
-      if (action === 'summarize') {
-        prompt = hasContent
-          ? `You are helping a self-represented parent in ${jurisdiction} understand a legal document from their ${caseType} case. They are not a lawyer and find legal language confusing.\n\nRead this entire document and explain it in simple, everyday language — like you are explaining it to a friend who has never been to court before. Do not use legal jargon. If you must use a legal term, explain what it means right away.\n\nCover these things:\n- What is this document and what does it mean for this parent in plain terms?\n- What is being said or asked for — from either the court or the other party?\n- Are there any dates, deadlines, or things the parent must do? List them clearly.\n- Is there anything in here that could hurt their case that they need to know about?\n- What should the parent do next?\n\nWrite in short, clear paragraphs. Be honest and direct. The parent needs to truly understand this.\n\nDocument name: ${doc.file_name}\n\nFull document content:\n${fileContent}`
-          : `You are helping a self-represented parent in ${jurisdiction} understand a document called "${doc.file_name}" from their ${caseType} case. They are not a lawyer.\n\nExplain in simple, everyday language — like talking to a friend — what this type of document is, what it typically means for the parent, what they should watch out for, and what they should do after receiving it. No legal jargon. Keep it honest, clear, and practical.`;
-      } else if (action === 'scan') {
-        prompt = hasContent
-          ? `You are a legal document analyst for Foresight. Review this ${caseType} document from ${jurisdiction} and identify: 1) Red flags or concerning language, 2) Missing information, 3) Deadlines/response requirements, 4) Anything overlooked, 5) Whether it appears properly completed.\n\nDocument: ${doc.file_name}\n\nContent:\n${fileContent}`
-          : `You are a legal document analyst for Foresight. Analyze "${doc.file_name}" in a ${caseType} case in ${jurisdiction}. Identify potential issues, missing info, red flags, and what a self-represented parent should verify.`;
-      } else {
-        prompt = hasContent
-          ? `You are a legal document comparator for Foresight. Compare this ${caseType} document from ${jurisdiction} against standard court requirements. Identify: 1) Whether it meets court standards, 2) Deficiencies that could cause rejection, 3) Whether all required sections are present, 4) What needs fixing before filing.\n\nDocument: ${doc.file_name}\n\nContent:\n${fileContent}`
-          : `You are a legal document comparator for Foresight. A parent uploaded "${doc.file_name}" in a ${caseType} case in ${jurisdiction}. Compare against standard court requirements. Note typical deficiencies.`;
+
+      // If no content and no file, tell the user honestly
+      if (!hasContent) {
+        const noFileMsg = 'No document content could be read. This document has no file attached. Please use the ↩️ re-upload button to attach the file, then try again.';
+        await supabase.from('case_documents').update({ ai_summary: noFileMsg, ai_scanned: true }).eq('id', doc.id);
+        await fetchDocuments();
+        setExpandedDoc(doc.id);
+        setScanning(null);
+        return;
       }
+
+      let prompt;
+      const imageNote = imageBase64 ? 'The document is attached as an image. Read every word of it carefully.' : '';
+
+      if (action === 'summarize') {
+        prompt = `You are helping a self-represented parent in ${jurisdiction} understand a legal document from their ${caseType} case. They are not a lawyer and find legal language very confusing. ${imageNote}
+
+Read this ENTIRE document carefully — every word — and explain it in simple, everyday language, like you are explaining it to a friend who has never been to court before.
+
+Do NOT explain what this type of document generally is. Summarize THIS specific document — what it actually says, what the specific names, dates, amounts, and orders are.
+
+Cover:
+- What is actually happening in this document? (names, dates, orders made, amounts owed, etc.)
+- What is the court or other party saying or asking for — specifically?
+- Are there any deadlines or things this parent must do? List them with dates.
+- Is there anything in here that could hurt this parent's case?
+- What should this parent do next?
+
+Be specific. Use the actual names, dates, and amounts from the document. Write in short clear paragraphs. No legal jargon.
+
+Document name: ${doc.file_name}
+${fileContent ? 'Document content:\n' + fileContent : ''}`;
+      } else if (action === 'scan') {
+        prompt = `You are a legal document analyst helping a self-represented parent in ${jurisdiction}. ${imageNote}
+
+Read this ENTIRE ${caseType} document carefully and identify specific problems, not general ones.
+
+Look for:
+1. Red flags or concerning language — quote the specific text
+2. Missing information that should be there
+3. Deadlines or response requirements with specific dates
+4. Anything the parent may have missed or misunderstood
+5. Whether this document appears properly completed and signed
+
+Be specific — reference actual text, names, dates, and amounts from the document. Do not give generic advice.
+
+Document: ${doc.file_name}
+${fileContent ? 'Content:\n' + fileContent : ''}`;
+      } else {
+        prompt = `You are a legal document analyst helping a self-represented parent in ${jurisdiction}. ${imageNote}
+
+Read this ENTIRE ${caseType} document and compare it against what Saskatchewan courts require.
+
+Identify:
+1. Whether it meets court standards — cite what is or isn't there specifically
+2. Any deficiencies that could cause the court to reject or question it
+3. Whether all required sections, signatures, and information are present
+4. Anything that needs to be fixed before filing
+
+Be specific — reference actual content from the document.
+
+Document: ${doc.file_name}
+${fileContent ? 'Content:\n' + fileContent : ''}`;
+      }
+
       const response = await fetch('/api/ai/chat', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: prompt, userId: user.id, jurisdiction: caseData.jurisdiction_id })
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          message: prompt,
+          userId: user.id,
+          jurisdiction: caseData.jurisdiction_id,
+          ...(imageBase64 && { imageBase64, imageMimeType })
+        })
       });
       const data = await response.json();
       const result = data.content || 'Unable to analyze.';
