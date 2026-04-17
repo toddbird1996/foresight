@@ -169,7 +169,13 @@ export async function POST(request) {
     if (!response.ok) {
       const err = await response.json();
       console.error('OpenAI Error:', err);
-      return NextResponse.json({ error: 'AI request failed', detail: err?.error?.message || JSON.stringify(err), code: err?.error?.code || err?.error?.type }, { status: 500 });
+      const code = err?.error?.code || err?.error?.type || '';
+      const userMsg = code === 'insufficient_quota'
+        ? 'AI service is temporarily unavailable — billing limit reached. Please contact support.'
+        : code === 'invalid_api_key'
+        ? 'AI service configuration error — invalid API key.'
+        : 'AI request failed. Please try again shortly.';
+      return NextResponse.json({ error: userMsg, content: userMsg }, { status: 500 });
     }
 
     const data = await response.json();
