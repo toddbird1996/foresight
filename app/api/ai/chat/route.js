@@ -1,4 +1,4 @@
-// Foresight AI route — rebuilt to pick up OPENAI_KEY env var
+// Foresight AI route — v2 with corrected OPENAI_KEY env var name
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 
