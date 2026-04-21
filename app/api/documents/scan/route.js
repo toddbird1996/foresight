@@ -96,9 +96,13 @@ export async function POST(request) {
 
     const fileBuffer = await fileResponse.arrayBuffer();
     const base64File = Buffer.from(fileBuffer).toString('base64');
-    const mimeType = doc.file_type || 'image/jpeg';
 
-    // Send everything as a vision request — works for images AND PDFs (gpt-4o can read both)
+    // GPT-4o vision only accepts image MIME types
+    // Files uploaded from mobile camera are images even if stored as application/pdf
+    const rawMime = doc.file_type || '';
+    const mimeType = rawMime.startsWith('image/') ? rawMime : 'image/jpeg';
+
+    // Send everything as a vision request
     const aiResponse = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
