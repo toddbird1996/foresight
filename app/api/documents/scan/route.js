@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
-import pdfParse from 'pdf-parse';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL,
@@ -27,36 +26,6 @@ Flag anything urgent, concerning, or that requires immediate attention or legal 
 Give 2-3 concrete actions the parent should take now, this week, or before the next deadline.
 
 Be specific and practical. Never predict court outcomes. Always suggest consulting a lawyer for advice specific to their situation.`;
-
-async function uploadFileToOpenAI(fileBuffer, filename, mimeType, apiKey) {
-  const { FormData, Blob } = await import('node:buffer').catch(() => ({ FormData: global.FormData, Blob: global.Blob }));
-  
-  const formData = new FormData();
-  const blob = new Blob([fileBuffer], { type: mimeType });
-  formData.append('file', blob, filename);
-  formData.append('purpose', 'assistants');
-
-  const res = await fetch('https://api.openai.com/v1/files', {
-    method: 'POST',
-    headers: { 'Authorization': `Bearer ${apiKey}` },
-    body: formData
-  });
-
-  if (!res.ok) {
-    const err = await res.json();
-    throw new Error('File upload failed: ' + (err?.error?.message || res.status));
-  }
-
-  const data = await res.json();
-  return data.id;
-}
-
-async function deleteOpenAIFile(fileId, apiKey) {
-  await fetch(`https://api.openai.com/v1/files/${fileId}`, {
-    method: 'DELETE',
-    headers: { 'Authorization': `Bearer ${apiKey}` }
-  });
-}
 
 export async function POST(request) {
   try {
@@ -112,7 +81,7 @@ export async function POST(request) {
     }
 
     if (!doc.file_url) {
-      return NextResponse.json({ error: 'Document has no file URL' }, { status: 400 });
+      return NextResponse.json({ error: 'Document has no file attached. Please re-upload the file and try again.' }, { status: 400 });
     }
 
     const apiKey = process.env.OPENAI_KEY || process.env.OPENAI_API_KEY;
@@ -122,133 +91,46 @@ export async function POST(request) {
 
     const fileResponse = await fetch(doc.file_url);
     if (!fileResponse.ok) {
-      return NextResponse.json({ error: 'Could not fetch document file' }, { status: 500 });
+      return NextResponse.json({ error: 'Could not fetch document. The file may have expired — try re-uploading it.' }, { status: 500 });
     }
 
     const fileBuffer = await fileResponse.arrayBuffer();
-    const mimeType = doc.file_type || '';
-    const isImage = mimeType.startsWith('image/') || doc.file_name?.match(/\.(jpg|jpeg|png|webp|heic)$/i);
-    const isPdf = mimeType.includes('pdf') || doc.file_name?.endsWith('.pdf');
+    const base64File = Buffer.from(fileBuffer).toString('base64');
+    const mimeType = doc.file_type || 'image/jpeg';
 
-    // status column removed
-
-    let messages;
-
-    if (isImage) {
-      // Images — use vision directly
-      const base64File = Buffer.from(fileBuffer).toString('base64');
-      messages = [
-        { role: 'system', content: activePrompt },
-        {
-          role: 'user',
-          content: [
-            { type: 'image_url', image_url: { url: `data:${mimeType};base64,${base64File}`, detail: 'high' } },
-            { type: 'text', text: `Please analyze this legal document: ${doc.file_name}` }
-          ]
-        }
-      ];
-    } else if (isPdf) {
-      // Try text extraction first (fast, works for digital PDFs)
-      let extractedText = '';
-      try {
-        const parsed = await pdfParse(Buffer.from(fileBuffer));
-        extractedText = parsed.text?.trim() || '';
-      } catch (e) {
-        console.log('pdf-parse failed, falling back to vision:', e.message);
-      }
-
-      if (extractedText.length > 100) {
-        // Digital PDF with text layer — use extracted text
-        messages = [
-          { role: 'system', content: activePrompt },
-          {
-            role: 'user',
-            content: `Please analyze this legal document: ${doc.file_name}\n\nDocument text:\n${extractedText.substring(0, 15000)}`
-          }
-        ];
-      } else {
-        // Scanned PDF — upload to OpenAI and use gpt-4o with vision
-        console.log('Scanned PDF detected, uploading to OpenAI Files API...');
-        let fileId = null;
-        try {
-          fileId = await uploadFileToOpenAI(Buffer.from(fileBuffer), doc.file_name || 'document.pdf', 'application/pdf', apiKey);
-
-          const aiResponse = await fetch('https://api.openai.com/v1/chat/completions', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
-            body: JSON.stringify({
-              model: 'gpt-4o',
-              max_tokens: 2000,
-              messages: [
-                { role: 'system', content: activePrompt },
-                {
-                  role: 'user',
-                  content: [
-                    {
-                      type: 'text',
-                      text: `Please analyze this legal document: ${doc.file_name}`
-                    },
-                    {
-                      type: 'file',
-                      file: { file_id: fileId }
-                    }
-                  ]
-                }
-              ]
-            })
-          });
-
-          if (!aiResponse.ok) {
-            const err = await aiResponse.json();
-            throw new Error(err?.error?.message || 'OpenAI request failed');
-          }
-
-          const aiData = await aiResponse.json();
-          const analysis = aiData.choices?.[0]?.message?.content || '';
-
-          await supabase.from('case_documents').update({ status: 'analyzed', ai_summary: analysis, ai_scanned: true }).eq('id', documentId);
-
-          if (user.tier === 'bronze') {
-            await supabase.from('users').update({ pdf_trial_used: user.pdf_trial_used + 1 }).eq('id', userId);
-          } else {
-            await supabase.from('users').update({ monthly_pdf_scans_used: user.monthly_pdf_scans_used + 1 }).eq('id', userId);
-          }
-
-          if (fileId) await deleteOpenAIFile(fileId, apiKey);
-          return NextResponse.json({ success: true, analysis, documentId });
-
-        } catch (uploadErr) {
-          console.error('OpenAI file upload error:', uploadErr.message);
-          if (fileId) await deleteOpenAIFile(fileId, apiKey);
-          // status column removed
-          return NextResponse.json({ error: 'Could not process scanned PDF: ' + uploadErr.message }, { status: 500 });
-        }
-      }
-    } else {
-      const textContent = Buffer.from(fileBuffer).toString('utf-8').substring(0, 15000);
-      messages = [
-        { role: 'system', content: activePrompt },
-        { role: 'user', content: `Please analyze this legal document: ${doc.file_name}\n\nContent:\n${textContent}` }
-      ];
-    }
-
+    // Send everything as a vision request — works for images AND PDFs (gpt-4o can read both)
     const aiResponse = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
-      body: JSON.stringify({ model: 'gpt-4o', max_tokens: 2000, messages })
+      body: JSON.stringify({
+        model: 'gpt-4o',
+        max_tokens: 2000,
+        messages: [
+          { role: 'system', content: activePrompt },
+          {
+            role: 'user',
+            content: [
+              { type: 'text', text: `Please analyze this legal document: ${doc.file_name}` },
+              { type: 'image_url', image_url: { url: `data:${mimeType};base64,${base64File}`, detail: 'high' } }
+            ]
+          }
+        ]
+      })
     });
 
     if (!aiResponse.ok) {
       const err = await aiResponse.json();
-      console.error('OpenAI Scan Error:', JSON.stringify(err));
-      // status column removed
-      return NextResponse.json({ error: 'AI scan failed', detail: err?.error?.message || '' }, { status: 500 });
+      console.error('OpenAI error:', JSON.stringify(err));
+      return NextResponse.json({ error: err?.error?.message || 'AI request failed' }, { status: 500 });
     }
 
     const aiData = await aiResponse.json();
     const analysis = aiData.choices?.[0]?.message?.content || '';
 
-    await supabase.from('case_documents').update({ status: 'analyzed', ai_summary: analysis, ai_scanned: true }).eq('id', documentId);
+    await supabase
+      .from('case_documents')
+      .update({ ai_summary: analysis, ai_scanned: true })
+      .eq('id', documentId);
 
     if (user.tier === 'bronze') {
       await supabase.from('users').update({ pdf_trial_used: user.pdf_trial_used + 1 }).eq('id', userId);
@@ -259,7 +141,7 @@ export async function POST(request) {
     return NextResponse.json({ success: true, analysis, documentId });
 
   } catch (error) {
-    console.error('PDF Scan Error:', error);
-    return NextResponse.json({ error: 'Failed to process scan', detail: error.message }, { status: 500 });
+    console.error('Scan Error:', error);
+    return NextResponse.json({ error: error.message || 'Failed to process scan' }, { status: 500 });
   }
 }
