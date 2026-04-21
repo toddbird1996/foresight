@@ -583,34 +583,14 @@ Document: ${doc.file_name}
 ${fileContent ? 'Content:\n' + fileContent : ''}`;
       }
 
-      const isPdf = (doc.file_type || '').includes('pdf') || doc.file_name?.endsWith('.pdf');
-
-      let result;
-      if (isPdf) {
-        // PDFs go through the dedicated scan route which handles them properly
-        const scanRes = await fetch('/api/documents/scan', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ documentId: doc.id, userId: user.id })
-        });
-        const scanData = await scanRes.json();
-        result = scanData.analysis || scanData.message || 'Unable to analyze.';
-      } else {
-        // Images and text go through AI chat with vision
-        const response = await fetch('/api/ai/chat', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            message: prompt,
-            userId: user.id,
-            action,
-            jurisdiction: caseData.jurisdiction_id,
-            ...(imageBase64 && { imageBase64, imageMimeType })
-          })
-        });
-        const data = await response.json();
-        result = data.content || 'Unable to analyze.';
-      }
+      // Always use the dedicated scan route — it handles PDFs, images, and text properly
+      const scanRes = await fetch('/api/documents/scan', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ documentId: doc.id, userId: user.id, action, prompt })
+      });
+      const scanData = await scanRes.json();
+      const result = scanData.analysis || scanData.message || 'Unable to analyze.';
       const updateField = action === 'compare' ? { ai_comparison: result, ai_scanned: true } : { ai_summary: result, ai_scanned: true };
       await supabase.from('case_documents').update(updateField).eq('id', doc.id);
       await fetchDocuments();
