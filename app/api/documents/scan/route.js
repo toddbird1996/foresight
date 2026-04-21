@@ -60,7 +60,8 @@ async function deleteOpenAIFile(fileId, apiKey) {
 
 export async function POST(request) {
   try {
-    const { documentId, userId } = await request.json();
+    const { documentId, userId, prompt: customPrompt } = await request.json();
+    const activePrompt = customPrompt || SCAN_PROMPT;
 
     if (!documentId || !userId) {
       return NextResponse.json({ error: 'documentId and userId are required' }, { status: 400 });
@@ -137,7 +138,7 @@ export async function POST(request) {
       // Images — use vision directly
       const base64File = Buffer.from(fileBuffer).toString('base64');
       messages = [
-        { role: 'system', content: SCAN_PROMPT },
+        { role: 'system', content: activePrompt },
         {
           role: 'user',
           content: [
@@ -159,7 +160,7 @@ export async function POST(request) {
       if (extractedText.length > 100) {
         // Digital PDF with text layer — use extracted text
         messages = [
-          { role: 'system', content: SCAN_PROMPT },
+          { role: 'system', content: activePrompt },
           {
             role: 'user',
             content: `Please analyze this legal document: ${doc.file_name}\n\nDocument text:\n${extractedText.substring(0, 15000)}`
@@ -179,7 +180,7 @@ export async function POST(request) {
               model: 'gpt-4o',
               max_tokens: 2000,
               messages: [
-                { role: 'system', content: SCAN_PROMPT },
+                { role: 'system', content: activePrompt },
                 {
                   role: 'user',
                   content: [
@@ -226,7 +227,7 @@ export async function POST(request) {
     } else {
       const textContent = Buffer.from(fileBuffer).toString('utf-8').substring(0, 15000);
       messages = [
-        { role: 'system', content: SCAN_PROMPT },
+        { role: 'system', content: activePrompt },
         { role: 'user', content: `Please analyze this legal document: ${doc.file_name}\n\nContent:\n${textContent}` }
       ];
     }
