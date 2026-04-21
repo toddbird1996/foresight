@@ -590,7 +590,7 @@ ${fileContent ? 'Content:\n' + fileContent : ''}`;
         body: JSON.stringify({ documentId: doc.id, userId: user.id, action, prompt })
       });
       const scanData = await scanRes.json();
-      const result = scanData.analysis || scanData.message || 'Unable to analyze.';
+      const result = scanData.analysis || scanData.message || scanData.error || scanData.detail || 'No response from AI. Please try again.';
       const updateField = action === 'compare' ? { ai_comparison: result, ai_scanned: true } : { ai_summary: result, ai_scanned: true };
       await supabase.from('case_documents').update(updateField).eq('id', doc.id);
       await fetchDocuments();
