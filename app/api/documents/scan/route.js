@@ -28,6 +28,36 @@ Give 2-3 concrete actions the parent should take now, this week, or before the n
 
 Be specific and practical. Never predict court outcomes. Always suggest consulting a lawyer for advice specific to their situation.`;
 
+async function uploadFileToOpenAI(fileBuffer, filename, mimeType, apiKey) {
+  const { FormData, Blob } = await import('node:buffer').catch(() => ({ FormData: global.FormData, Blob: global.Blob }));
+  
+  const formData = new FormData();
+  const blob = new Blob([fileBuffer], { type: mimeType });
+  formData.append('file', blob, filename);
+  formData.append('purpose', 'assistants');
+
+  const res = await fetch('https://api.openai.com/v1/files', {
+    method: 'POST',
+    headers: { 'Authorization': `Bearer ${apiKey}` },
+    body: formData
+  });
+
+  if (!res.ok) {
+    const err = await res.json();
+    throw new Error('File upload failed: ' + (err?.error?.message || res.status));
+  }
+
+  const data = await res.json();
+  return data.id;
+}
+
+async function deleteOpenAIFile(fileId, apiKey) {
+  await fetch(`https://api.openai.com/v1/files/${fileId}`, {
+    method: 'DELETE',
+    headers: { 'Authorization': `Bearer ${apiKey}` }
+  });
+}
+
 export async function POST(request) {
   try {
     const { documentId, userId } = await request.json();
@@ -99,10 +129,12 @@ export async function POST(request) {
     const isImage = mimeType.startsWith('image/') || doc.file_name?.match(/\.(jpg|jpeg|png|webp|heic)$/i);
     const isPdf = mimeType.includes('pdf') || doc.file_name?.endsWith('.pdf');
 
+    await supabase.from('case_documents').update({ status: 'processing' }).eq('id', documentId);
+
     let messages;
 
     if (isImage) {
-      // Images — use vision
+      // Images — use vision directly
       const base64File = Buffer.from(fileBuffer).toString('base64');
       messages = [
         { role: 'system', content: SCAN_PROMPT },
@@ -115,51 +147,94 @@ export async function POST(request) {
         }
       ];
     } else if (isPdf) {
-      // PDFs — extract real text with pdf-parse
+      // Try text extraction first (fast, works for digital PDFs)
       let extractedText = '';
       try {
         const parsed = await pdfParse(Buffer.from(fileBuffer));
-        extractedText = parsed.text?.substring(0, 15000) || '';
-      } catch (parseErr) {
-        console.error('PDF parse error:', parseErr);
+        extractedText = parsed.text?.trim() || '';
+      } catch (e) {
+        console.log('pdf-parse failed, falling back to vision:', e.message);
       }
 
-      if (!extractedText || extractedText.trim().length < 50) {
-        return NextResponse.json({
-          error: 'Could not extract text from this PDF. It may be scanned or image-based. Try re-uploading as an image (JPG/PNG) for better results.',
-          analysis: 'This PDF appears to be scanned or image-based and could not be read as text. Please re-upload it as a JPG or PNG image for AI analysis.'
-        });
-      }
+      if (extractedText.length > 100) {
+        // Digital PDF with text layer — use extracted text
+        messages = [
+          { role: 'system', content: SCAN_PROMPT },
+          {
+            role: 'user',
+            content: `Please analyze this legal document: ${doc.file_name}\n\nDocument text:\n${extractedText.substring(0, 15000)}`
+          }
+        ];
+      } else {
+        // Scanned PDF — upload to OpenAI and use gpt-4o with vision
+        console.log('Scanned PDF detected, uploading to OpenAI Files API...');
+        let fileId = null;
+        try {
+          fileId = await uploadFileToOpenAI(Buffer.from(fileBuffer), doc.file_name || 'document.pdf', 'application/pdf', apiKey);
 
-      messages = [
-        { role: 'system', content: SCAN_PROMPT },
-        {
-          role: 'user',
-          content: `Please analyze this legal document: ${doc.file_name}\n\nDocument text:\n${extractedText}`
+          const aiResponse = await fetch('https://api.openai.com/v1/chat/completions', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
+            body: JSON.stringify({
+              model: 'gpt-4o',
+              max_tokens: 2000,
+              messages: [
+                { role: 'system', content: SCAN_PROMPT },
+                {
+                  role: 'user',
+                  content: [
+                    {
+                      type: 'text',
+                      text: `Please analyze this legal document: ${doc.file_name}`
+                    },
+                    {
+                      type: 'file',
+                      file: { file_id: fileId }
+                    }
+                  ]
+                }
+              ]
+            })
+          });
+
+          if (!aiResponse.ok) {
+            const err = await aiResponse.json();
+            throw new Error(err?.error?.message || 'OpenAI request failed');
+          }
+
+          const aiData = await aiResponse.json();
+          const analysis = aiData.choices?.[0]?.message?.content || '';
+
+          await supabase.from('case_documents').update({ status: 'analyzed', ai_summary: analysis, ai_scanned: true }).eq('id', documentId);
+
+          if (user.tier === 'bronze') {
+            await supabase.from('users').update({ pdf_trial_used: user.pdf_trial_used + 1 }).eq('id', userId);
+          } else {
+            await supabase.from('users').update({ monthly_pdf_scans_used: user.monthly_pdf_scans_used + 1 }).eq('id', userId);
+          }
+
+          if (fileId) await deleteOpenAIFile(fileId, apiKey);
+          return NextResponse.json({ success: true, analysis, documentId });
+
+        } catch (uploadErr) {
+          console.error('OpenAI file upload error:', uploadErr.message);
+          if (fileId) await deleteOpenAIFile(fileId, apiKey);
+          await supabase.from('case_documents').update({ status: 'failed' }).eq('id', documentId);
+          return NextResponse.json({ error: 'Could not process scanned PDF: ' + uploadErr.message }, { status: 500 });
         }
-      ];
+      }
     } else {
-      // Other text-based docs
       const textContent = Buffer.from(fileBuffer).toString('utf-8').substring(0, 15000);
       messages = [
         { role: 'system', content: SCAN_PROMPT },
-        {
-          role: 'user',
-          content: `Please analyze this legal document: ${doc.file_name}\n\nDocument content:\n${textContent}`
-        }
+        { role: 'user', content: `Please analyze this legal document: ${doc.file_name}\n\nContent:\n${textContent}` }
       ];
     }
-
-    await supabase.from('case_documents').update({ status: 'processing' }).eq('id', documentId);
 
     const aiResponse = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
-      body: JSON.stringify({
-        model: 'gpt-4o',
-        max_tokens: 2000,
-        messages
-      })
+      body: JSON.stringify({ model: 'gpt-4o', max_tokens: 2000, messages })
     });
 
     if (!aiResponse.ok) {
