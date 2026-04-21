@@ -130,7 +130,7 @@ export async function POST(request) {
     const isImage = mimeType.startsWith('image/') || doc.file_name?.match(/\.(jpg|jpeg|png|webp|heic)$/i);
     const isPdf = mimeType.includes('pdf') || doc.file_name?.endsWith('.pdf');
 
-    await supabase.from('case_documents').update({ status: 'processing' }).eq('id', documentId);
+    // status column removed
 
     let messages;
 
@@ -220,7 +220,7 @@ export async function POST(request) {
         } catch (uploadErr) {
           console.error('OpenAI file upload error:', uploadErr.message);
           if (fileId) await deleteOpenAIFile(fileId, apiKey);
-          await supabase.from('case_documents').update({ status: 'failed' }).eq('id', documentId);
+          // status column removed
           return NextResponse.json({ error: 'Could not process scanned PDF: ' + uploadErr.message }, { status: 500 });
         }
       }
@@ -241,7 +241,7 @@ export async function POST(request) {
     if (!aiResponse.ok) {
       const err = await aiResponse.json();
       console.error('OpenAI Scan Error:', JSON.stringify(err));
-      await supabase.from('case_documents').update({ status: 'failed' }).eq('id', documentId);
+      // status column removed
       return NextResponse.json({ error: 'AI scan failed', detail: err?.error?.message || '' }, { status: 500 });
     }
 
