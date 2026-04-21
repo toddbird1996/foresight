@@ -95,7 +95,7 @@ export async function POST(request) {
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
         body: JSON.stringify({
           model: 'gpt-4o',
-          max_tokens: 2000,
+          max_tokens: 3000,
           messages: [
             { role: 'system', content: activePrompt },
             {
