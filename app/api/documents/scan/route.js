@@ -1,22 +1,32 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import pdfParse from 'pdf-parse';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL,
   process.env.SUPABASE_SERVICE_ROLE_KEY
 );
 
-const SCAN_PROMPT = `You are a legal document analyst helping a parent navigate a custody case in Canada.
-Analyze this document and provide:
-1. A plain-language summary (2-3 sentences)
-2. Key dates mentioned
-3. Key obligations or requirements for each party
-4. Any deadlines or court dates
-5. Red flags or items requiring urgent attention
-6. Recommended next steps for the user
+const SCAN_PROMPT = `You are a legal document analyst helping a parent navigate a custody or family law case.
 
-Be specific, practical, and supportive. Use plain language. Format your response with clear headings.
-Do not provide legal advice — provide legal information and suggest consulting a lawyer for advice.`;
+When analyzing a document, follow this exact structure:
+
+**DOCUMENT CONTENTS**
+Report what the document actually says using its own exact wording and language as closely as possible. Preserve names, dates, dollar amounts, legal terms, obligations, and conditions exactly as written. Do not paraphrase or reinterpret — reflect what it literally states. Go section by section if the document has sections.
+
+**WHAT THIS MEANS FOR YOU**
+In plain everyday language, explain what the document means for the parent reading it. What are they required to do? What rights does it give or take away? What could happen if they don't comply?
+
+**KEY DATES & DEADLINES**
+List every date, deadline, or time-sensitive requirement mentioned in the document.
+
+**RED FLAGS**
+Flag anything urgent, concerning, or that requires immediate attention or legal advice.
+
+**RECOMMENDED NEXT STEPS**
+Give 2-3 concrete actions the parent should take now, this week, or before the next deadline.
+
+Be specific and practical. Never predict court outcomes. Always suggest consulting a lawyer for advice specific to their situation.`;
 
 export async function POST(request) {
   try {
@@ -54,7 +64,7 @@ export async function POST(request) {
       if (tier && user.monthly_pdf_scans_used >= tier.monthly_doc_limit) {
         return NextResponse.json({
           error: 'Monthly limit reached',
-          message: `You have reached your monthly PDF scan limit. Your limit resets on the 1st of next month.`
+          message: 'You have reached your monthly PDF scan limit. Your limit resets on the 1st of next month.'
         }, { status: 403 });
       }
     }
@@ -85,65 +95,84 @@ export async function POST(request) {
     }
 
     const fileBuffer = await fileResponse.arrayBuffer();
-    const base64File = Buffer.from(fileBuffer).toString('base64');
-    const mimeType = doc.file_type || 'application/pdf';
+    const mimeType = doc.file_type || '';
+    const isImage = mimeType.startsWith('image/') || doc.file_name?.match(/\.(jpg|jpeg|png|webp|heic)$/i);
+    const isPdf = mimeType.includes('pdf') || doc.file_name?.endsWith('.pdf');
 
     let messages;
-    if (mimeType.startsWith('image/')) {
+
+    if (isImage) {
+      // Images — use vision
+      const base64File = Buffer.from(fileBuffer).toString('base64');
       messages = [
         { role: 'system', content: SCAN_PROMPT },
         {
           role: 'user',
           content: [
-            { type: 'image_url', image_url: { url: `data:${mimeType};base64,${base64File}` } },
-            { type: 'text', text: 'Please analyze this legal document.' }
+            { type: 'image_url', image_url: { url: `data:${mimeType};base64,${base64File}`, detail: 'high' } },
+            { type: 'text', text: `Please analyze this legal document: ${doc.file_name}` }
           ]
         }
       ];
-    } else {
+    } else if (isPdf) {
+      // PDFs — extract real text with pdf-parse
+      let extractedText = '';
+      try {
+        const parsed = await pdfParse(Buffer.from(fileBuffer));
+        extractedText = parsed.text?.substring(0, 15000) || '';
+      } catch (parseErr) {
+        console.error('PDF parse error:', parseErr);
+      }
+
+      if (!extractedText || extractedText.trim().length < 50) {
+        return NextResponse.json({
+          error: 'Could not extract text from this PDF. It may be scanned or image-based. Try re-uploading as an image (JPG/PNG) for better results.',
+          analysis: 'This PDF appears to be scanned or image-based and could not be read as text. Please re-upload it as a JPG or PNG image for AI analysis.'
+        });
+      }
+
       messages = [
         { role: 'system', content: SCAN_PROMPT },
         {
           role: 'user',
-          content: `Please analyze this legal document (${doc.file_name}). The document is encoded in base64 below:\n\n${base64File.substring(0, 8000)}`
+          content: `Please analyze this legal document: ${doc.file_name}\n\nDocument text:\n${extractedText}`
+        }
+      ];
+    } else {
+      // Other text-based docs
+      const textContent = Buffer.from(fileBuffer).toString('utf-8').substring(0, 15000);
+      messages = [
+        { role: 'system', content: SCAN_PROMPT },
+        {
+          role: 'user',
+          content: `Please analyze this legal document: ${doc.file_name}\n\nDocument content:\n${textContent}`
         }
       ];
     }
 
-    await supabase
-      .from('case_documents')
-      .update({ status: 'processing' })
-      .eq('id', documentId);
+    await supabase.from('case_documents').update({ status: 'processing' }).eq('id', documentId);
 
     const aiResponse = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${apiKey}`
-      },
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
       body: JSON.stringify({
-        model: 'gpt-4o-mini',
-        max_tokens: 1500,
+        model: 'gpt-4o',
+        max_tokens: 2000,
         messages
       })
     });
 
     if (!aiResponse.ok) {
+      const err = await aiResponse.json();
+      console.error('OpenAI Scan Error:', JSON.stringify(err));
       await supabase.from('case_documents').update({ status: 'failed' }).eq('id', documentId);
-      return NextResponse.json({ error: 'AI scan failed' }, { status: 500 });
+      return NextResponse.json({ error: 'AI scan failed', detail: err?.error?.message || '' }, { status: 500 });
     }
 
     const aiData = await aiResponse.json();
     const analysis = aiData.choices?.[0]?.message?.content || '';
 
-    await supabase
-      .from('case_documents')
-      .update({
-        status: 'analyzed',
-        ai_summary: analysis,
-        ai_scanned: true
-      })
-      .eq('id', documentId);
+    await supabase.from('case_documents').update({ status: 'analyzed', ai_summary: analysis, ai_scanned: true }).eq('id', documentId);
 
     if (user.tier === 'bronze') {
       await supabase.from('users').update({ pdf_trial_used: user.pdf_trial_used + 1 }).eq('id', userId);
@@ -155,6 +184,6 @@ export async function POST(request) {
 
   } catch (error) {
     console.error('PDF Scan Error:', error);
-    return NextResponse.json({ error: 'Failed to process scan' }, { status: 500 });
+    return NextResponse.json({ error: 'Failed to process scan', detail: error.message }, { status: 500 });
   }
 }
