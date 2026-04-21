@@ -488,16 +488,24 @@ This is for a ${caseType} case in ${jurisdiction}.`;
             // Plain text — read directly
             fileContent = await blob.text();
             fileContent = fileContent.substring(0, 10000);
-          } else if (fileType.includes('pdf') || doc.file_name?.endsWith('.pdf') ||
-                     fileType.includes('image') || doc.file_name?.match(/\.(jpg|jpeg|png|webp|heic)$/i)) {
-            // PDF or image — convert to base64 and use vision
+          } else if (fileType.includes('image') || doc.file_name?.match(/\.(jpg|jpeg|png|webp|heic)$/i)) {
+            // Images only — use vision
             const reader = new FileReader();
             imageBase64 = await new Promise((resolve, reject) => {
               reader.onload = () => resolve(reader.result.split(',')[1]);
               reader.onerror = reject;
               reader.readAsDataURL(blob);
             });
-            imageMimeType = fileType || (doc.file_name?.endsWith('.pdf') ? 'application/pdf' : 'image/jpeg');
+            imageMimeType = fileType || 'image/jpeg';
+          } else if (fileType.includes('pdf') || doc.file_name?.endsWith('.pdf')) {
+            // PDF — convert to base64 text (vision doesn't support PDFs)
+            const reader = new FileReader();
+            const b64 = await new Promise((resolve, reject) => {
+              reader.onload = () => resolve(reader.result.split(',')[1]);
+              reader.onerror = reject;
+              reader.readAsDataURL(blob);
+            });
+            fileContent = b64.substring(0, 12000);
           }
         } catch (fetchErr) { console.error('File fetch error:', fetchErr); }
       }
@@ -581,6 +589,7 @@ ${fileContent ? 'Content:\n' + fileContent : ''}`;
         body: JSON.stringify({
           message: prompt,
           userId: user.id,
+          action,
           jurisdiction: caseData.jurisdiction_id,
           ...(imageBase64 && { imageBase64, imageMimeType })
         })
