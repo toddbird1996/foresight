@@ -81,7 +81,7 @@ What you must NEVER do:
 
 export async function POST(request) {
   try {
-    const { message, jurisdiction = 'saskatchewan', userId, history = [], imageBase64, imageMimeType } = await request.json();
+    const { message, jurisdiction = 'saskatchewan', userId, history = [], imageBase64, imageMimeType, action } = await request.json();
 
     if (!message) return NextResponse.json({ error: 'Message is required' }, { status: 400 });
     if (!userId) return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
@@ -145,7 +145,7 @@ export async function POST(request) {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
       body: JSON.stringify({
-        model: imageBase64 ? 'gpt-4o' : 'gpt-4o-mini',
+        model: (imageBase64 || ['summarize','scan','compare'].includes(action)) ? 'gpt-4o' : 'gpt-4o-mini',
         max_tokens: 1500,
         messages: [
           { role: 'system', content: systemPrompt },
