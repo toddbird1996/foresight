@@ -60,12 +60,8 @@ export async function POST(request) {
         .select('monthly_doc_limit')
         .eq('tier_name', user.tier)
         .single();
-
       if (tier && user.monthly_pdf_scans_used >= tier.monthly_doc_limit) {
-        return NextResponse.json({
-          error: 'Monthly limit reached',
-          message: 'You have reached your monthly PDF scan limit. Your limit resets on the 1st of next month.'
-        }, { status: 403 });
+        return NextResponse.json({ error: 'Monthly limit reached', message: 'You have reached your monthly PDF scan limit.' }, { status: 403 });
       }
     }
 
@@ -76,51 +72,68 @@ export async function POST(request) {
       .eq('user_id', userId)
       .single();
 
-    if (docError || !doc) {
-      return NextResponse.json({ error: 'Document not found' }, { status: 404 });
-    }
-
-    if (!doc.file_url) {
-      return NextResponse.json({ error: 'Document has no file attached. Please re-upload the file and try again.' }, { status: 400 });
-    }
+    if (docError || !doc) return NextResponse.json({ error: 'Document not found' }, { status: 404 });
+    if (!doc.file_url) return NextResponse.json({ error: 'No file attached. Please re-upload and try again.' }, { status: 400 });
 
     const apiKey = process.env.OPENAI_KEY || process.env.OPENAI_API_KEY;
-    if (!apiKey) {
-      return NextResponse.json({ error: 'AI service not configured' }, { status: 500 });
-    }
+    if (!apiKey) return NextResponse.json({ error: 'AI service not configured' }, { status: 500 });
 
     const fileResponse = await fetch(doc.file_url);
-    if (!fileResponse.ok) {
-      return NextResponse.json({ error: 'Could not fetch document. The file may have expired — try re-uploading it.' }, { status: 500 });
-    }
+    if (!fileResponse.ok) return NextResponse.json({ error: 'Could not fetch document file.' }, { status: 500 });
 
     const fileBuffer = await fileResponse.arrayBuffer();
     const base64File = Buffer.from(fileBuffer).toString('base64');
+    const mimeType = doc.file_type || 'application/pdf';
+    const isImage = mimeType.startsWith('image/');
 
-    // GPT-4o vision only accepts image MIME types
-    // Files uploaded from mobile camera are images even if stored as application/pdf
-    const rawMime = doc.file_type || '';
-    const mimeType = rawMime.startsWith('image/') ? rawMime : 'image/jpeg';
+    let aiResponse;
 
-    // Send everything as a vision request
-    const aiResponse = await fetch('https://api.openai.com/v1/chat/completions', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
-      body: JSON.stringify({
-        model: 'gpt-4o',
-        max_tokens: 2000,
-        messages: [
-          { role: 'system', content: activePrompt },
-          {
-            role: 'user',
-            content: [
-              { type: 'text', text: `Please analyze this legal document: ${doc.file_name}` },
-              { type: 'image_url', image_url: { url: `data:${mimeType};base64,${base64File}`, detail: 'high' } }
-            ]
-          }
-        ]
-      })
-    });
+    if (isImage) {
+      // Images — use chat completions with vision
+      aiResponse = await fetch('https://api.openai.com/v1/chat/completions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
+        body: JSON.stringify({
+          model: 'gpt-4o',
+          max_tokens: 2000,
+          messages: [
+            { role: 'system', content: activePrompt },
+            {
+              role: 'user',
+              content: [
+                { type: 'text', text: `Please analyze this legal document: ${doc.file_name}` },
+                { type: 'image_url', image_url: { url: `data:${mimeType};base64,${base64File}`, detail: 'high' } }
+              ]
+            }
+          ]
+        })
+      });
+    } else {
+      // PDFs — use OpenAI Responses API which natively supports PDF input
+      aiResponse = await fetch('https://api.openai.com/v1/responses', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
+        body: JSON.stringify({
+          model: 'gpt-4o',
+          input: [
+            {
+              role: 'user',
+              content: [
+                {
+                  type: 'input_file',
+                  filename: doc.file_name || 'document.pdf',
+                  file_data: `data:application/pdf;base64,${base64File}`
+                },
+                {
+                  type: 'input_text',
+                  text: `${activePrompt}\n\nPlease analyze this legal document: ${doc.file_name}`
+                }
+              ]
+            }
+          ]
+        })
+      });
+    }
 
     if (!aiResponse.ok) {
       const err = await aiResponse.json();
@@ -129,12 +142,14 @@ export async function POST(request) {
     }
 
     const aiData = await aiResponse.json();
-    const analysis = aiData.choices?.[0]?.message?.content || '';
 
-    await supabase
-      .from('case_documents')
-      .update({ ai_summary: analysis, ai_scanned: true })
-      .eq('id', documentId);
+    // Responses API and Chat Completions API have different response shapes
+    const analysis = aiData.output_text
+      || aiData.output?.[0]?.content?.[0]?.text
+      || aiData.choices?.[0]?.message?.content
+      || '';
+
+    await supabase.from('case_documents').update({ ai_summary: analysis, ai_scanned: true }).eq('id', documentId);
 
     if (user.tier === 'bronze') {
       await supabase.from('users').update({ pdf_trial_used: user.pdf_trial_used + 1 }).eq('id', userId);
