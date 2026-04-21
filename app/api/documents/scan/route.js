@@ -6,26 +6,17 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY
 );
 
-const SCAN_PROMPT = `You are a legal document analyst for Foresight, helping a parent navigate a custody or family law case.
+const SCAN_PROMPT = `You are a legal document analyst helping a parent navigate a custody case in Canada.
+Analyze this document and provide:
+1. A plain-language summary (2-3 sentences)
+2. Key dates mentioned
+3. Key obligations or requirements for each party
+4. Any deadlines or court dates
+5. Red flags or items requiring urgent attention
+6. Recommended next steps for the user
 
-When analyzing a document, follow this exact structure:
-
-**DOCUMENT CONTENTS**
-Report what the document actually says using its own exact wording and language as closely as possible. Preserve names, dates, dollar amounts, legal terms, obligations, and conditions exactly as written. Do not paraphrase or reinterpret — reflect what it literally states. Go section by section if the document has sections.
-
-**WHAT THIS MEANS FOR YOU**
-In plain everyday language, explain what the document means for the parent reading it. What are they required to do? What rights does it give or take away? What could happen if they don't comply?
-
-**KEY DATES & DEADLINES**
-List every date, deadline, or time-sensitive requirement mentioned in the document.
-
-**RED FLAGS**
-Flag anything urgent, concerning, or that requires immediate attention or legal advice.
-
-**RECOMMENDED NEXT STEPS**
-Give 2-3 concrete actions the parent should take now, this week, or before the next deadline.
-
-Be specific and practical. Never predict court outcomes. Always suggest consulting a lawyer for advice specific to their situation.`;
+Be specific, practical, and supportive. Use plain language. Format your response with clear headings.
+Do not provide legal advice — provide legal information and suggest consulting a lawyer for advice.`;
 
 export async function POST(request) {
   try {
@@ -63,7 +54,7 @@ export async function POST(request) {
       if (tier && user.monthly_pdf_scans_used >= tier.monthly_doc_limit) {
         return NextResponse.json({
           error: 'Monthly limit reached',
-          message: 'You have reached your monthly PDF scan limit. Your limit resets on the 1st of next month.'
+          message: `You have reached your monthly PDF scan limit. Your limit resets on the 1st of next month.`
         }, { status: 403 });
       }
     }
@@ -104,8 +95,8 @@ export async function POST(request) {
         {
           role: 'user',
           content: [
-            { type: 'image_url', image_url: { url: `data:${mimeType};base64,${base64File}`, detail: 'high' } },
-            { type: 'text', text: `Please analyze this legal document: ${doc.file_name}` }
+            { type: 'image_url', image_url: { url: `data:${mimeType};base64,${base64File}` } },
+            { type: 'text', text: 'Please analyze this legal document.' }
           ]
         }
       ];
@@ -114,7 +105,7 @@ export async function POST(request) {
         { role: 'system', content: SCAN_PROMPT },
         {
           role: 'user',
-          content: `Please analyze this legal document: ${doc.file_name}\n\nDocument content (base64 encoded):\n${base64File.substring(0, 12000)}`
+          content: `Please analyze this legal document (${doc.file_name}). The document is encoded in base64 below:\n\n${base64File.substring(0, 8000)}`
         }
       ];
     }
@@ -131,17 +122,15 @@ export async function POST(request) {
         'Authorization': `Bearer ${apiKey}`
       },
       body: JSON.stringify({
-        model: 'gpt-4o',
-        max_tokens: 2000,
+        model: 'gpt-4o-mini',
+        max_tokens: 1500,
         messages
       })
     });
 
     if (!aiResponse.ok) {
-      const err = await aiResponse.json();
-      console.error('OpenAI Scan Error:', JSON.stringify(err));
       await supabase.from('case_documents').update({ status: 'failed' }).eq('id', documentId);
-      return NextResponse.json({ error: 'AI scan failed', detail: err?.error?.message || '' }, { status: 500 });
+      return NextResponse.json({ error: 'AI scan failed' }, { status: 500 });
     }
 
     const aiData = await aiResponse.json();
@@ -166,6 +155,6 @@ export async function POST(request) {
 
   } catch (error) {
     console.error('PDF Scan Error:', error);
-    return NextResponse.json({ error: 'Failed to process scan', detail: error.message }, { status: 500 });
+    return NextResponse.json({ error: 'Failed to process scan' }, { status: 500 });
   }
 }
