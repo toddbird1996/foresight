@@ -16,12 +16,12 @@ const CASE_STAGES = [
     ],
   },
   {
-    id: 'fdr', title: 'Family Dispute Resolution (Mediation)', subtitle: 'FDR — also known as mediation — is required before filing in most provinces', icon: '🤝', color: 'bg-purple-600',
+    id: 'fdr', title: 'Family Dispute Resolution (Mediation)', subtitle: 'FDR (mediation) is strongly recommended before filing — it saves time, money, and stress', icon: '🤝', color: 'bg-purple-600',
     tasks: [
-      { key: 'fdr_check', label: 'Confirm if FDR (mediation) is mandatory', detail: 'FDR stands for Family Dispute Resolution — it is mediation. In SK, it is mandatory unless family violence is involved. Skip it and the judge sends you back — losing months.' },
+      { key: 'fdr_check', label: 'Consider FDR (mediation) before filing', detail: 'FDR stands for Family Dispute Resolution — it is mediation. It is not mandatory, but it is highly recommended. It saves significant time and money compared to going to court. Many disputes are resolved entirely through mediation without ever needing a judge.' },
       { key: 'fdr_find', label: 'Find a mediator (FDR provider)', detail: 'You need a trained FDR mediator to run the session. Check the Programs page. SK: Dispute Resolution Office (306-787-5747), sliding-scale fees available.' },
-      { key: 'fdr_attend', label: 'Attend FDR session(s)', detail: 'Bring your evidence binder. Be calm and factual. The mediator reports whether you participated in good faith.' },
-      { key: 'fdr_cert', label: 'Get Certificate of Compliance', detail: 'If unsuccessful, the professional issues this certificate. File it with the court as proof you attended. Without it, court won\'t proceed.' },
+      { key: 'fdr_attend', label: 'Attend FDR session(s)', detail: 'Bring your evidence binder. Be calm and factual. The mediator does not take sides — they help both parties reach an agreement. Participating in good faith can reflect positively on you if the matter ever goes to court.' },
+      { key: 'fdr_cert', label: 'Get Certificate of Compliance (if required by your province)', detail: 'If mediation was unsuccessful and your province requires it, the mediator issues a Certificate of Compliance as proof you attempted FDR. Check your jurisdiction — not all provinces require this before filing.' },
     ],
   },
   {
