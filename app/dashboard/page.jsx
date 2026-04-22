@@ -345,9 +345,9 @@ const WALKTHROUGH = {
     colour: { bg: 'bg-purple-50 border-purple-200', badge: 'bg-purple-100 text-purple-700', head: 'text-purple-900', sub: 'text-purple-700', btn: 'bg-purple-600 hover:bg-purple-700', step: 'bg-purple-200 text-purple-800', mand: 'bg-purple-600', opt: 'bg-purple-200' },
     icon: '📋', label: 'Filed — Awaiting Service',
     headline: "Your application is filed. Now you need to serve the other party.",
-    summary: "Filing is step one. The other parent must be personally served — you cannot do it yourself. Until service is confirmed with the court, nothing proceeds.",
+    summary: "Filing is step one. The other parent must be served with the documents. Until service is confirmed with the court, nothing proceeds.",
     steps: [
-      { title: "Arrange personal service", desc: "An adult (18+) who is not involved in the case must hand the documents directly to the other parent. You cannot serve them yourself.", link: '/filing', linkLabel: 'Service Steps', mandatory: true },
+      { title: "Arrange service", desc: "In most cases, an adult (18+) who is not involved in the case must personally hand the documents to the other parent. However, you may also be able to serve them yourself in person if they are known to you, by delivering to their known address, or in some cases by email if that address is on file with the court. Check your jurisdiction's rules.", link: '/filing', linkLabel: 'Service Steps', mandatory: true },
       { title: "Complete the Affidavit of Service (Form 12-15)", desc: "The person who served the documents fills this out and swears it before a Commissioner for Oaths. This is your proof of service.", link: '/court-forms', linkLabel: 'Get Form 12-15', mandatory: true },
       { title: "File proof of service with the court", desc: "Submit the sworn Affidavit of Service to the court registry. Without this, your case cannot proceed.", link: null, linkLabel: null, mandatory: true },
       { title: "Set a deadline reminder", desc: "The other parent has 30 days to respond (60 days if outside SK). Set a reminder so you know when you can move forward.", link: '/deadlines', linkLabel: 'Set Reminder', mandatory: false },
