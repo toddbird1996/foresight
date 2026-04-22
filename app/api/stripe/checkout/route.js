@@ -49,8 +49,8 @@ export async function POST(request) {
       payment_method_types: ['card'],
       line_items: [{ price: priceId, quantity: 1 }],
       mode: 'subscription',
-      success_url: `${process.env.NEXT_PUBLIC_APP_URL}/dashboard?upgraded=true`,
-      cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/pricing`,
+      success_url: `${process.env.NEXT_PUBLIC_APP_URL || 'https://foresightcustody.ca'}/dashboard?upgraded=true`,
+      cancel_url: `${process.env.NEXT_PUBLIC_APP_URL || 'https://foresightcustody.ca'}/pricing`,
       metadata: { user_id: user.id, tier },
       subscription_data: { metadata: { user_id: user.id, tier } }
     });
