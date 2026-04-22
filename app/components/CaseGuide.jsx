@@ -16,10 +16,10 @@ const CASE_STAGES = [
     ],
   },
   {
-    id: 'fdr', title: 'Family Dispute Resolution', subtitle: 'Required before filing in most provinces', icon: '🤝', color: 'bg-purple-600',
+    id: 'fdr', title: 'Family Dispute Resolution (Mediation)', subtitle: 'FDR — also known as mediation — is required before filing in most provinces', icon: '🤝', color: 'bg-purple-600',
     tasks: [
-      { key: 'fdr_check', label: 'Confirm if FDR is mandatory', detail: 'In SK, mandatory unless family violence. Skip it and the judge sends you back — losing months.' },
-      { key: 'fdr_find', label: 'Find a mediator', detail: 'Check Programs page. SK: Dispute Resolution Office (306-787-5747), sliding-scale fees.' },
+      { key: 'fdr_check', label: 'Confirm if FDR (mediation) is mandatory', detail: 'FDR stands for Family Dispute Resolution — it is mediation. In SK, it is mandatory unless family violence is involved. Skip it and the judge sends you back — losing months.' },
+      { key: 'fdr_find', label: 'Find a mediator (FDR provider)', detail: 'You need a trained FDR mediator to run the session. Check the Programs page. SK: Dispute Resolution Office (306-787-5747), sliding-scale fees available.' },
       { key: 'fdr_attend', label: 'Attend FDR session(s)', detail: 'Bring your evidence binder. Be calm and factual. The mediator reports whether you participated in good faith.' },
       { key: 'fdr_cert', label: 'Get Certificate of Compliance', detail: 'If unsuccessful, the professional issues this certificate. File it with the court as proof you attended. Without it, court won\'t proceed.' },
     ],
