@@ -39,7 +39,7 @@ const CASE_STAGES = [
   {
     id: 'service', title: 'Serving the Other Party', subtitle: 'Legally notifying the other parent', icon: '📬', color: 'bg-amber-600',
     tasks: [
-      { key: 'server', label: 'Find someone to serve documents', detail: 'You CANNOT serve them yourself. Friend (18+), family member, or process server ($50-150). Must hand documents directly to the other parent.' },
+      { key: 'server', label: 'Arrange service of documents', detail: 'You may be able to serve the other party yourself in person, deliver to their known address, or in some cases by email if that address is on file with the court. Otherwise, a friend (18+), family member, or process server ($50-150) can serve on your behalf. Documents must be delivered directly to the other parent.' },
       { key: 'serve', label: 'Have documents served', detail: 'Server hands complete copy of filed documents to other parent. Note exact date, time, location.' },
       { key: 'aff_service', label: 'Get Affidavit of Service signed', detail: 'Server fills out Affidavit of Service (SK: Form 12-15). Must be sworn/commissioned. This is your proof.' },
       { key: 'file_service', label: 'File Affidavit of Service with court', detail: 'Without this filed, the judge has no proof the other parent was notified. Case cannot proceed.' },
