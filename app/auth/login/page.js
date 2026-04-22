@@ -20,9 +20,32 @@ function LoginForm() {
     e.preventDefault();
     setLoading(true);
     setError('');
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    if (error) { setError(error.message); setLoading(false); }
-    else { router.push(redirectTo); }
+    try {
+      // Check rate limit first
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
+      const data = await res.json();
+      if (res.status === 429) {
+        setError(data.error);
+        setLoading(false);
+        return;
+      }
+      if (!res.ok) {
+        setError(data.error || 'Invalid email or password');
+        setLoading(false);
+        return;
+      }
+      // Rate limit passed — do actual Supabase login
+      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error) { setError(error.message); setLoading(false); }
+      else { router.push(redirectTo); }
+    } catch (err) {
+      setError('Login failed. Please try again.');
+      setLoading(false);
+    }
   };
 
   const handleReset = async (e) => {
