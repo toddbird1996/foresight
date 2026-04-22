@@ -55,64 +55,65 @@ function PartialAgreementPanel() {
 
   const OPTIONS = [
     {
-      id: 'adjourn',
-      icon: '⏸️',
-      color: 'blue',
-      title: 'Adjourn and keep negotiating',
-      when: 'You agree on most things but one or two issues remain unresolved and you believe a short break could lead to full agreement.',
-      steps: [
-        'Ask the judge to adjourn the matter to a set date — usually 2 to 4 weeks.',
-        'Use the time to negotiate the remaining issues directly, through lawyers, or via Family Justice Services.',
-        'If you reach agreement on the outstanding points, prepare and submit the full consent order before the adjourned date.',
-        'If not, the judge will proceed with the contested issues at the adjourned date.',
-      ],
-      tip: 'Judges generally support adjournments when parties are close to agreement. Be specific about what you still need to resolve.',
-      color_class: 'blue',
-    },
-    {
-      id: 'split',
-      icon: '✂️',
+      id: 'agree_all',
+      icon: '✅',
       color: 'green',
-      title: 'Consent on agreed issues, contest the rest',
-      when: 'You agree on some issues (e.g., child support amount) but not others (e.g., parenting schedule). You can consent on the settled issues and let the judge decide the rest.',
+      title: 'Agree to the entire draft',
+      when: 'You accept all terms in the draft consent order as written by the judge.',
       steps: [
-        'Tell the judge which specific issues you have agreed on and which remain in dispute.',
-        'File a partial consent order covering only the agreed issues.',
-        'The contested issues will be scheduled for a hearing where each side presents evidence.',
-        'The judge makes the final decision on the disputed issues only.',
+        'Prepare an Affidavit stating you consent to all terms of the draft consent order.',
+        'File the Affidavit with the Court Registry (Registrar\'s Office).',
+        'Serve a copy of your Affidavit on the opposing party.',
+        'Once both parties consent, the judge signs the order and it becomes legally binding.',
       ],
-      tip: 'This approach saves time and money. Issues you agree on are resolved immediately — you only go to a hearing for what you genuinely cannot agree on.',
+      tip: 'Read every clause carefully before agreeing. Once signed by the judge, the order is enforceable and difficult to change.',
       color_class: 'green',
     },
     {
-      id: 'without_prejudice',
-      icon: '🔒',
-      color: 'amber',
-      title: 'Negotiate without prejudice',
-      when: 'You want to make compromise offers to settle without those offers being used against you in court if negotiations fail.',
+      id: 'agree_partial',
+      icon: '✂️',
+      color: 'blue',
+      title: 'Agree to part of the draft, contest the rest',
+      when: 'You agree with some clauses in the draft consent order but disagree with others.',
       steps: [
-        'Clearly label any written offers or discussions as "Without Prejudice."',
-        'This means the other party cannot show the judge what you offered if you do not reach a deal.',
-        'Use a neutral mediator through Family Justice Services (1-866-933-5972) — free in Saskatchewan.',
-        'If you settle, draft the consent order and present it to the judge.',
-        'If not, return to court for a hearing on the outstanding issues.',
+        'Prepare an Affidavit clearly identifying which clauses you consent to and which you dispute.',
+        'Explain in the Affidavit why you disagree with the contested clauses and what alternative you propose.',
+        'File the Affidavit with the Court Registry (Registrar\'s Office).',
+        'Serve a copy of your Affidavit on the opposing party.',
+        'The contested clauses will be dealt with at a hearing or further conference; agreed clauses may be finalized by the judge.',
       ],
-      tip: 'Without prejudice negotiations are protected — what you say or offer cannot be used as evidence of an admission if the talks break down.',
-      color_class: 'amber',
+      tip: 'Be specific — reference exact clause numbers or sections. Vague objections slow the process down. Attach supporting evidence where possible.',
+      color_class: 'blue',
+    },
+    {
+      id: 'disagree_all',
+      icon: '❌',
+      color: 'red',
+      title: 'Disagree with the entire draft',
+      when: 'You do not accept any of the terms proposed in the draft consent order.',
+      steps: [
+        'Prepare an Affidavit explaining why you do not consent to the draft.',
+        'State the terms you would accept, or that you require the matter to proceed to a full hearing.',
+        'File the Affidavit with the Court Registry (Registrar\'s Office).',
+        'Serve a copy of your Affidavit on the opposing party.',
+        'The matter will proceed to a contested hearing where the judge will decide based on evidence from both sides.',
+      ],
+      tip: 'If you disagree entirely, you bear the responsibility of showing the court why a different outcome is in the child\'s best interests. Prepare your evidence thoroughly.',
+      color_class: 'red',
     },
     {
       id: 'interim',
       icon: '⏳',
       color: 'purple',
-      title: 'Get an interim order while you negotiate',
-      when: 'There is urgency — children need a temporary arrangement in place while the full dispute is being resolved.',
+      title: 'Request an interim arrangement',
+      when: 'There is urgency — children need a temporary order while the consent order is being finalized or contested.',
       steps: [
-        'Ask the judge for an interim order covering the immediate and urgent issues.',
-        'Interim orders are temporary — they stay in place until a final order is made.',
-        'Continue negotiating or go to a hearing for a final resolution.',
-        'The interim order does not prejudge the final outcome.',
+        'In your Affidavit, request an interim (temporary) order covering urgent issues.',
+        'File and serve the Affidavit as normal.',
+        'Interim orders stay in place until the final order is made.',
+        'The interim arrangement does not prejudge the final outcome.',
       ],
-      tip: 'Interim orders are common when parents cannot agree on immediate parenting arrangements. They give stability to the children while the main dispute is worked out.',
+      tip: 'Interim orders give stability to children while the main dispute is being resolved. Ask for them early if parenting or support needs cannot wait.',
       color_class: 'purple',
     },
   ];
@@ -137,8 +138,8 @@ function PartialAgreementPanel() {
         className="w-full flex items-center gap-2 px-3 py-2.5 bg-gray-50 hover:bg-gray-100 text-left transition-colors">
         <span className="text-sm">🤔</span>
         <div className="flex-1">
-          <p className="text-xs font-semibold text-gray-800">What if I only partially agree to the consent order?</p>
-          <p className="text-[10px] text-gray-500">Four paths when you agree on some terms but not all</p>
+          <p className="text-xs font-semibold text-gray-800">How do I respond to the judge's draft consent order?</p>
+          <p className="text-[10px] text-gray-500">File an Affidavit — agree, partially agree, or disagree</p>
         </div>
         <span className="text-gray-400 text-xs">{open ? '▲' : '▼'}</span>
       </button>
@@ -146,8 +147,7 @@ function PartialAgreementPanel() {
       {open && (
         <div className="p-3 bg-white space-y-3">
           <p className="text-[11px] text-gray-600 leading-relaxed">
-            Partial agreement is common. You do not have to agree on everything before the JCC ends.
-            Pick the situation that fits:
+            After the JCC, the judge will typically issue a <strong>draft consent order</strong>. You respond to it by filing an Affidavit with the Court Registry and serving a copy on the opposing party. Pick the situation that fits:
           </p>
 
           <div className="grid grid-cols-2 gap-2">
