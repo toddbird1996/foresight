@@ -1,8 +1,13 @@
 'use client';
+import { useEffect } from 'react';
 import Link from 'next/link';
+import { track, EVENTS } from '../lib/analytics';
 
 // Shown when Bronze user is running low or hits a limit
 export function UpgradeBanner({ type = 'soft', remaining = null, feature = 'AI' }) {
+  useEffect(() => {
+    track(EVENTS.UPGRADE_BANNER_SEEN, { type, feature });
+  }, []);
   if (type === 'hard') {
     // Hit the wall — full block with emotional urgency
     return (
@@ -36,6 +41,7 @@ export function UpgradeBanner({ type = 'soft', remaining = null, feature = 'AI' 
           </div>
           <p className="text-[10px] text-gray-400 text-center">One hour with a lawyer costs $300–$500. Foresight costs less than $1 a day.</p>
           <Link href="/pricing"
+            onClick={() => track(EVENTS.UPGRADE_CLICKED, { source: 'hard_limit_banner', type })}
             className="block w-full bg-red-600 hover:bg-red-700 text-white text-sm font-bold py-3 rounded-xl text-center transition-colors">
             Upgrade Now — Stay in Control
           </Link>
@@ -93,6 +99,7 @@ export function UpgradeBanner({ type = 'soft', remaining = null, feature = 'AI' 
             Less than $1/day. One lawyer hour costs $300–$500.
           </p>
           <Link href="/pricing"
+            onClick={() => track(EVENTS.UPGRADE_CLICKED, { source: 'dashboard_default_banner', type })}
             className="mt-3 block w-full bg-white text-red-600 font-bold text-xs py-2.5 rounded-xl text-center hover:bg-red-50 transition-colors">
             See Plans & Upgrade →
           </Link>
