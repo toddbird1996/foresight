@@ -8,6 +8,7 @@ import OnboardingFlow from "../components/Onboarding";
 import Header from "../components/Header";
 import Footer from '../components/Footer';
 import CaseGuide from '../components/CaseGuide';
+import { UpgradeBanner } from '../components/UpgradeBanner';
 
 export default function Dashboard() {
   const router = useRouter();
@@ -91,6 +92,11 @@ export default function Dashboard() {
 
         {/* AI Question Bar */}
         <QuestionBar />
+
+        {/* Upgrade Banner — Bronze users only */}
+        {userProfile?.tier === 'bronze' && (
+          <UpgradeBanner type="default" />
+        )}
 
         {/* Smart Status Banner */}
         {userProfile && <CaseWalkthroughBanner profile={userProfile} />}
