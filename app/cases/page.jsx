@@ -1,6 +1,7 @@
 'use client';
 import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
+import { track, EVENTS } from '../lib/analytics';
 import { UpgradeBanner } from '../components/UpgradeBanner';
 import { supabase } from '../../lib/supabaseClient';
 import { useRouter } from 'next/navigation';
@@ -585,6 +586,7 @@ ${fileContent ? 'Content:\n' + fileContent : ''}`;
       }
 
       // Always use the dedicated scan route — it handles PDFs, images, and text properly
+      track(EVENTS.DOC_SCAN_STARTED);
       const scanRes = await fetch('/api/documents/scan', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
