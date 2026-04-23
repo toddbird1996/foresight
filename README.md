@@ -83,4 +83,3 @@ Questions? Email support@foresight.app
 ---
 
 Built with ❤️ in Saskatchewan, Canada
-
