@@ -99,7 +99,7 @@ export default function AIPage() {
       }
 
       // Save user message
-      await supabase.from('ai_messages').insert({ conversation_id: convId, user_id: user.id, role: 'user', content: q });
+      await supabase.from('ai_messages').insert({ conversation_id: convId, role: 'user', content: q });
 
       // Call AI
       const res = await fetch('/api/ai/chat', {
@@ -119,7 +119,7 @@ export default function AIPage() {
       const reply = data.content || 'Sorry, I was unable to process that. Please try again.';
 
       // Save AI message
-      await supabase.from('ai_messages').insert({ conversation_id: convId, user_id: user.id, role: 'assistant', content: reply });
+      await supabase.from('ai_messages').insert({ conversation_id: convId, role: 'assistant', content: reply });
 
       // Update conversation timestamp
       await supabase.from('ai_conversations').update({ updated_at: new Date().toISOString() }).eq('id', convId);
