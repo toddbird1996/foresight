@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import Header from '../components/Header';
 import Link from 'next/link';
 import { UpgradeBanner } from '../components/UpgradeBanner';
+import { track, EVENTS } from '../lib/analytics';
 
 export default function AIPage() {
   const router = useRouter();
@@ -223,7 +224,9 @@ export default function AIPage() {
 
           {/* Upgrade banners for Bronze */}
           {isBronze && remaining === 0 && (
-            <UpgradeBanner type="hard" feature="AI" />
+            <div onClick={() => track(EVENTS.UPGRADE_CLICKED, { source: 'ai_hard_limit' })}>
+              <UpgradeBanner type="hard" feature="AI" />
+            </div>
           )}
           {isBronze && remaining > 0 && remaining <= 2 && (
             <UpgradeBanner type="low" remaining={remaining} feature="AI" />
