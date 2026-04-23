@@ -1,9 +1,8 @@
 import { NextResponse } from 'next/server';
 
-// Protected API routes — return 401 if no auth token present
+// API routes that require Authorization header
+// Note: /api/ai handles its own auth internally via userId + service role key
 const PROTECTED_API_ROUTES = [
-  '/api/ai',
-  '/api/documents',
   '/api/stripe/checkout',
   '/api/stripe/portal',
 ];
@@ -11,7 +10,6 @@ const PROTECTED_API_ROUTES = [
 export async function middleware(req) {
   const pathname = req.nextUrl.pathname;
 
-  // Check protected API routes — must have Authorization header
   const isProtectedAPI = PROTECTED_API_ROUTES.some(route => pathname.startsWith(route));
 
   if (isProtectedAPI) {
