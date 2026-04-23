@@ -224,7 +224,7 @@ export default function AIPage() {
 
           {/* Upgrade banners for Bronze */}
           {isBronze && remaining === 0 && (
-            <div onClick={() => track(EVENTS.UPGRADE_CLICKED, { source: 'ai_hard_limit' })}>
+            <div onClick={() => { try { track(EVENTS.UPGRADE_CLICKED, { source: 'ai_hard_limit' }); } catch {} }}>
               <UpgradeBanner type="hard" feature="AI" />
             </div>
           )}
