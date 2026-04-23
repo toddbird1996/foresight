@@ -1059,12 +1059,8 @@ function CaseAIChat({ caseData, user, userTier }) {
   };
 
   if (!canUseAI) return (
-    <div className="bg-white border border-gray-200 rounded-xl p-8 text-center">
-      <span className="text-4xl block mb-3">🔒</span>
-      <h3 className="font-bold text-gray-900 text-lg mb-2">You've used your AI questions</h3>
-      <p className="text-gray-500 text-sm mb-1">Silver ($19.99 CAD/month) — 500 AI questions/month</p>
-      <p className="text-gray-500 text-sm mb-4">Gold ($29.99 CAD/month) — 2,000 AI questions/month</p>
-      <Link href="/pricing" className="px-5 py-2.5 bg-red-600 hover:bg-red-700 text-white rounded-lg text-sm font-medium inline-block">View Plans</Link>
+    <div className="py-2">
+      <UpgradeBanner type="hard" feature="AI" />
     </div>
   );
 
