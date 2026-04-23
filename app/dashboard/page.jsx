@@ -9,6 +9,7 @@ import Header from "../components/Header";
 import Footer from '../components/Footer';
 import CaseGuide from '../components/CaseGuide';
 import { UpgradeBanner } from '../components/UpgradeBanner';
+import SupportButton from '../components/SupportButton';
 
 export default function Dashboard() {
   const router = useRouter();
@@ -96,6 +97,13 @@ export default function Dashboard() {
         {/* Upgrade Banner — Bronze users only */}
         {userProfile?.tier === 'bronze' && (
           <UpgradeBanner type="default" />
+        )}
+
+        {/* Priority Support — Silver/Gold users */}
+        {userProfile?.tier !== 'bronze' && (
+          <div className="px-4 mb-3">
+            <SupportButton user={user} tier={userProfile?.tier} />
+          </div>
         )}
 
         {/* Smart Status Banner */}
