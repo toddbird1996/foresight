@@ -4,6 +4,7 @@ import { supabase } from '../../lib/supabaseClient';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Header from '../components/Header';
 import Link from 'next/link';
+import { UpgradeBanner } from '../components/UpgradeBanner';
 
 export default function AIPage() {
   const router = useRouter();
@@ -203,9 +204,8 @@ export default function AIPage() {
             <div className="flex items-center gap-2">
               {isBronze ? (
                 <div className="text-right">
-                  <span className="text-xs font-semibold text-gray-700">{remaining} / 5</span>
-                  <span className="text-xs text-gray-400 ml-1">free</span>
-                  <Link href="/pricing" className="block text-[10px] text-red-600 hover:underline">Upgrade →</Link>
+                  <span className={`text-xs font-bold ${remaining <= 1 ? 'text-red-600' : 'text-amber-600'}`}>{remaining} / 5 left</span>
+                  <Link href="/pricing" className="block text-[10px] font-bold text-red-600 hover:underline">Upgrade →</Link>
                 </div>
               ) : (
                 <span className="text-xs text-gray-400 capitalize">{profile?.tier}</span>
@@ -220,6 +220,14 @@ export default function AIPage() {
           <div className="bg-amber-50 border-b border-amber-200 px-4 py-2">
             <p className="text-xs text-amber-700"><strong>Educational guidance only.</strong> Not legal advice. Consult a lawyer for advice specific to your situation.</p>
           </div>
+
+          {/* Upgrade banners for Bronze */}
+          {isBronze && remaining === 0 && (
+            <UpgradeBanner type="hard" feature="AI" />
+          )}
+          {isBronze && remaining > 0 && remaining <= 2 && (
+            <UpgradeBanner type="low" remaining={remaining} feature="AI" />
+          )}
 
           {/* Messages */}
           <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4">
