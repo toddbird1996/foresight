@@ -1,6 +1,7 @@
 'use client';
 import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
+import { UpgradeBanner } from '../components/UpgradeBanner';
 import { supabase } from '../../lib/supabaseClient';
 import { useRouter } from 'next/navigation';
 import Header from '../components/Header';
