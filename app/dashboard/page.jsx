@@ -10,6 +10,7 @@ import Footer from '../components/Footer';
 import CaseGuide from '../components/CaseGuide';
 import { UpgradeBanner } from '../components/UpgradeBanner';
 import SupportButton from '../components/SupportButton';
+import { track, EVENTS } from '../lib/analytics';
 
 export default function Dashboard() {
   const router = useRouter();
@@ -39,7 +40,10 @@ export default function Dashboard() {
           setShowOnboarding(true);
         }
         if (profile?.action_plan) setActionPlan(profile.action_plan);
-        if (profile) setUserProfile(profile);
+        if (profile) {
+          setUserProfile(profile);
+          track(EVENTS.PAGE_DASHBOARD, { tier: profile.tier });
+        }
 
 
         // Fetch upcoming deadlines (next 14 days, not completed)
@@ -96,7 +100,9 @@ export default function Dashboard() {
 
         {/* Upgrade Banner — Bronze users only */}
         {userProfile?.tier === 'bronze' && (
-          <UpgradeBanner type="default" />
+          <div onClick={() => track(EVENTS.UPGRADE_CLICKED, { source: 'dashboard_banner' })}>
+            <UpgradeBanner type="default" />
+          </div>
         )}
 
         {/* Priority Support — Silver/Gold users */}
