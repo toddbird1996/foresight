@@ -16,9 +16,18 @@ export default function Footer() {
             <Link href="/privacy" className="hover:text-red-600">Privacy</Link>
             <Link href="/terms" className="hover:text-red-600">Terms</Link>
             <Link href="/programs" className="hover:text-red-600">Support</Link>
+            <a href="mailto:Foresightcustodysupport@gmail.com" className="hover:text-red-600 flex items-center gap-1">
+              <span>✉️</span> Contact Us
+            </a>
           </div>
         </div>
         <p className="text-[10px] text-gray-400 text-center mt-3">Foresight provides educational guidance, not legal advice. Always consult a lawyer for your specific situation.</p>
+        <p className="text-[10px] text-gray-400 text-center mt-1">
+          Questions? Email us at{' '}
+          <a href="mailto:Foresightcustodysupport@gmail.com" className="text-red-500 hover:underline">
+            Foresightcustodysupport@gmail.com
+          </a>
+        </p>
       </div>
     </footer>
   );
