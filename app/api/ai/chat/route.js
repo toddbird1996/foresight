@@ -272,10 +272,10 @@ export async function POST(request) {
       headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
       body: JSON.stringify({
         model: 'gpt-4o',
-        max_tokens: 2000,
+        max_tokens: 1500,
         messages: [
           { role: 'system', content: systemPrompt },
-          ...history.slice(-8).map(m => ({ role: m.role, content: m.content })),
+          ...history.slice(-6).map(m => ({ role: m.role, content: m.content })),
           { role: 'user', content: imageBase64
             ? [
                 { type: 'text', text: message },
@@ -295,6 +295,8 @@ export async function POST(request) {
         ? 'AI service is temporarily unavailable — billing limit reached. Please contact support.'
         : code === 'invalid_api_key'
         ? 'AI service configuration error — invalid API key.'
+        : code === 'context_length_exceeded'
+        ? 'Your question is too long for a single message. Please try breaking it into smaller parts.'
         : 'AI request failed. Please try again shortly.';
       return NextResponse.json({ error: userMsg, content: userMsg }, { status: 500 });
     }
