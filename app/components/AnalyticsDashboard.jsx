@@ -149,8 +149,8 @@ export const analyticsService = {
     const goldUsers = tierData?.filter(u => u.tier === 'gold').length || 0;
 
     // Calculate MRR (Monthly Recurring Revenue)
-    const silverMRR = silverUsers * 9.99;
-    const goldMRR = goldUsers * 19.99;
+    const silverMRR = silverUsers * 19.99;
+    const goldMRR = goldUsers * 29.99;
     const totalMRR = silverMRR + goldMRR;
 
     // Calculate ARR (Annual Recurring Revenue)
@@ -415,7 +415,7 @@ export function AnalyticsDashboard() {
                 color="#C0C0C0"
               />
               <TierBar 
-                label="Gold ($19.99)" 
+                label="Gold ($29.99)" 
                 value={metrics.users?.usersByTier?.gold || 0}
                 total={metrics.users?.totalUsers || 1}
                 color="#FFD700"
@@ -493,7 +493,7 @@ export function AnalyticsDashboard() {
               <div className="flex justify-between items-center p-4 rounded-lg bg-slate-800/50">
                 <div>
                   <div className="font-medium">Gold Tier MRR</div>
-                  <div className="text-sm text-slate-400">{metrics.revenue?.goldUsers || 0} users × $19.99</div>
+                  <div className="text-sm text-slate-400">{metrics.revenue?.goldUsers || 0} users × $29.99</div>
                 </div>
                 <div className="text-xl font-bold text-yellow-400">
                   ${metrics.revenue?.goldMRR?.toFixed(2) || '0.00'}
