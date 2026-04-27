@@ -8,7 +8,7 @@ const inter = Inter({ subsets: ['latin'] });
 
 export const metadata = {
   title: {
-    default: 'Foresight - Navigate Custody Battles with Confidence',
+    default: 'Foresight — A Coach in Your Corner',
     template: '%s | Foresight'
   },
   description: 'Free self-help platform for Canadian parents navigating custody and family law. Filing guides, court forms, rights info, AI assistant, and community support across all 13 provinces.',
@@ -19,13 +19,13 @@ export const metadata = {
   openGraph: {
     type: 'website',
     locale: 'en_CA',
-    title: 'Foresight - Navigate Custody with Confidence',
+    title: 'Foresight — A Coach in Your Corner',
     description: 'Free tools to help parents understand and navigate custody proceedings. Filing guides, court forms, rights by province, AI assistant, and peer support.',
     siteName: 'Foresight',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Foresight - Navigate Custody with Confidence',
+    title: 'Foresight — A Coach in Your Corner',
     description: 'Free tools to help parents understand and navigate custody proceedings across Canada.',
   },
   appleWebApp: {
