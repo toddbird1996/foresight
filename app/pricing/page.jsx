@@ -147,7 +147,7 @@ export default function PricingPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
-      <PageTitle title="Pricing" subtitle="Choose your plan" icon="⭐" />
+      <PageTitle title="Pricing" subtitle="A coach in your corner — choose your plan" icon="⭐" />
 
       <main className="max-w-6xl mx-auto px-4 py-12">
         <div className="text-center mb-12">
