@@ -128,7 +128,7 @@ function HeroSection() {
           {/* Badge */}
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-red-50 border border-red-200 mb-8">
             <span className="w-2 h-2 rounded-full bg-red-600 animate-pulse" />
-            <span className="text-sm text-red-700">Now available in Saskatchewan, Alberta, Ontario & BC</span>
+            <span className="text-sm text-red-700">Now live across all Canadian provinces & territories</span>
           </div>
 
           {/* Headline */}
@@ -715,7 +715,7 @@ function FAQSection() {
     },
     {
       question: 'Which provinces do you support?',
-      answer: 'We currently support Saskatchewan, Alberta, Ontario, and British Columbia with complete filing guides and court forms. Manitoba, Quebec, and Nova Scotia are in beta. US states (California, Texas, New York, Florida, Washington) are coming soon.'
+      answer: 'Foresight is live across all Canadian provinces and territories with filing guides, court forms, and AI guidance specific to your jurisdiction. forms. Manitoba, Quebec, and Nova Scotia are in beta. US states (California, Texas, New York, Florida, Washington) are coming soon.'
     },
     {
       question: 'How is Foresight different from a lawyer?',
