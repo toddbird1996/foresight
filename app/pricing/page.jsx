@@ -6,6 +6,7 @@ import Link from "next/link";
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import PageTitle from '../components/PageTitle';
+import SponsorshipCodeInput from '../components/SponsorshipCode';
 
 const PLANS = [
   {
