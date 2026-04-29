@@ -29,8 +29,8 @@ const sections = [
         detail: 'Write a brief, clear statement of what you are asking for and why. Keep it factual. Focus on the best interests of the child — that is the standard every judge uses. Practice it out loud until it feels natural.'
       },
       {
-        title: 'Know what the other side will argue',
-        detail: 'Think about what the other parent is likely to say. Prepare your response to their strongest points. This is your shield — anticipate the arguments and have your answers ready.'
+        title: 'Understand the issues in dispute',
+        detail: 'Before your hearing, write down the specific issues that need to be resolved — parenting schedule, decision-making, support. For each issue, think about what outcome is genuinely best for your child and be ready to explain why with specific examples from your child\'s life.'
       },
       {
         title: 'Arrive early',
@@ -58,7 +58,7 @@ const sections = [
       },
       {
         title: 'How to question a witness',
-        detail: 'If you have witnesses, ask them clear, open-ended questions. "Can you describe what you observed on that date?" Do not lead your own witness. When cross-examining the other side\'s witnesses, ask short, pointed questions and stop when you have what you need.'
+        detail: 'If you have witnesses, ask them clear, open-ended questions about what they personally observed. "Can you describe what you saw on that date?" Keep questions focused on facts relevant to your child\'s wellbeing. When the other parent\'s witnesses testify, you may ask clarifying questions — keep them brief and factual.'
       },
       {
         title: 'How to object',
