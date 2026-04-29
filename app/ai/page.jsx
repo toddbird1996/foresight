@@ -295,7 +295,7 @@ export default function AIPage() {
                 value={input}
                 onChange={e => setInput(e.target.value)}
                 onKeyDown={e => e.key === 'Enter' && !e.shiftKey && sendMessage()}
-                placeholder="Ask about your case, rights, forms, or procedures..."
+                placeholder="Ask me anything about your case — I'm here 24/7..."
                 className="flex-1 px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-red-400 focus:bg-white transition-colors"
               />
               <button onClick={sendMessage} disabled={!input.trim() || sending}
