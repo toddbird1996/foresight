@@ -116,7 +116,7 @@ export default function AIPage() {
         return;
       }
 
-      const reply = data.content || 'Sorry, I was unable to process that. Please try again.';
+      const reply = data.content || 'Something went wrong. Please try again.';
 
       // Save AI message
       await supabase.from('ai_messages').insert({ conversation_id: convId, role: 'assistant', content: reply });
