@@ -289,6 +289,7 @@ export default function Dashboard() {
           <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
             {[
               { href: '/filing', icon: '📋', label: 'Filing Guide' },
+          { href: '/self-rep', icon: '⚖️', label: 'Represent Yourself' },
               { href: '/court-forms', icon: '📄', label: 'Court Forms' },
               { href: '/rights', icon: '⚖️', label: 'Your Rights' },
               { href: '/judge-insight', icon: '🏛️', label: 'Court Tips' },
