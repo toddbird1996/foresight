@@ -150,6 +150,15 @@ export default function PricingPage() {
       <Header />
       <PageTitle title="Pricing" subtitle="A coach in your corner — choose your plan" icon="⭐" />
 
+      {/* Sponsorship Code */}
+      <div className="max-w-md mx-auto mt-4 mb-2 px-4">
+        <SponsorshipCodeInput
+          userId={user?.id}
+          currentTier={profile?.tier}
+          onSuccess={() => window.location.reload()}
+        />
+      </div>
+
       <main className="max-w-6xl mx-auto px-4 py-12">
         <div className="text-center mb-12">
           <h2 className="text-3xl font-bold text-gray-900 mb-4">Choose Your Plan</h2>
