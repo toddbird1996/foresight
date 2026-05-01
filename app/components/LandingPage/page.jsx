@@ -133,9 +133,9 @@ function HeroSection() {
 
           {/* Headline */}
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight mb-6 text-gray-900">
-            Fight for Your Kids{' '}
+            A Coach in Your Corner{' '}
             <span className="text-red-600">
-              Without a $30K Lawyer
+              24/7
             </span>
           </h1>
 
