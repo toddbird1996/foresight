@@ -858,7 +858,7 @@ function Footer() {
             <h4 className="font-semibold mb-4 text-gray-900">Contact</h4>
             <ul className="space-y-2 text-sm text-gray-500">
               <li>
-                <a href="mailto:Foresightcustodysupport@gmail.com" className="hover:text-red-600 flex items-center gap-1">
+                <a href="mailto:Foresightcustodysupport@gmail.com" className="text-red-600 hover:text-red-700 flex items-center gap-1">
                   ✉️ Foresightcustodysupport@gmail.com
                 </a>
               </li>
