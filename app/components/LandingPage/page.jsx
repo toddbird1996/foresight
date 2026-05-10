@@ -494,77 +494,40 @@ function HowItWorksSection() {
 // ============================================
 
 function TestimonialsSection() {
-  const testimonials = [
-    {
-      quote: "I was about to spend $20,000 on a lawyer. Foresight helped me understand the process and I represented myself successfully. I got 50/50 custody.",
-      author: "Michael T.",
-      location: "Regina, SK",
-      avatar: "M",
-      result: "Won 50/50 custody"
-    },
-    {
-      quote: "The AI assistant answered questions my expensive lawyer couldn't explain clearly. It's like having a legal expert available 24/7.",
-      author: "Sarah L.",
-      location: "Calgary, AB",
-      avatar: "S",
-      result: "Primary custody"
-    },
-    {
-      quote: "The community here saved me. Connecting with other parents who understood what I was going through made all the difference.",
-      author: "Jennifer K.",
-      location: "Toronto, ON",
-      avatar: "J",
-      result: "Full custody"
-    }
-  ];
-
   return (
     <section className="py-20 sm:py-32 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-3xl mx-auto mb-16">
           <h2 className="text-3xl sm:text-4xl font-bold mb-6 text-gray-900">
-            Trusted by Parents{' '}
-            <span className="text-red-600">
-              Across Canada
-            </span>
+            Built for Parents Who{' '}
+            <span className="text-red-600">Need It Most</span>
           </h2>
+          <p className="text-xl text-gray-600">
+            Foresight launched in Saskatchewan and is growing across Canada. Be among the first families in your province to access free, AI-powered legal guidance built specifically for custody and family court.
+          </p>
         </div>
-
-        <div className="grid md:grid-cols-3 gap-8">
-          {testimonials.map((t, i) => (
-            <div
-              key={i}
-              className="p-6 rounded-2xl bg-white border border-gray-200 shadow-sm"
-            >
-              <div className="flex gap-1 mb-4 text-yellow-500">
-                {[...Array(5)].map((_, i) => <span key={i}>★</span>)}
-              </div>
-              <p className="text-lg mb-6 text-gray-700">"{t.quote}"</p>
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-full bg-red-600 text-white flex items-center justify-center font-bold">
-                  {t.avatar}
-                </div>
-                <div>
-                  <div className="font-semibold text-gray-900">{t.author}</div>
-                  <div className="text-sm text-gray-500">{t.location}</div>
-                </div>
-              </div>
-              <div className="mt-4 pt-4 border-t border-gray-200">
-                <div className="inline-block px-3 py-1 rounded-full bg-green-50 border border-green-200 text-green-700 text-sm">
-                  ✓ {t.result}
-                </div>
-              </div>
-            </div>
-          ))}
+        <div className="grid sm:grid-cols-3 gap-8">
+          <div className="p-6 rounded-2xl bg-white border border-gray-200 text-center shadow-sm">
+            <div className="text-4xl mb-4">🆓</div>
+            <h3 className="font-bold text-gray-900 mb-2">Free to Start</h3>
+            <p className="text-gray-600 text-sm">Bronze tier is completely free — no credit card, no time limit. Filing guides, court forms, and community access at no cost.</p>
+          </div>
+          <div className="p-6 rounded-2xl bg-white border border-gray-200 text-center shadow-sm">
+            <div className="text-4xl mb-4">🤖</div>
+            <h3 className="font-bold text-gray-900 mb-2">AI Available 24/7</h3>
+            <p className="text-gray-600 text-sm">Ask anything about your case at midnight or 6am. The AI knows Saskatchewan family law and gives you real answers in plain language.</p>
+          </div>
+          <div className="p-6 rounded-2xl bg-white border border-gray-200 text-center shadow-sm">
+            <div className="text-4xl mb-4">🇨🇦</div>
+            <h3 className="font-bold text-gray-900 mb-2">All of Canada</h3>
+            <p className="text-gray-600 text-sm">Every province and territory covered — filing guides, court forms, programs directory, and AI guidance specific to your jurisdiction.</p>
+          </div>
         </div>
       </div>
     </section>
   );
 }
 
-// ============================================
-// PRICING SECTION
-// ============================================
 
 function PricingSection() {
   const plans = [
@@ -782,8 +745,7 @@ function CTASection() {
           Ready to Fight for Your Kids?
         </h2>
         <p className="text-xl text-gray-600 mb-8">
-          Join thousands of parents who've navigated custody court with confidence. 
-          Start free today—no credit card required.
+          Foresight is built for parents who can't afford to get it wrong. Start free today — no credit card required.
         </p>
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
           <a
