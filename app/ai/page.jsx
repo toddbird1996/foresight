@@ -235,17 +235,32 @@ export default function AIPage() {
           {/* Messages */}
           <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4">
             {messages.length === 0 && (
-              <div className="text-center py-8">
-                <span className="text-4xl block mb-3">🤖</span>
-                <p className="font-semibold text-gray-900 mb-1">Ask me anything about your case</p>
-                <p className="text-sm text-gray-500 mb-6">I know your jurisdiction, case type, and upcoming dates.</p>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-w-xl mx-auto">
-                  {SUGGESTIONS.map((s, i) => (
-                    <button key={i} onClick={() => setInput(s)}
-                      className="text-left text-xs bg-white border border-gray-200 hover:border-red-300 text-gray-600 rounded-xl px-3 py-2.5 transition-colors">
-                      💬 {s}
-                    </button>
-                  ))}
+              <div className="py-6 space-y-4">
+                {/* AI Greeting */}
+                <div className="flex gap-3 justify-start">
+                  <div className="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center text-sm flex-shrink-0 mt-1">🤖</div>
+                  <div className="max-w-[85%] rounded-2xl rounded-tl-sm px-4 py-3 text-sm leading-relaxed bg-white border border-gray-200 text-gray-800">
+                    <p className="font-semibold mb-1">Hi{profile?.full_name ? `, ${profile.full_name.split(' ')[0]}` : ''}. I'm here to help.</p>
+                    <p className="text-gray-600 mb-2">
+                      {profile?.jurisdiction === 'saskatchewan'
+                        ? "I know Saskatchewan family law — forms, deadlines, court procedures, and what to do at every stage."
+                        : "I know Canadian family law across every province — forms, deadlines, court procedures, and what to do at every stage."}
+                    </p>
+                    <p className="text-gray-600">What's going on with your case right now? You can ask me anything.</p>
+                  </div>
+                </div>
+
+                {/* Suggestion prompts */}
+                <div className="pl-11">
+                  <p className="text-xs text-gray-400 mb-2">Common questions to get started:</p>
+                  <div className="grid grid-cols-1 gap-2">
+                    {SUGGESTIONS.map((s, i) => (
+                      <button key={i} onClick={() => setInput(s)}
+                        className="text-left text-xs bg-white border border-gray-200 hover:border-red-300 hover:bg-red-50 text-gray-600 rounded-xl px-3 py-2.5 transition-colors">
+                        💬 {s}
+                      </button>
+                    ))}
+                  </div>
                 </div>
               </div>
             )}
