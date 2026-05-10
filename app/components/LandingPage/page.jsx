@@ -588,7 +588,7 @@ function PricingSection() {
         'Document review by mentors'
       ],
       cta: 'Get Gold',
-      popular: true
+      popular: false
     }
   ];
 
