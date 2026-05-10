@@ -95,6 +95,34 @@ export default function Dashboard() {
           </Link>
         </div>
 
+        {/* First Step Card — shown for new users with no case yet */}
+        {userProfile && !userProfile.case_status && userProfile.situation && (
+          <div className="mb-4 bg-white border-2 border-red-200 rounded-2xl p-4 shadow-sm">
+            <div className="flex items-start gap-3">
+              <div className="w-10 h-10 bg-red-600 rounded-xl flex items-center justify-center flex-shrink-0">
+                <span className="text-white text-lg">👋</span>
+              </div>
+              <div className="flex-1">
+                <p className="font-bold text-gray-900 text-sm">Welcome to Foresight. Here's your first step.</p>
+                <p className="text-gray-600 text-xs mt-1 leading-relaxed">
+                  {userProfile.situation === 'starting_fresh' && "Start by telling the AI about your situation. Ask: "I'm starting a custody case in Saskatchewan — what do I do first?""}
+                  {userProfile.situation === 'responding' && "You've been served papers. Ask the AI: "I just received custody papers — what do I need to do right now?""}
+                  {userProfile.situation === 'preparing_to_file' && "You're getting ready to file. Tap "My Steps" below to see your filing guide, or ask the AI your first question."}
+                  {userProfile.situation === 'have_order_want_change' && "You want to change an existing order. Ask the AI: "How do I apply to vary my custody order in Saskatchewan?""}
+                  {userProfile.situation === 'have_order_not_followed' && "Your order isn't being followed. Ask the AI: "The other parent isn't following our court order — what can I do?""}
+                  {userProfile.situation === 'filed_waiting' && "Your case is active. Check your filing guide for what comes next, or ask the AI about your upcoming hearing."}
+                  {userProfile.situation === 'in_mediation' && "You're in mediation. Ask the AI: "What should I know before my FDR mediation session?""}
+                  {userProfile.situation === 'cps_involved' && "CPS is involved. Tap "Your Rights" to understand your rights, or ask the AI your most urgent question."}
+                  {!['starting_fresh','responding','preparing_to_file','have_order_want_change','have_order_not_followed','filed_waiting','in_mediation','cps_involved'].includes(userProfile.situation) && "Ask the AI your most pressing question right now — it knows your province and situation."}
+                </p>
+                <Link href="/ai" className="inline-block mt-2 text-xs font-bold text-red-600 hover:underline">
+                  Ask the AI now →
+                </Link>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* AI Question Bar */}
         <QuestionBar />
 
