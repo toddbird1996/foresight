@@ -148,18 +148,11 @@ function HeroSection() {
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
             <a
               href="/auth/signup"
-              className="w-full sm:w-auto px-8 py-4 bg-red-600 hover:bg-red-700 text-white rounded-xl font-semibold text-lg transition-colors flex items-center justify-center gap-2"
+              className="w-full sm:w-auto px-10 py-5 bg-red-600 hover:bg-red-700 text-white rounded-xl font-bold text-xl transition-colors flex items-center justify-center gap-2 shadow-lg"
             >
-              Start Free Today
-              <span>→</span>
+              Get Started Free →
             </a>
-            <a
-              href="#how-it-works"
-              className="w-full sm:w-auto px-8 py-4 border border-gray-300 rounded-xl font-semibold text-lg hover:bg-gray-100 transition-colors flex items-center justify-center gap-2 text-gray-700"
-            >
-              <span>▶</span>
-              See How It Works
-            </a>
+            <p className="text-sm text-gray-500 mt-2">No credit card required. Takes 2 minutes.</p>
           </div>
 
           {/* Trust Indicators */}
