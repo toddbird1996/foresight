@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://foresightcustody.ca/</loc><priority>1.0</priority></url>
+  <url><loc>https://foresightcustody.ca/auth/signup</loc><priority>0.8</priority></url>
+  <url><loc>https://foresightcustody.ca/auth/login</loc><priority>0.8</priority></url>
+  <url><loc>https://foresightcustody.ca/pricing</loc><priority>0.8</priority></url>
+  <url><loc>https://foresightcustody.ca/filing</loc><priority>0.7</priority></url>
+  <url><loc>https://foresightcustody.ca/court-forms</loc><priority>0.7</priority></url>
+  <url><loc>https://foresightcustody.ca/self-rep</loc><priority>0.7</priority></url>
+  <url><loc>https://foresightcustody.ca/programs</loc><priority>0.6</priority></url>
+  <url><loc>https://foresightcustody.ca/community</loc><priority>0.6</priority></url>
+</urlset>
