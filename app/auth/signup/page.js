@@ -30,7 +30,7 @@ function SignupForm() {
       password,
       options: {
         data: { full_name: fullName },
-        emailRedirectTo: `${typeof window !== 'undefined' ? window.location.origin : 'https://foresight-eta-three.vercel.app'}/auth/callback`,
+        emailRedirectTo: 'https://foresightcustody.ca/auth/callback',
       },
     });
 
