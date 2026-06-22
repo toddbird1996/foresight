@@ -428,7 +428,7 @@ export default function CourtFormsPage() {
             <p className="text-xs text-gray-500 mt-0.5">Suggest it and we'll add it to Foresight.</p>
           </div>
           <a
-            href={`mailto:toddbird1996@outlook.com?subject=Form Request — ${selectedJurisdiction?.name || 'Canada'}&body=Hi,%0A%0AI'm looking for the following court form:%0A%0AForm name/number: %0AJurisdiction: ${selectedJurisdiction?.name || ''}%0APurpose: %0A%0APlease add it to Foresight. Thank you.`}
+            href={`mailto:Foresightcustodysupport@gmail.com?subject=Form Request — ${selectedJurisdiction?.name || 'Canada'}&body=Hi,%0A%0AI'm looking for the following court form:%0A%0AForm name/number: %0AJurisdiction: ${selectedJurisdiction?.name || ''}%0APurpose: %0A%0APlease add it to Foresight. Thank you.`}
             className="flex-shrink-0 px-3 py-2 bg-red-600 hover:bg-red-700 text-white rounded-xl text-xs font-semibold whitespace-nowrap"
           >
             📩 Suggest a Form
