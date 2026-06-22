@@ -401,7 +401,7 @@ export const FORMS_DATABASE = {
             formNumber: 'Form 3',
             description: 'Start a family law case in Provincial Court for parenting, support, or guardianship.',
             required: true,
-            downloadUrl: 'https://www2.gov.bc.ca/assets/gov/law-crime-and-justice/courthouse-services/court-files-records/court-forms/family/pfa712.pdf',
+            downloadUrl: 'https://www2.gov.bc.ca/gov/content/justice/courthouse-services/documents-forms-records/court-forms/prov-family-forms',
             fileType: 'pdf',
             fillable: true,
             pages: 8
@@ -412,7 +412,7 @@ export const FORMS_DATABASE = {
             formNumber: 'Form 4',
             description: 'Financial disclosure for child or spousal support claims in Provincial Court.',
             required: true,
-            downloadUrl: 'https://www2.gov.bc.ca/assets/gov/law-crime-and-justice/courthouse-services/court-files-records/court-forms/family/pfa713.pdf',
+            downloadUrl: 'https://www2.gov.bc.ca/gov/content/justice/courthouse-services/documents-forms-records/court-forms/prov-family-forms',
             fileType: 'pdf',
             fillable: true,
             pages: 12
@@ -423,7 +423,7 @@ export const FORMS_DATABASE = {
             formNumber: 'Form 5',
             description: 'Required when applying for guardianship of a child.',
             required: false,
-            downloadUrl: 'https://www2.gov.bc.ca/assets/gov/law-crime-and-justice/courthouse-services/court-files-records/court-forms/family/pfa733.pdf',
+            downloadUrl: 'https://www2.gov.bc.ca/gov/content/justice/courthouse-services/documents-forms-records/court-forms/prov-family-forms',
             fileType: 'pdf',
             fillable: true,
             pages: 4
@@ -434,7 +434,7 @@ export const FORMS_DATABASE = {
             formNumber: 'Form 6',
             description: 'Response to a family law application. File within 30 days of being served.',
             required: false,
-            downloadUrl: 'https://www2.gov.bc.ca/assets/gov/law-crime-and-justice/courthouse-services/court-files-records/court-forms/family/pfa715.pdf',
+            downloadUrl: 'https://www2.gov.bc.ca/gov/content/justice/courthouse-services/documents-forms-records/court-forms/prov-family-forms',
             fileType: 'pdf',
             fillable: true,
             pages: 6
@@ -452,7 +452,7 @@ export const FORMS_DATABASE = {
             formNumber: 'Form F3',
             description: 'Start a family law case in Supreme Court (required for divorce).',
             required: true,
-            downloadUrl: 'https://www2.gov.bc.ca/assets/gov/law-crime-and-justice/courthouse-services/court-files-records/court-forms/supreme-family/f3.pdf',
+            downloadUrl: 'https://www2.gov.bc.ca/gov/content/justice/courthouse-services/documents-forms-records/court-forms/sup-family-forms',
             fileType: 'pdf',
             fillable: true,
             pages: 10
@@ -463,7 +463,7 @@ export const FORMS_DATABASE = {
             formNumber: 'Form F4',
             description: 'Response to a Notice of Family Claim. File within 30 days.',
             required: false,
-            downloadUrl: 'https://www2.gov.bc.ca/assets/gov/law-crime-and-justice/courthouse-services/court-files-records/court-forms/supreme-family/f4.pdf',
+            downloadUrl: 'https://www2.gov.bc.ca/gov/content/justice/courthouse-services/documents-forms-records/court-forms/sup-family-forms',
             fileType: 'pdf',
             fillable: true,
             pages: 8
@@ -474,7 +474,7 @@ export const FORMS_DATABASE = {
             formNumber: 'Form F8',
             description: 'Financial disclosure for Supreme Court family proceedings.',
             required: true,
-            downloadUrl: 'https://www2.gov.bc.ca/assets/gov/law-crime-and-justice/courthouse-services/court-files-records/court-forms/supreme-family/f8.pdf',
+            downloadUrl: 'https://www2.gov.bc.ca/gov/content/justice/courthouse-services/documents-forms-records/court-forms/sup-family-forms',
             fileType: 'pdf',
             fillable: true,
             pages: 14
@@ -485,7 +485,7 @@ export const FORMS_DATABASE = {
             formNumber: 'Form F15',
             description: 'Proof that documents were personally served on the other party.',
             required: true,
-            downloadUrl: 'https://www2.gov.bc.ca/assets/gov/law-crime-and-justice/courthouse-services/court-files-records/court-forms/supreme-family/f15.pdf',
+            downloadUrl: 'https://www2.gov.bc.ca/gov/content/justice/courthouse-services/documents-forms-records/court-forms/sup-family-forms',
             fileType: 'pdf',
             fillable: true,
             pages: 2
