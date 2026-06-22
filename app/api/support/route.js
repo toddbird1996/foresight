@@ -42,10 +42,31 @@ export async function POST(request) {
       return NextResponse.json({ error: 'Failed to submit ticket' }, { status: 500 });
     }
 
-    // Forward to Gmail via mailto-style fetch (Nodemailer alternative using fetch)
-    // Since we don't have SMTP set up yet, we log it and notify via Supabase
-    // Users receive confirmation, you see it in Supabase support_tickets table
+    // Send email notification via Resend
     console.log(`[SUPPORT TICKET] From: ${email} | Tier: ${user.tier} | Subject: ${subject}`);
+    if (process.env.RESEND_API_KEY) {
+      await fetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${process.env.RESEND_API_KEY}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          from: 'Foresight Support <onboarding@resend.dev>',
+          to: 'Foresightcustodysupport@gmail.com',
+          subject: `[Support Ticket] ${subject}`,
+          html: `
+            <h2>New Support Ticket</h2>
+            <p><strong>From:</strong> ${email}</p>
+            <p><strong>Name:</strong> ${user.full_name || 'N/A'}</p>
+            <p><strong>Tier:</strong> ${user.tier}</p>
+            <p><strong>Subject:</strong> ${subject}</p>
+            <p><strong>Message:</strong></p>
+            <p>${message.replace(/\n/g, '<br/>')}</p>
+          `
+        })
+      }).catch(err => console.error('Resend error:', err));
+    }
 
     return NextResponse.json({ success: true, message: 'Your ticket has been submitted. We will respond within 24 hours.' });
 
