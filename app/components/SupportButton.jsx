@@ -118,7 +118,6 @@ export default function SupportButton({ user, tier }) {
                   />
                 </div>
                 {error && <p className="text-xs text-red-600">{error}</p>}
-                <p className="text-[10px] text-gray-400">Replies go to: <strong>{user?.email}</strong></p>
                 <button
                   onClick={handleSubmit}
                   disabled={sending}
