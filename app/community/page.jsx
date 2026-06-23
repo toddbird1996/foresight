@@ -393,13 +393,19 @@ function PostsView({ channel, user, userProfile, weeklyPrompt }) {
   const createPost = async () => {
     if (!newTitle.trim() || !newContent.trim() || posting) return;
     setPosting(true);
-    const { error } = await supabase.from('community_posts').insert({
-      channel_id: channel.id, user_id: user.id,
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) {
+      alert("Your session has expired. Please refresh the page and try again.");
+      setPosting(false);
+      return;
+    }
+    const { error } = await supabase.from("community_posts").insert({
+      channel_id: channel.id, user_id: session.user.id,
       title: newTitle.trim(), content: newContent.trim(), post_type: newType,
       like_count: 0, comment_count: 0,
     });
-    if (error) { console.error('Post error:', error); alert('Could not create post: ' + error.message); }
-    else { setNewTitle(''); setNewContent(''); setShowNew(false); setNewType('discussion'); }
+    if (error) { console.error("Post error:", error); alert("Could not create post: " + error.message); }
+    else { setNewTitle(""); setNewContent(""); setShowNew(false); setNewType("discussion"); }
     await fetchPosts();
     setPosting(false);
   };
