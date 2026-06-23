@@ -815,80 +815,82 @@ ${fileContent ? 'Content:\n' + fileContent : ''}`;
           <div className="space-y-2">
             {documents.map((doc, idx) => (
               <div key={doc.id} className="border border-gray-200 rounded-xl overflow-hidden hover:border-gray-300 transition-all">
-                <div className="flex items-start gap-3 p-3">
-                  {/* Reorder */}
-                  <div className="flex flex-col gap-0.5 flex-shrink-0 pt-1">
-                    <button onClick={() => moveDoc(doc.id, 'up')} disabled={idx === 0} className="w-5 h-5 flex items-center justify-center text-gray-300 hover:text-gray-600 disabled:opacity-0 text-xs">▲</button>
-                    <button onClick={() => moveDoc(doc.id, 'down')} disabled={idx === documents.length - 1} className="w-5 h-5 flex items-center justify-center text-gray-300 hover:text-gray-600 disabled:opacity-0 text-xs">▼</button>
-                  </div>
-
-                  {/* Icon */}
-                  <div className="w-10 h-10 bg-gray-50 border border-gray-100 rounded-xl flex items-center justify-center text-xl flex-shrink-0">
-                    {getDocIcon(doc)}
-                  </div>
-
-                  {/* Name + metadata */}
-                  <div className="flex-1 min-w-0">
-                    {editingDocId === doc.id ? (
-                      <div className="flex items-center gap-1.5">
-                        <input autoFocus type="text" value={editName} onChange={e => setEditName(e.target.value)}
-                          onKeyDown={e => { if (e.key === 'Enter') saveRename(doc.id); if (e.key === 'Escape') setEditingDocId(null); }}
-                          className="flex-1 text-sm border border-red-300 rounded-lg px-2 py-1 outline-none focus:border-red-500 min-w-0" />
-                        <button onClick={() => saveRename(doc.id)} className="text-green-600 text-xs font-bold px-2 py-1 bg-green-50 rounded-lg">Save</button>
-                        <button onClick={() => setEditingDocId(null)} className="text-gray-400 text-xs px-1">✕</button>
-                      </div>
-                    ) : (
-                      <div className="font-semibold text-gray-900 text-sm truncate">{doc.file_name}</div>
-                    )}
-                    <div className="flex items-center gap-2 mt-0.5 flex-wrap">
-                      {!hasFile(doc) && (
-                        <span className="text-[10px] font-bold text-amber-600 bg-amber-50 px-1.5 py-0.5 rounded">⚠️ No file attached</span>
-                      )}
-                      {doc.file_size && <span className="text-xs text-gray-400">{formatSize(doc.file_size)}</span>}
-                      {doc.file_size && <span className="text-xs text-gray-300">·</span>}
-                      <span className="text-xs text-gray-400">{new Date(doc.created_at).toLocaleDateString('en-CA', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
-                      {doc.ai_scanned && <span className="text-[10px] font-semibold text-green-600 bg-green-50 px-1.5 py-0.5 rounded-full">✓ AI scanned</span>}
+                <div className="p-3">
+                  {/* Row 1: Icon + Name + Delete */}
+                  <div className="flex items-center gap-2.5 mb-1.5">
+                    <div className="w-8 h-8 bg-gray-50 border border-gray-100 rounded-lg flex items-center justify-center text-base flex-shrink-0">
+                      {getDocIcon(doc)}
                     </div>
-                    {doc.notes && (
-                      <div className="mt-1.5 text-xs text-amber-700 bg-amber-50 px-2.5 py-1.5 rounded-lg line-clamp-2">{doc.notes}</div>
-                    )}
+                    <div className="flex-1 min-w-0">
+                      {editingDocId === doc.id ? (
+                        <div className="flex items-center gap-1.5">
+                          <input autoFocus type="text" value={editName} onChange={e => setEditName(e.target.value)}
+                            onKeyDown={e => { if (e.key === 'Enter') saveRename(doc.id); if (e.key === 'Escape') setEditingDocId(null); }}
+                            className="flex-1 text-sm border border-red-300 rounded-lg px-2 py-1 outline-none focus:border-red-500 min-w-0" />
+                          <button onClick={() => saveRename(doc.id)} className="text-green-600 text-xs font-bold px-2 py-1 bg-green-50 rounded-lg">Save</button>
+                          <button onClick={() => setEditingDocId(null)} className="text-gray-400 text-xs px-1">✕</button>
+                        </div>
+                      ) : (
+                        <div className="font-semibold text-gray-900 text-sm truncate">{doc.file_name}</div>
+                      )}
+                    </div>
+                    <button onClick={() => deleteDocument(doc)} className="flex-shrink-0 w-7 h-7 flex items-center justify-center text-gray-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors text-xs">✕</button>
                   </div>
 
-                  {/* Action buttons */}
-                  <div className="flex items-center gap-1 flex-shrink-0">
-                    <button onClick={() => viewDoc(doc)} title="View" className="px-2 py-1 text-[11px] font-medium text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">View</button>
-                    <button onClick={() => downloadDoc(doc)} title="Download" className="px-2 py-1 text-[11px] font-medium text-gray-500 hover:text-green-600 hover:bg-green-50 rounded-lg transition-colors">Save</button>
-                    <button onClick={() => openEditor(doc)} title="Edit notes" className="px-2 py-1 text-[11px] font-medium text-gray-500 hover:text-orange-600 hover:bg-orange-50 rounded-lg transition-colors">Notes</button>
-                    <button onClick={() => startRename(doc)} title="Rename" className="px-2 py-1 text-[11px] font-medium text-gray-500 hover:text-purple-600 hover:bg-purple-50 rounded-lg transition-colors">Rename</button>
+                  {/* Row 2: Metadata */}
+                  <div className="flex items-center gap-2 mb-2.5 flex-wrap pl-10">
                     {!hasFile(doc) && (
-                      <label title="Re-upload file" className="px-2 py-1 text-[11px] font-medium text-amber-500 hover:text-amber-700 hover:bg-amber-50 rounded-lg transition-colors cursor-pointer">
+                      <span className="text-[10px] font-bold text-amber-600 bg-amber-50 px-1.5 py-0.5 rounded">⚠️ No file</span>
+                    )}
+                    {doc.file_size && <span className="text-xs text-gray-400">{formatSize(doc.file_size)}</span>}
+                    {doc.file_size && <span className="text-xs text-gray-300">·</span>}
+                    <span className="text-xs text-gray-400">{new Date(doc.created_at).toLocaleDateString('en-CA', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+                    {doc.ai_scanned && <span className="text-[10px] font-semibold text-green-600 bg-green-50 px-1.5 py-0.5 rounded-full">✓ AI scanned</span>}
+                  </div>
+
+                  {doc.notes && (
+                    <div className="mb-2.5 text-xs text-amber-700 bg-amber-50 px-2.5 py-1.5 rounded-lg line-clamp-2 ml-10">{doc.notes}</div>
+                  )}
+
+                  {/* Row 3: Action buttons */}
+                  <div className="flex items-center gap-1 pl-10 flex-wrap">
+                    <button onClick={() => viewDoc(doc)} className="px-2.5 py-1 text-[11px] font-medium text-gray-600 bg-gray-50 hover:bg-blue-50 hover:text-blue-600 border border-gray-200 rounded-lg transition-colors">View</button>
+                    <button onClick={() => downloadDoc(doc)} className="px-2.5 py-1 text-[11px] font-medium text-gray-600 bg-gray-50 hover:bg-green-50 hover:text-green-600 border border-gray-200 rounded-lg transition-colors">Download</button>
+                    <button onClick={() => openEditor(doc)} className="px-2.5 py-1 text-[11px] font-medium text-gray-600 bg-gray-50 hover:bg-orange-50 hover:text-orange-600 border border-gray-200 rounded-lg transition-colors">Notes</button>
+                    <button onClick={() => startRename(doc)} className="px-2.5 py-1 text-[11px] font-medium text-gray-600 bg-gray-50 hover:bg-purple-50 hover:text-purple-600 border border-gray-200 rounded-lg transition-colors">Rename</button>
+                    {!hasFile(doc) && (
+                      <label className="px-2.5 py-1 text-[11px] font-medium text-amber-600 bg-amber-50 hover:bg-amber-100 border border-amber-200 rounded-lg transition-colors cursor-pointer">
                         Re-upload
                         <input type="file" className="hidden" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.txt"
                           onChange={e => { const f = e.target.files?.[0]; if (f) reuploadDoc(doc, f); }} />
                       </label>
                     )}
-                    <button onClick={() => deleteDocument(doc)} title="Delete" className="px-2 py-1 text-[11px] font-medium text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors">Delete</button>
+                    {/* Reorder */}
+                    <div className="ml-auto flex items-center gap-0.5">
+                      <button onClick={() => moveDoc(doc.id, 'up')} disabled={idx === 0} className="w-6 h-6 flex items-center justify-center text-gray-300 hover:text-gray-500 disabled:opacity-0 text-xs rounded">▲</button>
+                      <button onClick={() => moveDoc(doc.id, 'down')} disabled={idx === documents.length - 1} className="w-6 h-6 flex items-center justify-center text-gray-300 hover:text-gray-500 disabled:opacity-0 text-xs rounded">▼</button>
+                    </div>
                   </div>
                 </div>
 
                 {/* AI action buttons */}
                 {canUseAI && (
-                  <div className="px-3 pb-3 pt-1 border-t border-gray-50 flex gap-2 flex-wrap">
+                  <div className="px-3 pb-3 pt-2 border-t border-gray-100 flex gap-2 flex-wrap">
                     {[
-                      { action: 'summarize', label: '📝 Summarize', color: 'bg-blue-50 text-blue-700 hover:bg-blue-100 border-blue-100' },
-                      { action: 'scan', label: '🔍 Scan Issues', color: 'bg-green-50 text-green-700 hover:bg-green-100 border-green-100' },
-                      { action: 'compare', label: '⚖️ vs Standards', color: 'bg-purple-50 text-purple-700 hover:bg-purple-100 border-purple-100' },
+                      { action: 'summarize', label: 'Summarize', color: 'bg-blue-50 text-blue-700 hover:bg-blue-100 border-blue-100' },
+                      { action: 'scan', label: 'Scan Issues', color: 'bg-green-50 text-green-700 hover:bg-green-100 border-green-100' },
+                      { action: 'compare', label: 'vs Standards', color: 'bg-purple-50 text-purple-700 hover:bg-purple-100 border-purple-100' },
                     ].map(({ action, label, color }) => (
                       <button key={action} onClick={() => handleAIAction(doc, action)}
                         disabled={scanning === doc.id + '-' + action}
                         className={`px-3 py-1.5 rounded-lg text-xs font-semibold border disabled:opacity-40 transition-colors ${color}`}>
-                        {scanning === doc.id + '-' + action ? '⏳ Working...' : label}
+                        {scanning === doc.id + '-' + action ? 'Working...' : label}
                       </button>
                     ))}
                     {(doc.ai_summary || doc.ai_comparison) && (
                       <button onClick={() => setExpandedDoc(expandedDoc === doc.id ? null : doc.id)}
                         className="ml-auto px-3 py-1.5 rounded-lg text-xs font-semibold bg-gray-50 text-gray-600 hover:bg-gray-100 border border-gray-200">
-                        {expandedDoc === doc.id ? '▲ Hide AI' : '▼ AI Results'}
+                        {expandedDoc === doc.id ? '▲ Hide' : '▼ AI Results'}
                       </button>
                     )}
                   </div>
