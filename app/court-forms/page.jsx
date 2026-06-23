@@ -386,9 +386,7 @@ export default function CourtFormsPage() {
                       rel="noopener noreferrer"
                       className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg text-sm font-medium flex-shrink-0 whitespace-nowrap"
                     >
-                      {form.form_url?.includes('#/categories') ? '🔗 View on Publications SK'
-                        : form.form_url?.includes('gov.bc.ca') || form.form_url?.includes('provincialcourt.bc.ca') ? '🔗 BC Forms Directory'
-                        : '📄 Download'}
+                      {form.form_url?.includes('#/categories') ? '🔗 View on Publications SK' : '📄 Download'}
                     </a>
                   )}
                 </div>
