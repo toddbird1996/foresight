@@ -364,25 +364,6 @@ export default function CourtFormsPage() {
               <span className="text-xs text-gray-400">{filteredForms.length} form{filteredForms.length !== 1 ? "s" : ""}</span>
             </div>
 
-            {/* Category filter */}
-            {categories.length > 2 && (
-              <div className="flex flex-wrap gap-2">
-                {categories.map(cat => (
-                  <button
-                    key={cat}
-                    onClick={() => setSelectedCategory(cat)}
-                    className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
-                      selectedCategory === cat
-                        ? "bg-red-600 text-white"
-                        : "bg-white border border-gray-200 text-gray-600 hover:border-red-300"
-                    }`}
-                  >
-                    {cat === "all" ? "All Forms" : cat}
-                  </button>
-                ))}
-              </div>
-            )}
-
             {filteredForms.map(form => (
               <div key={form.id} className="bg-white border border-gray-200 rounded-xl p-4">
                 <div className="flex items-start justify-between gap-4">
