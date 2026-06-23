@@ -71,6 +71,46 @@ const TEMPLATES = [
       ]},
     ],
   },
+  {
+    id: 'consent-order',
+    name: 'Consent Order',
+    icon: '🤝',
+    desc: 'Draft the terms of a consent order when both parties have reached an agreement on parenting, support, and other family law matters.',
+    time: '20-30 min',
+    sections: [
+      { id: 'parties', title: 'Parties', fields: [
+        { id: 'applicantName', label: 'Applicant full legal name', type: 'text', placeholder: 'e.g., John David Smith' },
+        { id: 'respondentName', label: 'Respondent full legal name', type: 'text', placeholder: 'e.g., Jane Marie Smith' },
+        { id: 'province', label: 'Province where order is being filed', type: 'text', placeholder: 'e.g., Saskatchewan' },
+        { id: 'courtFile', label: 'Court file number (if known)', type: 'text', placeholder: 'e.g., FD-2025-00123 (leave blank if not yet assigned)' },
+      ]},
+      { id: 'children', title: 'Children', fields: [
+        { id: 'childrenList', label: 'Full name(s) and date(s) of birth of the children', type: 'textarea', placeholder: 'e.g., Emma Rose Smith, born March 4, 2018\nJake Thomas Smith, born July 12, 2021' },
+      ]},
+      { id: 'parenting', title: 'Parenting Arrangements', fields: [
+        { id: 'primaryResidence', label: 'Primary residence', type: 'textarea', placeholder: 'e.g., The children shall reside primarily with the Applicant at 123 Main Street, Saskatoon, Saskatchewan.' },
+        { id: 'parentingTime', label: 'Parenting time for each party', type: 'textarea', placeholder: 'e.g., The Respondent shall have parenting time every other weekend from Friday at 5:00 PM to Sunday at 6:00 PM, plus every Wednesday from 4:00 PM to 7:30 PM.' },
+        { id: 'holidays', label: 'Holiday and special occasion schedule', type: 'textarea', placeholder: 'e.g., Christmas Eve: with Respondent in odd years, Applicant in even years. Christmas Day: reverse. Each parent shall have the children on their respective birthday.' },
+        { id: 'decisionMaking', label: 'Decision-making responsibility', type: 'textarea', placeholder: 'e.g., The parties shall share joint decision-making responsibility for all major decisions regarding the children\'s education, health, and religious upbringing. Day-to-day decisions shall be made by the parent with whom the children are residing.' },
+      ]},
+      { id: 'support', title: 'Child Support', fields: [
+        { id: 'payorName', label: 'Who pays child support?', type: 'text', placeholder: 'e.g., The Respondent (Jane Marie Smith)' },
+        { id: 'supportAmount', label: 'Monthly child support amount', type: 'text', placeholder: 'e.g., $842 per month per the Federal Child Support Guidelines based on the Respondent\'s annual income of $65,000' },
+        { id: 'paymentDate', label: 'Payment date each month', type: 'text', placeholder: 'e.g., The 1st day of each month' },
+        { id: 'paymentMethod', label: 'Payment method', type: 'text', placeholder: 'e.g., By e-transfer, or as directed by the Maintenance Enforcement Program' },
+        { id: 'section7', label: 'Section 7 / special expenses (if any)', type: 'textarea', placeholder: 'e.g., The parties shall share childcare expenses in proportion to their respective incomes (60% Respondent, 40% Applicant). Leave blank if not applicable.' },
+      ]},
+      { id: 'spousal', title: 'Spousal Support', fields: [
+        { id: 'spousalSupport', label: 'Spousal support terms (if any)', type: 'textarea', placeholder: 'e.g., The Respondent shall pay spousal support of $500 per month for 24 months commencing January 1, 2026.\n\nOR\n\nNeither party shall pay spousal support and each party waives any future claim.\n\nLeave blank if not applicable.' },
+      ]},
+      { id: 'other', title: 'Additional Terms', fields: [
+        { id: 'communication', label: 'Communication between parties', type: 'textarea', placeholder: 'e.g., All communication between the parties shall be by text or email unless there is an emergency involving the children.' },
+        { id: 'travel', label: 'Travel and relocation', type: 'textarea', placeholder: 'e.g., Neither party shall relocate with the children outside Saskatchewan without 60 days written notice and consent of the other party or further order of the court.' },
+        { id: 'otherTerms', label: 'Any other agreed terms', type: 'textarea', placeholder: 'e.g., The parties agree to attend mediation before bringing any future applications to vary this order.' },
+        { id: 'variation', label: 'How this order can be changed', type: 'text', placeholder: 'e.g., This order may be varied by written agreement of both parties or by further order of the court upon a material change in circumstances.' },
+      ]},
+    ],
+  },
 ];
 
 export default function TemplatesPage() {
