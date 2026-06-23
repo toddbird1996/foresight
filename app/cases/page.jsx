@@ -787,16 +787,15 @@ ${fileContent ? 'Content:\n' + fileContent : ''}`;
             <p className="text-xs text-gray-400 mt-0.5">{documents.length} file{documents.length !== 1 ? 's' : ''}</p>
           </div>
           <div className="flex items-center gap-2">
-            {/* AI Digital Scan button */}
             <button onClick={() => scanInputRef.current?.click()}
-              className="px-3 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-xl text-xs font-bold transition-colors flex items-center gap-1.5"
+              className="px-3 py-2 bg-white border border-gray-200 hover:border-gray-300 text-gray-600 hover:text-gray-800 rounded-xl text-xs font-semibold transition-colors flex items-center gap-1.5"
               title="Take a photo of a physical document to digitize it with AI">
-              📷 Scan Physical Doc
+              📷 Scan Doc
             </button>
             <input ref={scanInputRef} type="file" accept="image/*" capture="environment" onChange={handleDigitalScan} className="hidden" />
             <button onClick={() => fileInputRef.current?.click()} disabled={uploading}
-              className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-xl text-sm font-bold disabled:opacity-40 transition-colors">
-              {uploading ? '⏳...' : '+ Upload'}
+              className="px-3 py-2 bg-red-600 hover:bg-red-700 text-white rounded-xl text-xs font-bold disabled:opacity-40 transition-colors">
+              {uploading ? '⏳' : '+ Upload'}
             </button>
             <input ref={fileInputRef} type="file" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.txt,.heic" onChange={handleUpload} className="hidden" />
           </div>
@@ -846,9 +845,9 @@ ${fileContent ? 'Content:\n' + fileContent : ''}`;
                         <span className="text-[10px] font-bold text-amber-600 bg-amber-50 px-1.5 py-0.5 rounded">⚠️ No file attached</span>
                       )}
                       {doc.file_size && <span className="text-xs text-gray-400">{formatSize(doc.file_size)}</span>}
-                      <span className="text-xs text-gray-300">•</span>
+                      {doc.file_size && <span className="text-xs text-gray-300">·</span>}
                       <span className="text-xs text-gray-400">{new Date(doc.created_at).toLocaleDateString('en-CA', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
-                      {doc.ai_scanned && <span className="text-xs text-green-600 font-semibold">✅ AI scanned</span>}
+                      {doc.ai_scanned && <span className="text-[10px] font-semibold text-green-600 bg-green-50 px-1.5 py-0.5 rounded-full">✓ AI scanned</span>}
                     </div>
                     {doc.notes && (
                       <div className="mt-1.5 text-xs text-amber-700 bg-amber-50 px-2.5 py-1.5 rounded-lg line-clamp-2">{doc.notes}</div>
@@ -856,19 +855,19 @@ ${fileContent ? 'Content:\n' + fileContent : ''}`;
                   </div>
 
                   {/* Action buttons */}
-                  <div className="flex items-center gap-0.5 flex-shrink-0">
-                    <button onClick={() => viewDoc(doc)} title="View" className="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">👁️</button>
-                    <button onClick={() => downloadDoc(doc)} title="Download" className="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-green-600 hover:bg-green-50 rounded-lg transition-colors">⬇️</button>
-                    <button onClick={() => openEditor(doc)} title="Edit notes" className="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-orange-600 hover:bg-orange-50 rounded-lg transition-colors">📝</button>
-                    <button onClick={() => startRename(doc)} title="Rename" className="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-purple-600 hover:bg-purple-50 rounded-lg transition-colors">✏️</button>
+                  <div className="flex items-center gap-1 flex-shrink-0">
+                    <button onClick={() => viewDoc(doc)} title="View" className="px-2 py-1 text-[11px] font-medium text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">View</button>
+                    <button onClick={() => downloadDoc(doc)} title="Download" className="px-2 py-1 text-[11px] font-medium text-gray-500 hover:text-green-600 hover:bg-green-50 rounded-lg transition-colors">Save</button>
+                    <button onClick={() => openEditor(doc)} title="Edit notes" className="px-2 py-1 text-[11px] font-medium text-gray-500 hover:text-orange-600 hover:bg-orange-50 rounded-lg transition-colors">Notes</button>
+                    <button onClick={() => startRename(doc)} title="Rename" className="px-2 py-1 text-[11px] font-medium text-gray-500 hover:text-purple-600 hover:bg-purple-50 rounded-lg transition-colors">Rename</button>
                     {!hasFile(doc) && (
-                      <label title="Re-upload file" className="w-8 h-8 flex items-center justify-center text-amber-500 hover:text-amber-700 hover:bg-amber-50 rounded-lg transition-colors cursor-pointer">
-                        ↩️
+                      <label title="Re-upload file" className="px-2 py-1 text-[11px] font-medium text-amber-500 hover:text-amber-700 hover:bg-amber-50 rounded-lg transition-colors cursor-pointer">
+                        Re-upload
                         <input type="file" className="hidden" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.txt"
                           onChange={e => { const f = e.target.files?.[0]; if (f) reuploadDoc(doc, f); }} />
                       </label>
                     )}
-                    <button onClick={() => deleteDocument(doc)} title="Delete" className="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors">🗑️</button>
+                    <button onClick={() => deleteDocument(doc)} title="Delete" className="px-2 py-1 text-[11px] font-medium text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors">Delete</button>
                   </div>
                 </div>
 
