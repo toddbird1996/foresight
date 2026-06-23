@@ -21,6 +21,7 @@ export default function Dashboard() {
   const [actionPlan, setActionPlan] = useState(null);
   const [userProfile, setUserProfile] = useState(null);
   const [upcomingDeadlines, setUpcomingDeadlines] = useState([]);
+  const [activeCard, setActiveCard] = useState('hearing');
 
 
   useEffect(() => {
@@ -59,6 +60,11 @@ export default function Dashboard() {
           .order("due_date", { ascending: true })
           .limit(5);
         setUpcomingDeadlines(deadlines || []);
+        const hasHearing = (deadlines || []).some(d =>
+          d.event_type === 'court' || d.event_type === 'hearing' ||
+          (d.title && (d.title.toLowerCase().includes('hearing') || d.title.toLowerCase().includes('trial') || d.title.toLowerCase().includes('court') || d.title.toLowerCase().includes('jcc')))
+        );
+        setActiveCard(hasHearing ? 'hearing' : (profile?.action_plan?.length > 0 ? 'plan' : 'walkthrough'));
       }
     });
   }, []);
@@ -140,18 +146,76 @@ export default function Dashboard() {
           </div>
         )}
 
-        {/* Smart Status Banner */}
-        {userProfile && <CaseWalkthroughBanner profile={userProfile} />}
+        {/* ── Smart Panel: Hearing / Action Plan / Case Guide ── */}
+        {user && (() => {
+          const hasHearing = upcomingDeadlines.some(d =>
+            d.event_type === 'court' || d.event_type === 'hearing' ||
+            (d.title && (d.title.toLowerCase().includes('hearing') || d.title.toLowerCase().includes('trial') || d.title.toLowerCase().includes('court') || d.title.toLowerCase().includes('jcc')))
+          );
+          const hasPlan = actionPlan && actionPlan.length > 0;
+          const tabs = [
+            ...(hasHearing ? [{ key: 'hearing', label: '🏛️ Hearing Prep' }] : []),
+            ...(hasPlan   ? [{ key: 'plan',    label: '🎯 Action Plan'  }] : []),
+            { key: 'walkthrough', label: '📋 Case Guide' },
+          ];
+          return (
+            <div className="mb-5">
+              {tabs.length > 1 && (
+                <div className="flex gap-2 mb-3 overflow-x-auto pb-1">
+                  {tabs.map(tab => (
+                    <button
+                      key={tab.key}
+                      onClick={() => setActiveCard(tab.key)}
+                      className={`flex-shrink-0 text-xs font-semibold px-3 py-1.5 rounded-full border transition-colors ${
+                        activeCard === tab.key
+                          ? 'bg-red-600 text-white border-red-600'
+                          : 'bg-white text-gray-500 border-gray-200 hover:border-red-300 hover:text-red-600'
+                      }`}
+                    >
+                      {tab.label}
+                    </button>
+                  ))}
+                </div>
+              )}
 
+              {activeCard === 'hearing' && hasHearing && (
+                <HearingPrepChecklist deadlines={upcomingDeadlines} userId={user.id} />
+              )}
 
+              {activeCard === 'plan' && hasPlan && (
+                <div className="bg-white border border-gray-200 rounded-xl p-4">
+                  <div className="flex items-center justify-between mb-3">
+                    <h3 className="font-semibold text-gray-900">🎯 Your Action Plan</h3>
+                    <span className="text-xs text-gray-400">Based on your case questionnaire</span>
+                  </div>
+                  <div className="space-y-2">
+                    {actionPlan.slice(0, 5).map((item, i) => (
+                      <Link key={i} href={item.link || '/cases'}
+                        className="flex items-center gap-3 p-2.5 rounded-lg bg-gray-50 hover:bg-red-50 hover:border-red-200 border border-gray-100 transition-colors">
+                        <div className="w-7 h-7 bg-red-600 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0">{item.step}</div>
+                        <div className="flex-1 min-w-0">
+                          <div className="font-medium text-gray-900 text-sm">{item.title}</div>
+                          <div className="text-xs text-gray-500 truncate">{item.desc}</div>
+                        </div>
+                        <span className="text-gray-400 text-sm">→</span>
+                      </Link>
+                    ))}
+                    {actionPlan.length > 5 && (
+                      <p className="text-xs text-gray-400 text-center pt-1">+ {actionPlan.length - 5} more steps</p>
+                    )}
+                  </div>
+                </div>
+              )}
 
-        {/* Case Guide - Step by Step Walkthrough */}
-        {/* Hearing Prep Checklist - auto-surfaces when hearing deadline within 14 days */}
-        {user && upcomingDeadlines.some(d => d.event_type === 'court' || d.event_type === 'hearing' || (d.title && (d.title.toLowerCase().includes('hearing') || d.title.toLowerCase().includes('trial') || d.title.toLowerCase().includes('court') || d.title.toLowerCase().includes('jcc')))) && (
-          <HearingPrepChecklist deadlines={upcomingDeadlines} userId={user.id} />
-        )}
-
-        {user && <CaseGuide userId={user.id} currentStep={userProfile?.case_guide_step || 0} dismissed={userProfile?.guide_dismissed || false} caseStatus={userProfile?.case_status} />}
+              {activeCard === 'walkthrough' && (
+                <>
+                  {userProfile && <CaseWalkthroughBanner profile={userProfile} />}
+                  <CaseGuide userId={user.id} currentStep={userProfile?.case_guide_step || 0} dismissed={userProfile?.guide_dismissed || false} caseStatus={userProfile?.case_status} />
+                </>
+              )}
+            </div>
+          );
+        })()}
 
 
 
@@ -246,32 +310,6 @@ export default function Dashboard() {
                 </Link>
               );
             })}
-          </div>
-        )}
-
-        {/* Action Plan */}
-        {actionPlan && actionPlan.length > 0 && (
-          <div className="mb-8 bg-white border border-gray-200 rounded-xl p-4">
-            <div className="flex items-center justify-between mb-3">
-              <h3 className="font-semibold text-gray-900">🎯 Your Action Plan</h3>
-              <span className="text-xs text-gray-400">Based on your case questionnaire</span>
-            </div>
-            <div className="space-y-2">
-              {actionPlan.slice(0, 5).map((item, i) => (
-                <Link key={i} href={item.link || '/cases'}
-                  className="flex items-center gap-3 p-2.5 rounded-lg bg-gray-50 hover:bg-red-50 hover:border-red-200 border border-gray-100 transition-colors">
-                  <div className="w-7 h-7 bg-red-600 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0">{item.step}</div>
-                  <div className="flex-1 min-w-0">
-                    <div className="font-medium text-gray-900 text-sm">{item.title}</div>
-                    <div className="text-xs text-gray-500 truncate">{item.desc}</div>
-                  </div>
-                  <span className="text-gray-400 text-sm">→</span>
-                </Link>
-              ))}
-              {actionPlan.length > 5 && (
-                <p className="text-xs text-gray-400 text-center pt-1">+ {actionPlan.length - 5} more steps</p>
-              )}
-            </div>
           </div>
         )}
 
