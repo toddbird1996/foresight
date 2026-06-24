@@ -380,14 +380,24 @@ export default function CourtFormsPage() {
                     <p className="text-gray-600 text-sm">{form.form_description}</p>
                   </div>
                   {form.form_url && form.downloadable && (
-                    <a
-                      href={form.form_url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg text-sm font-medium flex-shrink-0 whitespace-nowrap"
-                    >
-                      {form.form_url?.includes('#/categories') ? '🔗 View on Publications SK' : '📄 Download'}
-                    </a>
+                    <div className="flex flex-col gap-2 flex-shrink-0">
+                      <a
+                        href={form.form_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap text-center"
+                      >
+                        {form.form_url?.includes('#/categories') ? '🔗 View' : '📄 Download'}
+                      </a>
+                      {!form.form_url?.includes('#/categories') && (
+                        <button
+                          onClick={() => window.open(form.form_url, '_blank')}
+                          className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap text-center"
+                        >
+                          🖨️ Print
+                        </button>
+                      )}
+                    </div>
                   )}
                 </div>
               </div>
