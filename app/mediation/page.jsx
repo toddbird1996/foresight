@@ -107,7 +107,7 @@ export default function MediationModule() {
                 Before a Saskatchewan court will accept most family law applications, you must first attempt mediation. This is not optional — the court requires proof of mediation before your application can proceed.
               </p>
               <p className="text-blue-700 text-sm mt-2">
-                FDR is free, government-run, and designed to help both parties reach an agreement without
+                Mediation is free, government-run, and designed to help both parties reach an agreement without
                 going to court. Many families resolve their matters entirely through mediation.
               </p>
             </div>
@@ -146,12 +146,12 @@ export default function MediationModule() {
             <div className="bg-white border border-gray-200 rounded-2xl p-6">
               <h3 className="font-bold text-gray-900 mb-3">What is Mediation?</h3>
               <p className="text-gray-600 text-sm leading-relaxed mb-4">
-                Family Dispute Resolution (FDR) is a free, confidential service offered by the Government of
+                Mediation is a free, confidential service offered by the Government of
                 Saskatchewan. A trained mediator meets with both parties — together or separately — to help
                 reach an agreement on parenting time, decision-making, and support.
               </p>
               <p className="text-gray-600 text-sm leading-relaxed">
-                If you reach an agreement, FDR can help you formalize it. If you don't, you'll receive a
+                If you reach an agreement, the mediator can help you formalize it. If you don't, you'll receive a
                 Certificate of Compliance that allows you to proceed to court.
               </p>
             </div>
