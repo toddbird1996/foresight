@@ -59,7 +59,7 @@ const SELF_HELP_KITS = {
         tip: "Filing forms out of order or skipping one can get your application rejected.",
       },
       {
-        number: 4, icon: "👨‍👩‍👧", title: "Complete For Kids' Sake (if children involved)",
+        number: 4, icon: "👨‍👩‍👧", title: "Complete Parenting After Separation (if children involved)",
         description: "Mandatory parenting course required before filing — both parents separately.",
         checklist: [
           "Register at saskatchewanforkidssake.ca or call 1-888-425-4737",
@@ -126,7 +126,7 @@ const SELF_HELP_KITS = {
     resources: [
       { label: "Form Wizard (free online)", url: "https://familylaw.plea.org/", desc: "Guided tool to complete SK family law forms step by step" },
       { label: "Help Sessions (no appointment)", url: "https://www.saskatchewan.ca/residents/births-deaths-marriages-and-divorces/separation-or-divorce/represent-yourself-in-family-court", desc: "In-person help in Regina, Saskatoon, PA, Moose Jaw, Battleford, Meadow Lake" },
-      { label: "For Kids' Sake Course", url: "https://www.saskatchewanforkidssake.ca/", desc: "Mandatory parenting course — register online or call 1-888-425-4737" },
+      { label: "Parenting After Separation Course", url: "https://www.saskatchewanforkidssake.ca/", desc: "Mandatory parenting course — register online or call 1-888-425-4737" },
       { label: "Legal Aid Saskatchewan", url: "https://legalaid.sk.ca/", desc: "Free legal help if you qualify financially — 1-800-667-3764" },
       { label: "Family Law Saskatchewan", url: "https://familylaw.plea.org/", desc: "Comprehensive plain-language family law information" },
     ],
