@@ -459,6 +459,19 @@ export default function OnboardingFlow({ user, onComplete }) {
             <div>
               <h1 className="text-2xl font-bold text-gray-900 mb-1 text-center">What Are You Trying to Accomplish?</h1>
               <p className="text-gray-500 text-center mb-5 text-sm">This helps us build your action plan.</p>
+
+              {/* Mediation notice for Saskatchewan users starting fresh */}
+              {data.jurisdiction === 'saskatchewan' && (data.situation === 'starting_fresh' || data.situation === 'preparing_to_file') && (
+                <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-5">
+                  <div className="flex items-start gap-3">
+                    <span className="text-xl flex-shrink-0">🕊️</span>
+                    <div>
+                      <p className="text-blue-900 font-semibold text-sm mb-1">Mediation is required before court in Saskatchewan</p>
+                      <p className="text-blue-800 text-xs leading-relaxed">Before a court will hear your application, you must first attempt Family Dispute Resolution (FDR). We'll walk you through this as your first step. It's free and government-run.</p>
+                    </div>
+                  </div>
+                </div>
+              )}
               <div className="space-y-2 max-h-[400px] overflow-y-auto pr-1">
                 {currentGoals.map(g => (
                   <Option key={g.id} selected={data.goal === g.id}
