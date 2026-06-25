@@ -16,31 +16,31 @@ const STAGES = [
     id: 'not_started',
     icon: '🕊️',
     label: "I haven't started mediation yet",
-    desc: "I need to understand what FDR is and how to get started.",
+    desc: "I need to understand what mediation is and how to get started.",
   },
   {
     id: 'in_progress',
     icon: '🔄',
-    label: "I'm currently in FDR / mediation",
+    label: "I'm currently in mediation",
     desc: "I've booked or started the process but haven't finished.",
   },
   {
     id: 'completed',
     icon: '✅',
-    label: "I've completed FDR",
-    desc: "I have my Certificate of Compliance and I'm ready to file.",
+    label: "I've completed mediation",
+    desc: "I have my completion certificate and I'm ready to file.",
   },
   {
     id: 'active_case',
     icon: '🏛️',
     label: "I already have an active court case",
-    desc: "My matter is already before the court — FDR may already be done or exempted.",
+    desc: "My matter is already before the court — mediation may already be done or exempted.",
   },
   {
     id: 'exemption',
     icon: '🛡️',
-    label: "I believe I qualify for an FDR exemption",
-    desc: "Domestic violence, urgency, or another approved reason to bypass FDR.",
+    label: "I believe I qualify for a mediation exemption",
+    desc: "Domestic violence, urgency, or another approved reason to bypass mediation.",
   },
 ];
 
@@ -104,13 +104,11 @@ export default function MediationModule() {
             <div>
               <h2 className="font-bold text-blue-900 mb-1">Mediation comes first in Saskatchewan</h2>
               <p className="text-blue-800 text-sm leading-relaxed">
-                Before a Saskatchewan court will accept most family law applications, you must first attempt
-                <strong> Family Dispute Resolution (FDR)</strong>. This is not optional — the court requires
-                a Certificate of Compliance from FDR before your application can proceed.
+                Before a Saskatchewan court will accept most family law applications, you must first attempt mediation. This is not optional — the court requires proof of mediation before your application can proceed.
               </p>
               <p className="text-blue-700 text-sm mt-2">
                 FDR is free, government-run, and designed to help both parties reach an agreement without
-                going to court. Many families resolve their matters entirely through FDR.
+                going to court. Many families resolve their matters entirely through mediation.
               </p>
             </div>
           </div>
@@ -149,7 +147,7 @@ export default function MediationModule() {
               <h3 className="font-bold text-gray-900 mb-3">What is FDR?</h3>
               <p className="text-gray-600 text-sm leading-relaxed mb-4">
                 Family Dispute Resolution (FDR) is a free, confidential service offered by the Government of
-                Saskatchewan. A trained FDR officer meets with both parties — together or separately — to help
+                Saskatchewan. A trained mediator meets with both parties — together or separately — to help
                 reach an agreement on parenting time, decision-making, and support.
               </p>
               <p className="text-gray-600 text-sm leading-relaxed">
@@ -160,12 +158,12 @@ export default function MediationModule() {
 
             <div className="bg-white border border-gray-200 rounded-2xl p-6">
               <h3 className="font-bold text-gray-900 mb-1">What to expect</h3>
-              <p className="text-gray-500 text-xs mb-4">The FDR process typically looks like this:</p>
+              <p className="text-gray-500 text-xs mb-4">The mediation process typically looks like this:</p>
               <div className="space-y-3">
                 {[
-                  { step: '1', title: 'Book your intake appointment', desc: 'Call your local FDR office. The intake is usually by phone or in person.' },
+                  { step: '1', title: 'Book your intake appointment', desc: 'Call your local mediation office. The intake is usually by phone or in person.' },
                   { step: '2', title: 'Complete the "Parenting After Separation" course', desc: 'Required for most applicants. Available online and takes about 3 hours.' },
-                  { step: '3', title: 'Attend FDR sessions', desc: 'Meet with your FDR officer. Sessions may be joint or separate depending on your situation.' },
+                  { step: '3', title: 'Attend mediation sessions', desc: 'Meet with your mediator. Sessions may be joint or separate depending on your situation.' },
                   { step: '4', title: 'Receive your Certificate of Compliance', desc: "Whether or not you reach an agreement, you'll receive a certificate to file with the court." },
                 ].map((item) => (
                   <div key={item.step} className="flex gap-3">
@@ -180,7 +178,7 @@ export default function MediationModule() {
             </div>
 
             <div className="bg-white border border-gray-200 rounded-2xl p-6">
-              <h3 className="font-bold text-gray-900 mb-4">Saskatchewan FDR Offices</h3>
+              <h3 className="font-bold text-gray-900 mb-4">Saskatchewan Mediation Offices</h3>
               <div className="space-y-3">
                 {FDR_OFFICES.map((office) => (
                   <div key={office.city} className="flex items-start gap-3 p-3 bg-gray-50 rounded-xl">
@@ -211,13 +209,13 @@ export default function MediationModule() {
             <div className="bg-white border border-gray-200 rounded-2xl p-6">
               <h3 className="font-bold text-gray-900 mb-3">You're in the right place</h3>
               <p className="text-gray-600 text-sm leading-relaxed">
-                While you're in FDR, use this time to get organized. The more prepared you are,
+                While you're in mediation, use this time to get organized. The more prepared you are,
                 the more productive your sessions will be — and the better your outcome.
               </p>
             </div>
 
             <div className="bg-white border border-gray-200 rounded-2xl p-6">
-              <h3 className="font-bold text-gray-900 mb-4">While you're in FDR, you can:</h3>
+              <h3 className="font-bold text-gray-900 mb-4">While you're in mediation, you can:</h3>
               <div className="space-y-3">
                 {[
                   { icon: '📅', label: 'Build a parenting schedule proposal', link: '/schedule-builder' },
@@ -251,9 +249,9 @@ export default function MediationModule() {
               <div className="flex items-start gap-3">
                 <span className="text-2xl">✅</span>
                 <div>
-                  <h3 className="font-bold text-green-900 mb-1">FDR Complete — You're Ready to File</h3>
+                  <h3 className="font-bold text-green-900 mb-1">Mediation Complete — You're Ready to File</h3>
                   <p className="text-green-800 text-sm">
-                    With your Certificate of Compliance, your application can now proceed to court.
+                    With your mediation certificate, your application can now proceed to court.
                     The filing guide will walk you through every step from here.
                   </p>
                 </div>
@@ -270,14 +268,14 @@ export default function MediationModule() {
                   {confirmed && <span className="text-white text-xs">✓</span>}
                 </div>
                 <span className="text-sm text-gray-700">
-                  I confirm that I have completed Family Dispute Resolution and hold a valid Certificate of Compliance.
+                  I confirm that I have completed mediation and am ready to proceed.
                 </span>
               </button>
             </div>
 
             {/* Optional upload */}
             <div className="bg-white border border-gray-200 rounded-2xl p-5">
-              <h3 className="font-semibold text-gray-900 mb-1">Upload your certificate (optional)</h3>
+              <h3 className="font-semibold text-gray-900 mb-1">Upload your mediation certificate (optional)</h3>
               <p className="text-gray-500 text-xs mb-4">
                 Storing it here keeps everything in one place. You can skip this and upload later.
               </p>
@@ -292,7 +290,7 @@ export default function MediationModule() {
                   disabled={uploading}
                   className="w-full py-3 border-2 border-dashed border-gray-300 rounded-xl text-sm text-gray-500 hover:border-red-400 hover:text-red-600 transition-colors"
                 >
-                  {uploading ? 'Uploading...' : '📎 Tap to upload your FDR certificate'}
+                  {uploading ? 'Uploading...' : '📎 Tap to upload your mediation certificate'}
                 </button>
               )}
               <input ref={fileRef} type="file" accept=".pdf,.jpg,.jpeg,.png" className="hidden" onChange={handleFileUpload} />
@@ -353,10 +351,9 @@ export default function MediationModule() {
               <div className="flex items-start gap-3">
                 <span className="text-2xl">⚠️</span>
                 <div>
-                  <h3 className="font-bold text-amber-900 mb-1">FDR Exemptions Are Granted by the Court</h3>
+                  <h3 className="font-bold text-amber-900 mb-1">Mediation Exemptions Are Granted by the Court</h3>
                   <p className="text-amber-800 text-sm">
-                    You cannot self-declare an exemption — a judge must approve it. However, certain
-                    situations do qualify. Understanding when and how to apply matters.
+                    You cannot self-declare an exemption — a judge must approve it. However, certain situations do qualify.
                   </p>
                 </div>
               </div>
