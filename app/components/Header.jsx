@@ -130,7 +130,6 @@ export default function Header() {
               {[
                 { href: '/deadlines', label: 'Calendar & Deadlines', icon: '📅' },
                 { href: '/expenses', label: 'Expenses', icon: '💰' },
-                { href: '/children', label: 'Children\'s Info', icon: '👧' },
                 { href: '/coparent', label: 'Co-Parent Chat', icon: '🤝' },
                 { href: '/templates', label: 'Templates', icon: '📝' },
               ].map(link => (

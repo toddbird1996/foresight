@@ -338,7 +338,6 @@ export default function Dashboard() {
             {[
               { href: '/coparent', icon: '💬', label: 'Co-Parent Chat' },
               { href: '/expenses', icon: '💰', label: 'Expenses' },
-              { href: '/children', icon: '👧', label: "Children's Info" },
               { href: '/templates', icon: '📝', label: 'Templates' },
             ].map(item => (
               <Link key={item.href} href={item.href} className="bg-white border border-gray-200 rounded-xl p-3 hover:border-red-300 hover:shadow-sm transition-all text-center">
