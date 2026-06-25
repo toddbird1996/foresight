@@ -42,7 +42,7 @@ export const JURISDICTIONS = {
     },
     requirements: {
       fdr: { required: true, name: 'Family Dispute Resolution', certificate: 'Certificate of Compliance' },
-      parentingCourse: { required: true, name: 'For Kids\' Sake', hours: 3, online: true },
+      parentingCourse: { required: true, name: 'Parenting After Separation', hours: 3, online: true },
       financialDisclosure: { required: true, form: 'Form 70D' }
     },
     keyProcesses: [
