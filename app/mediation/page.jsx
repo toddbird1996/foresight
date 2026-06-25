@@ -144,7 +144,7 @@ export default function MediationModule() {
         {stage === 'not_started' && (
           <div className="space-y-6">
             <div className="bg-white border border-gray-200 rounded-2xl p-6">
-              <h3 className="font-bold text-gray-900 mb-3">What is FDR?</h3>
+              <h3 className="font-bold text-gray-900 mb-3">What is Mediation?</h3>
               <p className="text-gray-600 text-sm leading-relaxed mb-4">
                 Family Dispute Resolution (FDR) is a free, confidential service offered by the Government of
                 Saskatchewan. A trained mediator meets with both parties — together or separately — to help
@@ -198,7 +198,7 @@ export default function MediationModule() {
               onClick={() => router.push('/dashboard')}
               className="w-full py-4 bg-red-600 hover:bg-red-700 text-white rounded-2xl font-semibold transition-colors"
             >
-              Return to Dashboard — I'll Book FDR
+              Return to Dashboard — I'll Book Mediation
             </button>
           </div>
         )}
@@ -312,7 +312,7 @@ export default function MediationModule() {
             <div className="bg-white border border-gray-200 rounded-2xl p-6">
               <h3 className="font-bold text-gray-900 mb-3">Already in court</h3>
               <p className="text-gray-600 text-sm leading-relaxed">
-                If your matter is already before the court, FDR has likely already been completed or
+                If your matter is already before the court, mediation has likely already been completed or
                 exempted. Your focus now is on preparing for what's ahead — hearings, filings, and deadlines.
               </p>
             </div>
@@ -363,11 +363,11 @@ export default function MediationModule() {
               <h3 className="font-bold text-gray-900 mb-4">Common grounds for exemption</h3>
               <div className="space-y-3">
                 {[
-                  { icon: '🛡️', label: 'Domestic violence or abuse', desc: 'Where FDR would place either party at risk.' },
+                  { icon: '🛡️', label: 'Domestic violence or abuse', desc: 'Where mediation would place either party at risk.' },
                   { icon: '🚨', label: 'Urgent circumstances', desc: 'Child safety at immediate risk or emergency protection needed.' },
-                  { icon: '📍', label: 'Geographic barriers', desc: 'Where attending FDR is genuinely impractical.' },
+                  { icon: '📍', label: 'Geographic barriers', desc: 'Where attending mediation is genuinely impractical.' },
                   { icon: '⚖️', label: 'Power imbalance', desc: 'Where fair negotiation is not possible.' },
-                  { icon: '🤝', label: 'Prior agreement already reached', desc: 'Where parties have already settled outside of FDR.' },
+                  { icon: '🤝', label: 'Prior agreement already reached', desc: 'Where parties have already settled outside of mediation.' },
                 ].map((item) => (
                   <div key={item.label} className="flex items-start gap-3 p-3 bg-gray-50 rounded-xl">
                     <span className="text-lg">{item.icon}</span>
