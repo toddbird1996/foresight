@@ -270,7 +270,7 @@ const WHAT_NEXT = {
     'Phase 6: Resolution': { time: 'Varies', next: 'A consent order is signed by both parties and approved by the judge — usually within a few weeks. A trial can take 6–18 months to schedule.' },
   },
   parenting: {
-    'Phase 1: Preparation': { time: '1–2 weeks', next: 'Complete the For Kids Sake course first — you cannot file without the certificate. Then request your kit from the Family Law Information Centre.' },
+    'Phase 1: Preparation': { time: '1–2 weeks', next: 'Complete the Parenting After Separation course first — you cannot file without the certificate. Then request your kit from the Family Law Information Centre.' },
     'Phase 2: File Your Application': { time: '1 day', next: 'After filing, you will receive a court file number. You must serve the other parent within a reasonable time — 30 days is the response deadline.' },
     'Phase 3: Serve the Other Parent': { time: '1–7 days', next: 'File proof of service immediately after. The other parent has 30 days from the service date to file their Answer.' },
     'Phase 4: Response Period': { time: '30 days', next: 'Review their Answer carefully. Note every point of disagreement — these become the issues for your JCC. You can file a Reply if needed.' },
