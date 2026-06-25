@@ -237,7 +237,7 @@ export function AIChat({ onClose }) {
       {/* Disclaimer */}
       <div className="px-4 py-2 bg-orange-500/10 border-t border-orange-500/20">
         <p className="text-xs text-orange-300/80 text-center">
-          ⚠️ Legal information only, not legal advice. Always verify with official sources.
+          ⚠️ Legal information only — not legal advice. Verify case citations on CanLII before filing. <a href="/ai-disclosure" className="underline text-orange-300">Using AI responsibly →</a>
         </p>
       </div>
 
