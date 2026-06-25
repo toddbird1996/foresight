@@ -201,9 +201,14 @@ const goalToCaseType = (goal) => {
 
 function generateActionPlan(data) {
   const steps = [];
-  const { situation, goal, legalSupport } = data;
+  const { situation, goal, legalSupport, jurisdiction } = data;
 
-  // Step 1 is always rights
+  // For Saskatchewan users starting fresh or preparing to file, mediation is step 1
+  if ((situation === 'starting_fresh' || situation === 'preparing_to_file') && jurisdiction === 'saskatchewan') {
+    steps.push({ step: 1, title: 'Complete Family Dispute Resolution (FDR)', desc: 'Required before the court will accept your application in Saskatchewan. Start here.', link: '/mediation', icon: '🕊️' });
+  }
+
+  // Understand your rights
   steps.push({ step: 1, title: 'Understand your rights', desc: 'Review the Know Your Rights section for your province.', link: '/rights', icon: '⚖️' });
 
   // Branch based on situation
