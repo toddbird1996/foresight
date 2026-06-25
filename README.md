@@ -1,6 +1,6 @@
 # 🔮 Foresight
 
-Navigate custody battles with confidence. Step-by-step guides, AI assistance, and community support.
+Navigate family law matters with confidence. Step-by-step guides, AI assistance, and community support.
 
 ## Quick Start
 

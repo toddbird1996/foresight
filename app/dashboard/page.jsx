@@ -93,7 +93,7 @@ export default function Dashboard() {
             <h2 className="text-2xl font-bold text-gray-900 mb-1">
               {userProfile?.full_name ? `Welcome back, ${userProfile.full_name.split(' ')[0]}!` : 'Welcome back!'}
             </h2>
-            <p className="text-gray-600">Manage your custody case from one place.</p>
+            <p className="text-gray-600">Manage your family law case from one place.</p>
           </div>
           <Link href="/progress" className="hidden sm:flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-xl hover:border-red-300 transition-colors">
             <span className="text-sm">📊</span>
@@ -114,7 +114,7 @@ export default function Dashboard() {
                   {userProfile.situation === 'starting_fresh' && 'Start by telling the AI about your situation — what do I do first in Saskatchewan?'}
                   {userProfile.situation === 'responding' && 'You have been served papers. Ask the AI what you need to do right now.'}
                   {userProfile.situation === 'preparing_to_file' && 'You are getting ready to file. Tap My Steps below to see your filing guide, or ask the AI your first question.'}
-                  {userProfile.situation === 'have_order_want_change' && 'You want to change an existing order. Ask the AI how to apply to vary your custody order.'}
+                  {userProfile.situation === 'have_order_want_change' && 'You want to change an existing order. Ask the AI how to apply to vary your parenting order.'}
                   {userProfile.situation === 'have_order_not_followed' && 'Your order is not being followed. Ask the AI what you can do right now.'}
                   {userProfile.situation === 'filed_waiting' && 'Your case is active. Check your filing guide for what comes next, or ask the AI about your upcoming hearing.'}
                   {userProfile.situation === 'in_mediation' && 'You are in mediation. Ask the AI what you should know before your FDR session.'}

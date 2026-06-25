@@ -509,7 +509,7 @@ We strongly recommend consulting an attorney if your case involves:
 
 ## Mentors Are Not Attorneys
 
-Our mentor program connects you with parents who have personal experience with custody cases. Mentors:
+Our mentor program connects you with parents who have personal experience with family law cases. Mentors:
 
 - Are not licensed attorneys (unless separately identified)
 - Cannot provide legal advice

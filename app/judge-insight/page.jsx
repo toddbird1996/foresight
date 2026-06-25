@@ -250,7 +250,7 @@ const SECTIONS = [
       },
       {
         title: 'Don\'t try to be a lawyer — be a good parent',
-        detail: 'You don\'t need to know every legal term. Speak plainly. Tell your story factually. Show that you\'re a good, stable, loving parent. That\'s what wins custody cases, not legal theatrics.',
+        detail: 'You don\'t need to know every legal term. Speak plainly. Tell your story factually. Show that you\'re a good, stable, loving parent. That\'s what wins family law cases, not legal theatrics.',
       },
       {
         title: 'If the other party has a lawyer who is aggressive, stay calm',

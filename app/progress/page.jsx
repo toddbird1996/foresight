@@ -20,7 +20,7 @@ const JOURNEY_MILESTONES = [
   { key: 'read_judge_tips', title: 'Reviewed Court Tips', desc: 'Prepared for your hearing', icon: '🏛️', link: '/judge-insight' },
   { key: 'filed_application', title: 'Filed Your Application', desc: 'Submitted to the court', icon: '✅' },
   { key: 'attended_hearing', title: 'Attended a Hearing', desc: 'Appeared before the court', icon: '🏛️' },
-  { key: 'received_order', title: 'Received Court Order', desc: 'Got your custody order', icon: '🎉' },
+  { key: 'received_order', title: 'Received Court Order', desc: 'Got your parenting order', icon: '🎉' },
 ];
 
 export default function ProgressPage() {

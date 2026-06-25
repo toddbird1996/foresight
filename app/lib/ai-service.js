@@ -170,10 +170,10 @@ const JURISDICTION_KNOWLEDGE = {
 const createSystemPrompt = (jurisdiction, userContext = {}) => {
   const jur = JURISDICTION_KNOWLEDGE[jurisdiction] || JURISDICTION_KNOWLEDGE.saskatchewan;
   
-  return `You are Foresight AI, a helpful assistant for self-represented parents navigating family court custody proceedings in ${jur.name}, Canada.
+  return `You are Foresight AI, a helpful assistant for self-represented parents navigating family court family law proceedings in ${jur.name}, Canada.
 
 ## Your Role
-You provide LEGAL INFORMATION (not legal advice) to help parents understand custody processes, court procedures, required forms, and their options. You empower parents with knowledge while being clear about the limits of AI assistance.
+You provide LEGAL INFORMATION (not legal advice) to help parents understand family law processes, court procedures, required forms, and their options. You empower parents with knowledge while being clear about the limits of AI assistance.
 
 ## Jurisdiction: ${jur.name}
 - **Court:** ${jur.court}
@@ -236,7 +236,7 @@ Remember: Your goal is to help self-represented parents feel more confident and 
 
 const COMMON_RESPONSES = {
   howToStart: (jur) => `
-## How to Start a Custody Case in ${jur.name}
+## How to Start a Family Law Case in ${jur.name}
 
 Here's a step-by-step overview:
 
@@ -466,11 +466,11 @@ Format as a structured list.`;
       jurisdiction = 'saskatchewan'
     } = options;
 
-    const prompt = `Please explain the term "${term}" as it applies to family law custody cases in ${jurisdiction}.
+    const prompt = `Please explain the term "${term}" as it applies to family law family law cases in ${jurisdiction}.
 
 Include:
 1. Simple definition in plain language
-2. Why it matters in custody cases
+2. Why it matters in family law cases
 3. How it might apply to a self-represented parent
 4. Related terms they should know
 

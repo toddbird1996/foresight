@@ -558,7 +558,7 @@ export const FORMS_DATABASE = {
             id: 'qc-application',
             name: 'Application to Institute Proceedings (Divorce/Custody)',
             formNumber: 'N/A',
-            description: 'Main document to start a divorce, separation, or custody case. Quebec does not have a standardized form — use the Éducaloi template or have a lawyer draft one.',
+            description: 'Main document to start a divorce, separation, or family law case. Quebec does not have a standardized form — use the Éducaloi template or have a lawyer draft one.',
             required: true,
             downloadUrl: 'https://www.quebec.ca/en/justice-and-civil-status/judicial-system/forms-models/separation-divorce',
             fileType: 'link',

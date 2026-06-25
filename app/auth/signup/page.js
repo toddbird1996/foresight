@@ -97,7 +97,7 @@ function SignupForm() {
               <span className="text-white font-bold text-3xl">F</span>
             </div>
             <h1 className="text-2xl font-bold text-gray-900">Create your account</h1>
-            <p className="text-gray-500 text-sm mt-1">Start navigating your custody case today</p>
+            <p className="text-gray-500 text-sm mt-1">Start navigating your family law case today</p>
           </div>
 
           {refCode && (

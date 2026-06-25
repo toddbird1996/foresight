@@ -20,13 +20,13 @@ export const metadata = {
     type: 'website',
     locale: 'en_CA',
     title: 'Foresight — A Coach in Your Corner',
-    description: 'Free tools to help parents understand and navigate custody proceedings. Filing guides, court forms, rights by province, AI assistant, and peer support.',
+    description: 'Free tools to help parents understand and navigate family law proceedings. Filing guides, court forms, rights by province, AI assistant, and peer support.',
     siteName: 'Foresight',
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Foresight — A Coach in Your Corner',
-    description: 'Free tools to help parents understand and navigate custody proceedings across Canada.',
+    description: 'Free tools to help parents understand and navigate family law proceedings across Canada.',
   },
   appleWebApp: {
     capable: true,

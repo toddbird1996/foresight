@@ -114,7 +114,7 @@ const GOALS = {
     { id: 'modify_informal', label: 'Change the current informal arrangement', icon: '🔄' },
   ],
   have_support_no_custody: [
-    { id: 'get_custody', label: 'Get a formal custody order', icon: '👨‍👧‍👦' },
+    { id: 'get_custody', label: 'Get a formal parenting order', icon: '👨‍👧‍👦' },
     { id: 'get_parenting_schedule', label: 'Get a parenting schedule formalized', icon: '📅' },
     { id: 'combine_into_order', label: 'Combine support and custody into one order', icon: '📋' },
     { id: 'modify_support', label: 'Modify the existing support amount', icon: '💰' },
@@ -123,7 +123,7 @@ const GOALS = {
   have_custody_no_support: [
     { id: 'get_support_ordered', label: 'Get child support ordered', icon: '💰' },
     { id: 'get_retroactive_support', label: 'Get retroactive (back-dated) support', icon: '📅' },
-    { id: 'modify_custody', label: 'Modify the current custody arrangement', icon: '🔄' },
+    { id: 'modify_custody', label: 'Modify the current parenting arrangement', icon: '🔄' },
     { id: 'get_consent_order', label: 'Get a consent order for both', icon: '🤝' },
   ],
   responding: [
@@ -168,7 +168,7 @@ const GOALS = {
     { id: 'get_protection_order', label: 'Get an emergency protection order', icon: '🚨' },
     { id: 'deal_with_alienation', label: 'Deal with parental alienation', icon: '💔' },
     { id: 'document_situation', label: 'Document the situation properly', icon: '📁' },
-    { id: 'get_custody_in_conflict', label: 'Get a formal custody order', icon: '⚖️' },
+    { id: 'get_custody_in_conflict', label: 'Get a formal parenting order', icon: '⚖️' },
     { id: 'find_support', label: 'Find support and resources', icon: '🤝' },
   ],
 };

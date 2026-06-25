@@ -99,8 +99,8 @@ const LEGISLATION_DB = {
         rights: [
           { right: 'Both parents have equal rights to custody', section: "Children's Law Act, s.3", detail: 'Unless a court order says otherwise, both parents have equal rights to custody and decision-making for their children.' },
           { right: 'The child\'s best interests are paramount', section: "Children's Law Act, s.6", detail: 'Courts must consider the best interests of the child as the paramount consideration in all custody decisions. This includes the child\'s physical, emotional, and psychological needs.' },
-          { right: 'You can apply for custody without a lawyer', section: 'Court of King\'s Bench Rules', detail: 'You have the right to represent yourself in custody proceedings. The court must treat self-represented litigants fairly.' },
-          { right: 'Maximum contact principle', section: "Children's Law Act, s.6(2)", detail: 'Courts must consider the benefit of maximizing contact between the child and both parents when making custody orders.' },
+          { right: 'You can apply for custody without a lawyer', section: 'Court of King\'s Bench Rules', detail: 'You have the right to represent yourself in family law proceedings. The court must treat self-represented litigants fairly.' },
+          { right: 'Maximum contact principle', section: "Children's Law Act, s.6(2)", detail: 'Courts must consider the benefit of maximizing contact between the child and both parents when making parenting orders.' },
           { right: 'You can request a custody evaluation', section: 'Court Practice', detail: 'Either parent can request the court order a custody and access assessment by a qualified professional.' },
           { right: 'Parenting after separation course is required', section: 'King\'s Bench Practice Directive', detail: 'Both parents must complete the "For the Sake of the Children" parenting program before a custody hearing.' },
         ]
@@ -373,14 +373,14 @@ const LEGISLATION_DB = {
         rights: [
           { right: 'You have the right to contest the removal', section: 'Section 34', detail: 'You can appear at the protection hearing, present evidence, and argue for the child\'s return.' },
           { right: 'You can appeal any order', section: 'Section 82', detail: 'You have the right to appeal any order made under the Act to the Supreme Court.' },
-          { right: 'Time limits on continuing custody orders', section: 'Section 43', detail: 'There are maximum time limits for temporary custody orders, after which the child must be returned or a permanent order sought.' },
-          { right: 'You can apply to vary or cancel any order', section: 'Section 54', detail: 'You can apply to the court to change or cancel a supervision or custody order if circumstances change.' },
+          { right: 'Time limits on continuing parenting orders', section: 'Section 43', detail: 'There are maximum time limits for temporary parenting orders, after which the child must be returned or a permanent order sought.' },
+          { right: 'You can apply to vary or cancel any order', section: 'Section 54', detail: 'You can apply to the court to change or cancel a supervision or parenting order if circumstances change.' },
         ]
       },
       {
         id: 'access', title: 'Your Rights to Access & Visits', icon: '👨‍👩‍👧',
         rights: [
-          { right: 'Access can be included in custody orders', section: 'Section 48', detail: 'The court can order access (visits) between you and your child while the child is in the director\'s custody.' },
+          { right: 'Access can be included in parenting orders', section: 'Section 48', detail: 'The court can order access (visits) between you and your child while the child is in the director\'s custody.' },
           { right: 'You can apply for access at any time', section: 'Section 48', detail: 'You can apply to the court for an access order even if one wasn\'t initially included.' },
           { right: 'The director must facilitate reasonable visits', section: 'General', detail: 'Unless the court orders otherwise, the director should make reasonable arrangements for you to visit your child.' },
         ]
@@ -416,7 +416,7 @@ const LEGISLATION_DB = {
       {
         id: 'support', title: 'Your Child Support Rights', icon: '💰',
         rights: [
-          { right: 'Both parents must support their children', section: 'Provincial Family Law', detail: 'Both parents have a legal obligation to financially support their children regardless of custody arrangements.' },
+          { right: 'Both parents must support their children', section: 'Provincial Family Law', detail: 'Both parents have a legal obligation to financially support their children regardless of parenting arrangements.' },
           { right: 'Federal Child Support Guidelines apply', section: 'Federal Guidelines', detail: 'Child support amounts are determined by the Federal Child Support Guidelines tables based on income and number of children.' },
           { right: 'You can request financial disclosure', section: 'Provincial Family Law', detail: 'You have the right to request complete financial disclosure from the other parent to ensure accurate support calculations.' },
           { right: 'Support orders can be enforced', section: 'Provincial Enforcement Program', detail: 'Each province has a maintenance enforcement program that can garnish wages, seize assets, and suspend licenses to enforce support orders.' },
@@ -513,7 +513,7 @@ const LEGISLATION_DB = {
       {
         id: 'support', title: 'Your Child Support Rights', icon: '💰',
         rights: [
-          { right: 'Both parents must support their children', section: 'Provincial Family Law', detail: 'Both parents have a legal obligation to financially support their children regardless of custody arrangements.' },
+          { right: 'Both parents must support their children', section: 'Provincial Family Law', detail: 'Both parents have a legal obligation to financially support their children regardless of parenting arrangements.' },
           { right: 'Federal Child Support Guidelines apply', section: 'Federal Guidelines', detail: 'Child support amounts are determined by the Federal Child Support Guidelines tables based on income and number of children.' },
           { right: 'You can request financial disclosure', section: 'Provincial Family Law', detail: 'You have the right to request complete financial disclosure from the other parent to ensure accurate support calculations.' },
           { right: 'Support orders can be enforced', section: 'Provincial Enforcement Program', detail: 'Each province has a maintenance enforcement program that can garnish wages, seize assets, and suspend licenses to enforce support orders.' },
@@ -614,7 +614,7 @@ const LEGISLATION_DB = {
       {
         id: 'support', title: 'Your Child Support Rights', icon: '💰',
         rights: [
-          { right: 'Both parents must support their children', section: 'Provincial Family Law', detail: 'Both parents have a legal obligation to financially support their children regardless of custody arrangements.' },
+          { right: 'Both parents must support their children', section: 'Provincial Family Law', detail: 'Both parents have a legal obligation to financially support their children regardless of parenting arrangements.' },
           { right: 'Federal Child Support Guidelines apply', section: 'Federal Guidelines', detail: 'Child support amounts are determined by the Federal Child Support Guidelines tables based on income and number of children.' },
           { right: 'You can request financial disclosure', section: 'Provincial Family Law', detail: 'You have the right to request complete financial disclosure from the other parent to ensure accurate support calculations.' },
           { right: 'Support orders can be enforced', section: 'Provincial Enforcement Program', detail: 'Each province has a maintenance enforcement program that can garnish wages, seize assets, and suspend licenses to enforce support orders.' },
@@ -670,7 +670,7 @@ const LEGISLATION_DB = {
         rights: [
           { right: 'You can contest any protection application', section: 'General', detail: 'You have the right to appear, present evidence, call witnesses, and cross-examine agency witnesses.' },
           { right: 'You can appeal court orders', section: 'General', detail: 'You have the right to appeal any order made under the Act.' },
-          { right: 'Time limits on care orders', section: 'General', detail: 'Temporary care and custody orders have maximum time limits.' },
+          { right: 'Time limits on care orders', section: 'General', detail: 'Temporary care and parenting orders have maximum time limits.' },
         ]
       },
       {
@@ -708,7 +708,7 @@ const LEGISLATION_DB = {
       {
         id: 'support', title: 'Your Child Support Rights', icon: '💰',
         rights: [
-          { right: 'Both parents must support their children', section: 'Provincial Family Law', detail: 'Both parents have a legal obligation to financially support their children regardless of custody arrangements.' },
+          { right: 'Both parents must support their children', section: 'Provincial Family Law', detail: 'Both parents have a legal obligation to financially support their children regardless of parenting arrangements.' },
           { right: 'Federal Child Support Guidelines apply', section: 'Federal Guidelines', detail: 'Child support amounts are determined by the Federal Child Support Guidelines tables based on income and number of children.' },
           { right: 'You can request financial disclosure', section: 'Provincial Family Law', detail: 'You have the right to request complete financial disclosure from the other parent to ensure accurate support calculations.' },
           { right: 'Support orders can be enforced', section: 'Provincial Enforcement Program', detail: 'Each province has a maintenance enforcement program that can garnish wages, seize assets, and suspend licenses to enforce support orders.' },
@@ -764,7 +764,7 @@ const LEGISLATION_DB = {
         rights: [
           { right: 'You can contest any application', section: 'General', detail: 'You have the right to appear in court, present evidence, and challenge the Minister\'s application.' },
           { right: 'You can appeal court decisions', section: 'General', detail: 'You have the right to appeal any order made under the Act.' },
-          { right: 'Orders have time limits', section: 'General', detail: 'Supervision and custody orders have maximum durations and must be reviewed.' },
+          { right: 'Orders have time limits', section: 'General', detail: 'Supervision and parenting orders have maximum durations and must be reviewed.' },
         ]
       },
       {
@@ -803,7 +803,7 @@ const LEGISLATION_DB = {
       {
         id: 'support', title: 'Your Child Support Rights', icon: '💰',
         rights: [
-          { right: 'Both parents must support their children', section: 'Provincial Family Law', detail: 'Both parents have a legal obligation to financially support their children regardless of custody arrangements.' },
+          { right: 'Both parents must support their children', section: 'Provincial Family Law', detail: 'Both parents have a legal obligation to financially support their children regardless of parenting arrangements.' },
           { right: 'Federal Child Support Guidelines apply', section: 'Federal Guidelines', detail: 'Child support amounts are determined by the Federal Child Support Guidelines tables based on income and number of children.' },
           { right: 'You can request financial disclosure', section: 'Provincial Family Law', detail: 'You have the right to request complete financial disclosure from the other parent to ensure accurate support calculations.' },
           { right: 'Support orders can be enforced', section: 'Provincial Enforcement Program', detail: 'Each province has a maintenance enforcement program that can garnish wages, seize assets, and suspend licenses to enforce support orders.' },
@@ -897,7 +897,7 @@ const LEGISLATION_DB = {
       {
         id: 'support', title: 'Your Child Support Rights', icon: '💰',
         rights: [
-          { right: 'Both parents must support their children', section: 'Provincial Family Law', detail: 'Both parents have a legal obligation to financially support their children regardless of custody arrangements.' },
+          { right: 'Both parents must support their children', section: 'Provincial Family Law', detail: 'Both parents have a legal obligation to financially support their children regardless of parenting arrangements.' },
           { right: 'Federal Child Support Guidelines apply', section: 'Federal Guidelines', detail: 'Child support amounts are determined by the Federal Child Support Guidelines tables based on income and number of children.' },
           { right: 'You can request financial disclosure', section: 'Provincial Family Law', detail: 'You have the right to request complete financial disclosure from the other parent to ensure accurate support calculations.' },
           { right: 'Support orders can be enforced', section: 'Provincial Enforcement Program', detail: 'Each province has a maintenance enforcement program that can garnish wages, seize assets, and suspend licenses to enforce support orders.' },
@@ -990,7 +990,7 @@ const LEGISLATION_DB = {
       {
         id: 'support', title: 'Your Child Support Rights', icon: '💰',
         rights: [
-          { right: 'Both parents must support their children', section: 'Provincial Family Law', detail: 'Both parents have a legal obligation to financially support their children regardless of custody arrangements.' },
+          { right: 'Both parents must support their children', section: 'Provincial Family Law', detail: 'Both parents have a legal obligation to financially support their children regardless of parenting arrangements.' },
           { right: 'Federal Child Support Guidelines apply', section: 'Federal Guidelines', detail: 'Child support amounts are determined by the Federal Child Support Guidelines tables based on income and number of children.' },
           { right: 'You can request financial disclosure', section: 'Provincial Family Law', detail: 'You have the right to request complete financial disclosure from the other parent to ensure accurate support calculations.' },
           { right: 'Support orders can be enforced', section: 'Provincial Enforcement Program', detail: 'Each province has a maintenance enforcement program that can garnish wages, seize assets, and suspend licenses to enforce support orders.' },
@@ -1082,7 +1082,7 @@ const LEGISLATION_DB = {
       {
         id: 'support', title: 'Your Child Support Rights', icon: '💰',
         rights: [
-          { right: 'Both parents must support their children', section: 'Provincial Family Law', detail: 'Both parents have a legal obligation to financially support their children regardless of custody arrangements.' },
+          { right: 'Both parents must support their children', section: 'Provincial Family Law', detail: 'Both parents have a legal obligation to financially support their children regardless of parenting arrangements.' },
           { right: 'Federal Child Support Guidelines apply', section: 'Federal Guidelines', detail: 'Child support amounts are determined by the Federal Child Support Guidelines tables based on income and number of children.' },
           { right: 'You can request financial disclosure', section: 'Provincial Family Law', detail: 'You have the right to request complete financial disclosure from the other parent to ensure accurate support calculations.' },
           { right: 'Support orders can be enforced', section: 'Provincial Enforcement Program', detail: 'Each province has a maintenance enforcement program that can garnish wages, seize assets, and suspend licenses to enforce support orders.' },
@@ -1177,7 +1177,7 @@ const LEGISLATION_DB = {
       {
         id: 'support', title: 'Your Child Support Rights', icon: '💰',
         rights: [
-          { right: 'Both parents must support their children', section: 'Provincial Family Law', detail: 'Both parents have a legal obligation to financially support their children regardless of custody arrangements.' },
+          { right: 'Both parents must support their children', section: 'Provincial Family Law', detail: 'Both parents have a legal obligation to financially support their children regardless of parenting arrangements.' },
           { right: 'Federal Child Support Guidelines apply', section: 'Federal Guidelines', detail: 'Child support amounts are determined by the Federal Child Support Guidelines tables based on income and number of children.' },
           { right: 'You can request financial disclosure', section: 'Provincial Family Law', detail: 'You have the right to request complete financial disclosure from the other parent to ensure accurate support calculations.' },
           { right: 'Support orders can be enforced', section: 'Provincial Enforcement Program', detail: 'Each province has a maintenance enforcement program that can garnish wages, seize assets, and suspend licenses to enforce support orders.' },
@@ -1274,7 +1274,7 @@ const LEGISLATION_DB = {
       {
         id: 'support', title: 'Your Child Support Rights', icon: '💰',
         rights: [
-          { right: 'Both parents must support their children', section: 'Provincial Family Law', detail: 'Both parents have a legal obligation to financially support their children regardless of custody arrangements.' },
+          { right: 'Both parents must support their children', section: 'Provincial Family Law', detail: 'Both parents have a legal obligation to financially support their children regardless of parenting arrangements.' },
           { right: 'Federal Child Support Guidelines apply', section: 'Federal Guidelines', detail: 'Child support amounts are determined by the Federal Child Support Guidelines tables based on income and number of children.' },
           { right: 'You can request financial disclosure', section: 'Provincial Family Law', detail: 'You have the right to request complete financial disclosure from the other parent to ensure accurate support calculations.' },
           { right: 'Support orders can be enforced', section: 'Provincial Enforcement Program', detail: 'Each province has a maintenance enforcement program that can garnish wages, seize assets, and suspend licenses to enforce support orders.' },

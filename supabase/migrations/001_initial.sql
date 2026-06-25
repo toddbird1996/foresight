@@ -711,7 +711,7 @@ INSERT INTO channels (id, name, description, category, jurisdiction_id, icon, di
 ('on-parents', 'Ontario Parents', 'Support for ON parents navigating custody', 'legal', 'ontario', '⚖️', 3),
 ('bc-parents', 'BC Parents', 'Support for BC parents navigating custody', 'legal', 'bc', '⚖️', 4),
 ('high-conflict', 'High Conflict', 'Strategies for high-conflict custody situations', 'support', NULL, '🔥', 10),
-('mental-health', 'Mental Health', 'Self-care and mental wellness during custody battles', 'support', NULL, '💚', 11),
+('mental-health', 'Mental Health', 'Self-care and mental wellness during family law matters', 'support', NULL, '💚', 11),
 ('dads-corner', 'Dads Corner', 'Support space for fathers', 'support', NULL, '👨', 12),
 ('moms-circle', 'Moms Circle', 'Support space for mothers', 'support', NULL, '👩', 13),
 ('gaming', 'Gaming Lounge', 'Take a break and connect over games', 'hobbies', NULL, '🎮', 20),

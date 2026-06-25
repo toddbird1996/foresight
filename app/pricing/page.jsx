@@ -163,7 +163,7 @@ export default function PricingPage() {
         <div className="text-center mb-12">
           <h2 className="text-3xl font-bold text-gray-900 mb-4">Choose Your Plan</h2>
           <p className="text-gray-600 max-w-2xl mx-auto">
-            Get the support you need to navigate your custody case. All plans include access to our community and filing guides.
+            Get the support you need to navigate your family law case. All plans include access to our community and filing guides.
           </p>
         </div>
 

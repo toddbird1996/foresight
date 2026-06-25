@@ -1,7 +1,7 @@
 {
   "name": "Foresight - Navigate Custody with Confidence",
   "short_name": "Foresight",
-  "description": "Filing guides, AI assistance, community support, and resources for parents navigating custody battles.",
+  "description": "Filing guides, AI assistance, community support, and resources for parents navigating family law matters.",
   "start_url": "/dashboard",
   "display": "standalone",
   "background_color": "#ffffff",

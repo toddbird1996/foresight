@@ -189,7 +189,7 @@ export default function GlossaryPage() {
                               <p className="text-xs text-blue-800 leading-relaxed">{term.example}</p>
                             </div>
                           )}
-                          <Link href={`/ai?q=${encodeURIComponent('Explain ' + term.term + ' in the context of my Saskatchewan custody case')}`} className="inline-flex items-center gap-1.5 text-xs text-red-600 font-medium hover:underline">
+                          <Link href={`/ai?q=${encodeURIComponent('Explain ' + term.term + ' in the context of my Saskatchewan family law case')}`} className="inline-flex items-center gap-1.5 text-xs text-red-600 font-medium hover:underline">
                             💬 Ask AI about this →
                           </Link>
                         </div>

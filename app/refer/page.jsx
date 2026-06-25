@@ -51,7 +51,7 @@ export default function ReferPage() {
       try {
         await navigator.share({
           title: 'Foresight - Navigate Custody with Confidence',
-          text: 'I\'m using Foresight to navigate my custody case. It has filing guides, court forms, and AI assistance for all 13 Canadian provinces. Join free:',
+          text: 'I\'m using Foresight to navigate my family law case. It has filing guides, court forms, and AI assistance for all 13 Canadian provinces. Join free:',
           url: referralLink,
         });
       } catch { /* cancelled */ }
@@ -112,7 +112,7 @@ export default function ReferPage() {
         <div className="bg-white border border-gray-200 rounded-2xl p-5 mb-6">
           <h3 className="font-semibold text-gray-900 mb-3">Share via</h3>
           <div className="space-y-2">
-            <a href={`sms:?body=I'm using Foresight to navigate my custody case. Free filing guides, court forms, and AI assistance for all Canadian provinces. Check it out: ${referralLink}`}
+            <a href={`sms:?body=I'm using Foresight to navigate my family law case. Free filing guides, court forms, and AI assistance for all Canadian provinces. Check it out: ${referralLink}`}
               className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors">
               <span className="text-xl">💬</span>
               <span className="text-sm text-gray-700">Text Message</span>
@@ -122,7 +122,7 @@ export default function ReferPage() {
               <span className="text-xl">📧</span>
               <span className="text-sm text-gray-700">Email</span>
             </a>
-            <a href={`https://wa.me/?text=I'm using Foresight to navigate my custody case. Free filing guides, court forms, and AI for all Canadian provinces. Check it out: ${encodeURIComponent(referralLink)}`}
+            <a href={`https://wa.me/?text=I'm using Foresight to navigate my family law case. Free filing guides, court forms, and AI for all Canadian provinces. Check it out: ${encodeURIComponent(referralLink)}`}
               target="_blank" rel="noopener" className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors">
               <span className="text-xl">📱</span>
               <span className="text-sm text-gray-700">WhatsApp</span>

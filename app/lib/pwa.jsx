@@ -7,7 +7,7 @@
 // ============================================
 
 export const manifest = {
-  "name": "Foresight - Custody Guide",
+  "name": "Foresight - Family Law Guide",
   "short_name": "Foresight",
   "description": "Navigate family law matters with confidence. Filing guides, AI assistance, and community support.",
   "start_url": "/",

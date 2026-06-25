@@ -9,7 +9,7 @@ const TEMPLATES = [
     id: 'parenting-plan',
     name: 'Parenting Plan',
     icon: '👶',
-    desc: 'Create a detailed parenting plan for custody arrangements, schedules, and decision-making.',
+    desc: 'Create a detailed parenting plan for parenting arrangements, schedules, and decision-making.',
     time: '15-20 min',
     sections: [
       { id: 'children', title: 'Children Information', fields: [

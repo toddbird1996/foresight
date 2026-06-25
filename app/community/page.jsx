@@ -20,7 +20,7 @@ const WEEKLY_PROMPTS = [
   { emoji: '💬', text: "What's one thing you wish you knew before your first court date?" },
   { emoji: '🏆', text: "Share a small win from this week — no win is too small." },
   { emoji: '📚', text: "What resource (book, video, website) helped you most?" },
-  { emoji: '🧠', text: "How do you handle stress during the custody process?" },
+  { emoji: '🧠', text: "How do you handle stress during the family law process?" },
   { emoji: '💡', text: "What's the best advice you've received from another parent?" },
 ];
 

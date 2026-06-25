@@ -1,7 +1,7 @@
 {
   "name": "foresight",
   "version": "1.0.0",
-  "description": "Navigate custody battles with confidence",
+  "description": "Navigate family law matters with confidence",
   "private": true,
   "scripts": {
     "dev": "next dev",

@@ -165,7 +165,7 @@ export function AIChat({ onClose }) {
   };
 
   const suggestedQuestions = [
-    "How do I start a custody case?",
+    "How do I start a family law case?",
     "What forms do I need?",
     "Explain parenting time",
     "How does child support work?",
@@ -475,7 +475,7 @@ export function AIChatPage() {
         <div className="flex-1">
           <h1 className="font-semibold text-white">AI Assistant</h1>
           <p className="text-xs text-slate-400">
-            {profile?.jurisdiction ? `${profile.jurisdiction.charAt(0).toUpperCase() + profile.jurisdiction.slice(1)} Custody Guide` : 'Loading...'}
+            {profile?.jurisdiction ? `${profile.jurisdiction.charAt(0).toUpperCase() + profile.jurisdiction.slice(1)} Family Law Guide` : 'Loading...'}
           </p>
         </div>
       </header>
