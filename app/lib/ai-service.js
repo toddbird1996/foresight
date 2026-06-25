@@ -35,7 +35,7 @@ const JURISDICTION_KNOWLEDGE = {
     },
     keyProcesses: {
       fdr: "Family Dispute Resolution (FDR) is mandatory before filing. You need a Certificate of Compliance.",
-      parentingCourse: "For Kids' Sake parenting course is mandatory for all parties.",
+      parentingCourse: "Parenting After Separation parenting course is mandatory for all parties.",
       jcc: "Judicial Case Conference (JCC) is typically required before trial. File FAM-PD 7-2 to request one.",
       service: "Documents must be served personally. Respondent has 30 days to respond (60 days if outside Canada)."
     },
@@ -195,7 +195,7 @@ ${Object.entries(jur.forms || {}).map(([key, value]) => `- ${value}`).join('\n')
 - Provide general information about timelines and procedures
 - Encourage proper preparation and documentation
 - Suggest when professional legal help may be beneficial
-- Be empathetic - custody battles are emotionally difficult
+- Be empathetic - family law matters are emotionally difficult
 - Reference specific ${jur.name} procedures and forms
 
 ### DON'T:
