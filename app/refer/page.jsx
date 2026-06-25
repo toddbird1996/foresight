@@ -77,7 +77,7 @@ export default function ReferPage() {
         <div className="bg-gradient-to-br from-red-600 to-red-700 rounded-2xl p-6 text-white text-center mb-6">
           <div className="text-4xl mb-3">🤝</div>
           <h1 className="text-xl font-bold mb-2">Help Another Parent</h1>
-          <p className="text-sm text-red-100 mb-4">Know someone going through a custody battle? Share Foresight — it's free to start and could change their case.</p>
+          <p className="text-sm text-red-100 mb-4">Know someone going through a family law matter? Share Foresight — it's free to start and could change their case.</p>
           <div className="bg-white/10 backdrop-blur rounded-xl p-3 mb-4">
             <div className="text-xs text-red-200 mb-1">Your referral link</div>
             <div className="text-sm font-mono break-all">{referralLink}</div>
@@ -117,7 +117,7 @@ export default function ReferPage() {
               <span className="text-xl">💬</span>
               <span className="text-sm text-gray-700">Text Message</span>
             </a>
-            <a href={`mailto:?subject=Foresight - Free Custody Help&body=Hey, I wanted to share this app with you. Foresight helps parents navigate custody battles with step-by-step filing guides, court forms, and AI assistance. It covers all 13 Canadian provinces. You can sign up free here: ${referralLink}`}
+            <a href={`mailto:?subject=Foresight - Free Custody Help&body=Hey, I wanted to share this app with you. Foresight helps parents navigate family law matters with step-by-step filing guides, court forms, and AI assistance. It covers all 13 Canadian provinces. You can sign up free here: ${referralLink}`}
               className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors">
               <span className="text-xl">📧</span>
               <span className="text-sm text-gray-700">Email</span>
