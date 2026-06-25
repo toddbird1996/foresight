@@ -354,6 +354,7 @@ export default function Dashboard() {
           <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3 px-1">Learn & Prepare</h3>
           <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
             {[
+              { href: '/mediation', icon: '🕊️', label: 'Mediation & FDR' },
               { href: '/filing', icon: '📋', label: 'Filing Guide' },
               { href: '/self-rep', icon: '⚖️', label: 'Represent Yourself' },
               { href: '/court-forms', icon: '📄', label: 'Court Forms' },
