@@ -355,6 +355,7 @@ export default function Dashboard() {
           <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
             {[
               { href: '/mediation', icon: '🕊️', label: 'Mediation' },
+              { href: '/ai-disclosure', icon: '🤖', label: 'Using AI Responsibly' },
               { href: '/filing', icon: '📋', label: 'Filing Guide' },
               { href: '/self-rep', icon: '⚖️', label: 'Represent Yourself' },
               { href: '/court-forms', icon: '📄', label: 'Court Forms' },
