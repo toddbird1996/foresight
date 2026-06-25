@@ -4,11 +4,84 @@ import { useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '../../lib/supabaseClient';
 
-const FDR_OFFICES = [
-  { city: 'Regina', phone: '306-787-5749', address: '2151 Scarth St, Regina SK', hours: 'Mon–Fri 8:00am–5:00pm' },
-  { city: 'Saskatoon', phone: '306-933-6230', address: '101-110 21st St E, Saskatoon SK', hours: 'Mon–Fri 8:00am–5:00pm' },
-  { city: 'Prince Albert', phone: '306-953-2660', address: '800 Central Ave, Prince Albert SK', hours: 'Mon–Fri 8:00am–5:00pm' },
-  { city: 'Moose Jaw', phone: '306-694-3659', address: '111 Fairford St E, Moose Jaw SK', hours: 'Mon–Fri 8:00am–5:00pm' },
+const RESOLUTION_PATHWAYS = [
+  {
+    id: 'government',
+    icon: '🏛️',
+    title: 'Government Mediation (Free)',
+    org: 'Dispute Resolution Office — Ministry of Justice',
+    desc: 'Free, government-run mediation. Required before most family court applications. A trained officer helps both parties reach an agreement. You receive a Certificate of Compliance whether or not you reach a deal.',
+    cost: 'Free',
+    how: 'Call or email to book your intake appointment.',
+    contacts: [
+      { label: 'Toll-free', value: '1-866-257-0927', type: 'phone' },
+      { label: 'Email', value: 'earlyfamilyresolution@gov.sk.ca', type: 'email' },
+      { label: 'Website', value: 'saskatchewan.ca/earlyfamilyresolution', type: 'link', href: 'https://www.saskatchewan.ca/residents/births-deaths-marriages-and-divorces/separation-or-divorce/early-family-dispute-resolution' },
+    ]
+  },
+  {
+    id: 'private',
+    icon: '🤝',
+    title: 'Private Mediator',
+    org: 'Recognized Family Mediators — Province of Saskatchewan',
+    desc: 'Private mediators set their own fees and processes. Some offer reduced or pro bono rates. A recognized private mediator can also satisfy the court's mediation requirement and issue your certificate.',
+    cost: 'Varies — some reduced/pro bono options available',
+    how: 'Search the government's service provider registry to find a recognized mediator near you.',
+    contacts: [
+      { label: 'Service Provider Registry', value: 'Find a mediator', type: 'link', href: 'https://www.saskatchewan.ca/residents/births-deaths-marriages-and-divorces/separation-or-divorce/early-family-dispute-resolution' },
+      { label: 'Low-income options', value: '1-866-257-0927', type: 'phone' },
+    ]
+  },
+  {
+    id: 'collaborative',
+    icon: '⚖️',
+    title: 'Collaborative Law',
+    org: 'Collaborative Professionals of Saskatchewan Inc.',
+    desc: 'Both parties hire collaboratively trained lawyers who work together to reach a settlement — without going to court. A respectful, structured process focused on reaching mutual agreement.',
+    cost: 'Lawyer fees apply — varies by lawyer',
+    how: 'Contact Collaborative Professionals of Saskatchewan to find a trained collaborative lawyer in your area.',
+    contacts: [
+      { label: 'Website', value: 'collaborativeprofessionals.ca', type: 'link', href: 'https://www.collaborativeprofessionals.ca' },
+    ]
+  },
+  {
+    id: 'arbitration',
+    icon: '🔨',
+    title: 'Family Arbitration',
+    org: 'Recognized Family Arbitrators — Province of Saskatchewan',
+    desc: 'A family arbitrator acts like a private judge — they hear both sides and make a binding decision. Faster and more private than court. Must be a recognized arbitrator under Saskatchewan law.',
+    cost: 'Varies by arbitrator',
+    how: 'Search the government's service provider registry for a recognized family arbitrator.',
+    contacts: [
+      { label: 'Service Provider Registry', value: 'Find an arbitrator', type: 'link', href: 'https://www.saskatchewan.ca/residents/births-deaths-marriages-and-divorces/separation-or-divorce/early-family-dispute-resolution' },
+      { label: 'Info line', value: '1-866-257-0927', type: 'phone' },
+    ]
+  },
+  {
+    id: 'parenting',
+    icon: '👨‍👩‍👧',
+    title: 'Parenting Coordinator',
+    org: 'Recognized Parenting Coordinators — Province of Saskatchewan',
+    desc: 'For parents who already have an agreement or order in place but keep hitting conflicts. A parenting coordinator helps implement the plan and makes binding decisions on day-to-day disputes. Reduces returns to court.',
+    cost: 'Varies — typically $150–$400/hr',
+    how: 'Both parents must agree on the coordinator. Search the registry or ask your lawyer for a referral.',
+    contacts: [
+      { label: 'Service Provider Registry', value: 'Find a coordinator', type: 'link', href: 'https://www.saskatchewan.ca/residents/births-deaths-marriages-and-divorces/separation-or-divorce/early-family-dispute-resolution/parenting-coordination' },
+    ]
+  },
+  {
+    id: 'legalaid',
+    icon: '🆘',
+    title: 'Legal Aid Saskatchewan',
+    org: 'Legal Aid Saskatchewan',
+    desc: 'Free legal advice and court representation for people who cannot afford a lawyer. Covers family law matters including parenting time, support, and cases where children have been apprehended. Financial eligibility required.',
+    cost: 'Free (income-based eligibility)',
+    how: 'Call the Application Centre to apply by phone. Lines open Mon–Fri 8:00am–4:45pm.',
+    contacts: [
+      { label: 'Application Centre', value: '1-800-667-3764', type: 'phone' },
+      { label: 'Website', value: 'legalaid.sk.ca', type: 'link', href: 'https://legalaid.sk.ca/apply/' },
+    ]
+  },
 ];
 
 const STAGES = [
@@ -178,16 +251,38 @@ export default function MediationModule() {
             </div>
 
             <div className="bg-white border border-gray-200 rounded-2xl p-6">
-              <h3 className="font-bold text-gray-900 mb-4">Saskatchewan Mediation Offices</h3>
+              <h3 className="font-bold text-gray-900 mb-1">Your Options in Saskatchewan</h3>
+              <p className="text-gray-500 text-xs mb-4">There are six pathways. Government mediation is free and the most common starting point.</p>
               <div className="space-y-3">
-                {FDR_OFFICES.map((office) => (
-                  <div key={office.city} className="flex items-start gap-3 p-3 bg-gray-50 rounded-xl">
-                    <span className="text-lg">📍</span>
-                    <div>
-                      <div className="font-semibold text-gray-900 text-sm">{office.city}</div>
-                      <div className="text-gray-500 text-xs">{office.address}</div>
-                      <a href={`tel:${office.phone}`} className="text-red-600 text-xs font-medium">{office.phone}</a>
-                      <div className="text-gray-400 text-xs">{office.hours}</div>
+                {RESOLUTION_PATHWAYS.map((pathway) => (
+                  <div key={pathway.id} className="border border-gray-200 rounded-xl overflow-hidden">
+                    <div className="flex items-start gap-3 p-4">
+                      <span className="text-xl flex-shrink-0">{pathway.icon}</span>
+                      <div className="flex-1">
+                        <div className="flex items-center justify-between gap-2">
+                          <div className="font-semibold text-gray-900 text-sm">{pathway.title}</div>
+                          <span className="text-xs text-gray-400 flex-shrink-0">{pathway.cost}</span>
+                        </div>
+                        <div className="text-gray-400 text-xs mb-2">{pathway.org}</div>
+                        <p className="text-gray-600 text-xs leading-relaxed mb-3">{pathway.desc}</p>
+                        <div className="bg-blue-50 rounded-lg p-2 mb-3">
+                          <p className="text-blue-800 text-xs font-medium">How to start: <span className="font-normal">{pathway.how}</span></p>
+                        </div>
+                        <div className="space-y-1">
+                          {pathway.contacts.map((contact, i) => (
+                            <div key={i} className="flex items-center gap-2">
+                              <span className="text-gray-400 text-xs w-24 flex-shrink-0">{contact.label}:</span>
+                              {contact.type === 'phone' ? (
+                                <a href={`tel:${contact.value}`} className="text-red-600 text-xs font-medium">{contact.value}</a>
+                              ) : contact.type === 'email' ? (
+                                <a href={`mailto:${contact.value}`} className="text-red-600 text-xs font-medium">{contact.value}</a>
+                              ) : (
+                                <a href={contact.href} target="_blank" rel="noopener noreferrer" className="text-red-600 text-xs font-medium">{contact.value} →</a>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
                     </div>
                   </div>
                 ))}
