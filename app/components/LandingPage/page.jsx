@@ -141,7 +141,7 @@ function HeroSection() {
 
           {/* Subheadline */}
           <p className="text-xl sm:text-2xl text-gray-600 mb-8 max-w-3xl mx-auto">
-            Step-by-step custody guides, court forms, AI assistance, and a community of parents who understand. Everything you need to navigate family court — from filing to final order.
+            Navigating family law doesn't have to be overwhelming. Foresight guides you through every step — from mediation to resolution — in plain language, at your own pace.
           </p>
 
           {/* CTA Buttons */}
@@ -257,9 +257,9 @@ function SocialProofBar() {
 
 function ProblemSection() {
   const problems = [
-    { icon: '💸', title: '$15,000 - $50,000', description: 'Average cost of a custody lawyer in Canada' },
-    { icon: '📚', title: 'Overwhelming Complexity', description: 'Forms, deadlines, procedures—it\'s designed to confuse you' },
-    { icon: '😰', title: 'Emotional Exhaustion', description: 'Fighting for your kids while navigating a broken system' },
+    { icon: '💸', title: '$15,000 - $50,000', description: 'Average cost of a family law lawyer in Canada' },
+    { icon: '📚', title: 'Overwhelming Complexity', description: 'Forms, deadlines, and procedures can be difficult to navigate without the right guidance' },
+    { icon: '😰', title: 'Emotional Exhaustion', description: "One of the most stressful seasons of your life — you shouldn't have to face it alone" },
     { icon: '⏰', title: 'Months of Delays', description: 'One missed form can set you back weeks or months' }
   ];
 
@@ -268,12 +268,11 @@ function ProblemSection() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-3xl mx-auto mb-16">
           <h2 className="text-3xl sm:text-4xl font-bold mb-6 text-gray-900">
-            The Family Court System is{' '}
-            <span className="text-red-600">Broken</span>
+            The Family Court System Can Feel{' '}
+            <span className="text-red-600">Impossible to Navigate</span>
           </h2>
           <p className="text-xl text-gray-600">
-            Every year, thousands of parents lose custody battles—not because they're bad parents, 
-            but because they can't afford the legal help they need.
+            Every year, thousands of parents fall short — not because they're not up for the job, but because affording a lawyer is out of range.
           </p>
         </div>
 
@@ -310,20 +309,19 @@ function SolutionSection() {
             <h2 className="text-3xl sm:text-4xl font-bold mb-6 text-gray-900">
               What if You Had a{' '}
               <span className="text-red-600">
-                Custody Expert
+                Coach
               </span>{' '}
               in Your Pocket?
             </h2>
             <p className="text-xl text-gray-600 mb-8">
-              Foresight gives you everything you need to navigate custody court confidently—
-              step-by-step guides, AI assistance, and a community of parents who've been there.
+              Foresight gives you everything you need to navigate family law confidently — step-by-step guides, personalized AI assistance, and a community of parents who understand.
             </p>
             <ul className="space-y-4">
               {[
                 'Know exactly what forms to file and when',
-                'Get instant answers to your custody questions',
+                'Get instant answers to your family law questions',
                 'Never miss a deadline again',
-                'Connect with parents who\'ve won their cases'
+                'Connect with parents who\'ve been through it'
               ].map((item, i) => (
                 <li key={i} className="flex items-center gap-3 text-lg text-gray-700">
                   <span className="w-6 h-6 rounded-full bg-green-100 flex items-center justify-center text-green-600 text-sm">✓</span>
@@ -387,7 +385,7 @@ function FeaturesSection() {
           <h2 className="text-3xl sm:text-4xl font-bold mb-6 text-gray-900">
             Everything You Need to{' '}
             <span className="text-red-600">
-              Navigate Your Custody Case
+              Navigate Your Family Law Journey
             </span>
           </h2>
           <p className="text-xl text-gray-600">
@@ -438,8 +436,8 @@ function HowItWorksSection() {
     },
     {
       number: '04',
-      title: 'Win Your Case',
-      description: 'Navigate court like a pro. Get the custody arrangement your children deserve.',
+      title: 'Get Back to Living Life',
+      description: 'With the right guidance and support, you can move through the process and focus on what matters most — your family.',
       icon: '🏆'
     }
   ];
@@ -496,7 +494,7 @@ function TestimonialsSection() {
             <span className="text-red-600">Need It Most</span>
           </h2>
           <p className="text-xl text-gray-600">
-            Foresight launched in Saskatchewan and is growing across Canada. Be among the first families in your province to access free, AI-powered legal guidance built specifically for custody and family court.
+            Foresight launched in Saskatchewan and is growing across Canada. Be among the first families in your province to access free legal guidance and personalized AI support built for families navigating the process.
           </p>
         </div>
         <div className="grid sm:grid-cols-3 gap-8">
@@ -531,7 +529,7 @@ function PricingSection() {
       icon: '🥉',
       description: 'Get started with essential tools',
       features: [
-        'Custody guides & filing resources',
+        'Family law guides & filing resources',
         'Community forum / chat rooms',
         '2 GB document storage',
         '5 AI questions total (trial)',
@@ -550,7 +548,7 @@ function PricingSection() {
       price: '$19.99',
       period: 'CAD/month',
       icon: '🥈',
-      description: 'Full AI-powered custody guidance',
+      description: 'Full personalized AI-powered guidance',
       features: [
         'Everything in Bronze',
         '500 AI questions per month',
@@ -667,7 +665,7 @@ function FAQSection() {
   const faqs = [
     {
       question: 'Is Foresight legal advice?',
-      answer: 'No. Foresight provides legal information and educational resources to help you understand custody procedures. We are not a law firm and do not provide legal advice. For advice specific to your situation, consult a qualified lawyer.'
+      answer: 'No. Foresight provides legal information and educational resources to help you understand family law procedures. We are not a law firm and do not provide legal advice. For advice specific to your situation, consult a qualified lawyer.'
     },
     {
       question: 'Which provinces do you support?',
@@ -735,10 +733,10 @@ function CTASection() {
     <section className="py-20 sm:py-32 bg-red-50">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <h2 className="text-3xl sm:text-4xl font-bold mb-6 text-gray-900">
-          Ready to Fight for Your Kids?
+          Ready to Take the First Step?
         </h2>
         <p className="text-xl text-gray-600 mb-8">
-          Foresight is built for parents who can't afford to get it wrong. Start free today — no credit card required.
+          Foresight starts where the process starts — mediation — and walks you through every stage in plain language. Start free today — no credit card required.
         </p>
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
           <a
@@ -776,7 +774,7 @@ function Footer() {
               <span className="text-xl font-bold text-gray-900">Foresight</span>
             </div>
             <p className="text-gray-500 text-sm">
-              Helping parents navigate custody battles with confidence.
+              Helping parents navigate family law with clarity and confidence.
             </p>
           </div>
 
