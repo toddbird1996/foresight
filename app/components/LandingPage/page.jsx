@@ -347,7 +347,7 @@ function SolutionSection() {
                   <div className="flex-1 p-3 rounded-xl bg-red-50 border border-red-200 text-sm">
                     <p className="mb-2 text-gray-900">Here's your step-by-step guide for Saskatchewan:</p>
                     <p className="text-gray-600">1. Complete Family Dispute Resolution (FDR)</p>
-                    <p className="text-gray-600">2. Take the "For Kids' Sake" parenting course</p>
+                    <p className="text-gray-600">2. Complete the "Parenting After Separation" course</p>
                     <p className="text-gray-600">3. Prepare Form 70A (Petition)...</p>
                     <p className="text-red-600 mt-2">Want me to explain each step in detail?</p>
                   </div>
