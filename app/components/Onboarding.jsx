@@ -467,7 +467,7 @@ export default function OnboardingFlow({ user, onComplete }) {
                     <span className="text-xl flex-shrink-0">🕊️</span>
                     <div>
                       <p className="text-blue-900 font-semibold text-sm mb-1">Mediation is required before court in Saskatchewan</p>
-                      <p className="text-blue-800 text-xs leading-relaxed">Before a court will hear your application, you must first attempt Family Dispute Resolution (FDR). We'll walk you through this as your first step. It's free and government-run.</p>
+                      <p className="text-blue-800 text-xs leading-relaxed">Before a court will hear your application, you must first attempt mediation. We'll walk you through this as your first step.</p>
                     </div>
                   </div>
                 </div>
