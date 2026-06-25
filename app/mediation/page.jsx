@@ -91,7 +91,7 @@ export default function MediationModule() {
         <div className="max-w-2xl mx-auto flex items-center gap-3">
           <a href="/dashboard" className="text-gray-400 hover:text-gray-600 text-sm">← Dashboard</a>
           <span className="text-gray-300">/</span>
-          <span className="text-sm font-medium text-gray-700">Mediation & FDR</span>
+          <span className="text-sm font-medium text-gray-700">Mediation</span>
         </div>
       </div>
 
