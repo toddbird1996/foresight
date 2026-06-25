@@ -9,7 +9,7 @@
 export const manifest = {
   "name": "Foresight - Custody Guide",
   "short_name": "Foresight",
-  "description": "Navigate custody battles with confidence. Filing guides, AI assistance, and community support.",
+  "description": "Navigate family law matters with confidence. Filing guides, AI assistance, and community support.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#0a0a0f",
