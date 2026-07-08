@@ -209,7 +209,7 @@ const SECTIONS = [
       },
       {
         title: 'Don\'t speak negatively about the other parent in front of children',
-        detail: 'Children love both parents. Hearing one parent badmouth the other causes lasting psychological harm. Courts call this "parental alienation" and it can result in loss of custody.',
+        detail: 'Children love both parents. Hearing one parent badmouth the other causes lasting psychological harm. Courts call this "parental alienation" and it can result in loss of parenting time or decision-making responsibility.',
       },
       {
         title: 'Focus on what\'s best for your child, not what hurts the other parent',

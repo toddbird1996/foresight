@@ -50,7 +50,7 @@ export default function ReferPage() {
     if (navigator.share) {
       try {
         await navigator.share({
-          title: 'Foresight - Navigate Custody with Confidence',
+          title: 'Foresight - Navigate Parenting Arrangements with Confidence',
           text: 'I\'m using Foresight to navigate my family law case. It has filing guides, court forms, and AI assistance for all 13 Canadian provinces. Join free:',
           url: referralLink,
         });
@@ -117,7 +117,7 @@ export default function ReferPage() {
               <span className="text-xl">💬</span>
               <span className="text-sm text-gray-700">Text Message</span>
             </a>
-            <a href={`mailto:?subject=Foresight - Free Custody Help&body=Hey, I wanted to share this app with you. Foresight helps parents navigate family law matters with step-by-step filing guides, court forms, and AI assistance. It covers all 13 Canadian provinces. You can sign up free here: ${referralLink}`}
+            <a href={`mailto:?subject=Foresight - Free Family Law Help&body=Hey, I wanted to share this app with you. Foresight helps parents navigate family law matters with step-by-step filing guides, court forms, and AI assistance. It covers all 13 Canadian jurisdictions. You can sign up free here: ${referralLink}`}
               className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors">
               <span className="text-xl">📧</span>
               <span className="text-sm text-gray-700">Email</span>

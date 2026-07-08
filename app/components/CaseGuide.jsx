@@ -6,7 +6,7 @@ const CASE_STAGES = [
   {
     id: 'pre_fdr', title: 'Preparation', subtitle: 'Gather what you need before filing', icon: '📋', color: 'bg-blue-600',
     tasks: [
-      { key: 'rights', label: 'Read your provincial rights', detail: 'Go to Know Your Rights, select your province. Read CPS rights, custody rights, child support rights. Write down the legislation name and 3-4 relevant section numbers for court.' },
+      { key: 'rights', label: 'Read your provincial rights', detail: 'Go to Know Your Rights, select your province. Read CPS rights, parenting rights, child support rights. Write down the legislation name and 3-4 relevant section numbers for court.' },
       { key: 'filing_guide', label: 'Read the filing guide for your province', detail: 'Go to Filing Guide, select your province. Understand the order: FDR, File, Serve, Response, Conference, Hearing.' },
       { key: 'birth_cert', label: "Get your child's birth certificate", detail: "Certified copy from Vital Statistics. Can take 2-4 weeks to order if you don't have one." },
       { key: 'income_docs', label: 'Gather your income documents', detail: 'Last 3 years of T1 tax returns. Last 3 years of Notice of Assessments from CRA. Last 3 months of pay stubs. If self-employed: last 3 years of business financials.' },
@@ -28,7 +28,7 @@ const CASE_STAGES = [
     id: 'filing', title: 'Filing Your Application', subtitle: 'Officially starting your court case', icon: '📄', color: 'bg-emerald-600',
     tasks: [
       { key: 'forms', label: 'Download required court forms', detail: 'Court Forms page. SK: Petition (Form 15-1), Financial Statement (Form 15-26), Affidavit (Form 15-39). Form numbers vary by province.' },
-      { key: 'petition', label: 'Fill out the Petition', detail: 'Starts your case. Be factual, not emotional. State what you want (custody, support) and basic facts. Every word matters.' },
+      { key: 'petition', label: 'Fill out the Petition', detail: 'Starts your case. Be factual, not emotional. State what you want (parenting arrangements, support) and basic facts. Every word matters.' },
       { key: 'financial', label: 'Complete Financial Statement', detail: 'Attach: Last 3 years T1 returns, last 3 years NOAs, last 3 months pay stubs. List ALL income, expenses, assets, debts. Lying = perjury.' },
       { key: 'affidavit', label: 'Write your Affidavit', detail: 'Sworn facts. Use dates: "On [date], [what happened]." No opinions, no insults. Get it commissioned at courthouse or law office.' },
       { key: 'copies', label: 'Print 3 copies of everything', detail: 'Original for court, copy for other parent, copy for you. Some courthouses require 4 — call ahead.' },
@@ -82,7 +82,7 @@ const CASE_STAGES = [
       { key: 'get_order', label: 'Get certified copy of court order', detail: 'Request from Court Registry. Keep original safe.' },
       { key: 'follow', label: 'Follow the order exactly', detail: 'Even if you disagree. Document every violation by the other parent with dates and evidence.' },
       { key: 'register', label: 'Register support with enforcement', detail: 'SK: MEO. AB: MEP. ON: FRO. Ensures payments are tracked and enforced.' },
-      { key: 'track', label: 'Track custody schedule', detail: 'Use Calendar for every exchange. Evidence if you need to go back to court.' },
+      { key: 'track', label: 'Track parenting schedule', detail: 'Use Calendar for every exchange. Evidence if you need to go back to court.' },
     ],
   },
 ];

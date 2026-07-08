@@ -11,9 +11,9 @@ export const metadata = {
     default: 'Foresight — A Coach in Your Corner',
     template: '%s | Foresight'
   },
-  description: 'Free self-help platform for Canadian parents navigating custody and family law. Filing guides, court forms, rights info, AI assistant, and community support across all 13 provinces.',
+  description: 'Free self-help platform for Canadian parents navigating family law and parenting arrangements. Filing guides, court forms, rights info, AI assistant, and community support across every province and territory.',
   manifest: '/manifest.json',
-  keywords: ['custody', 'family law', 'Canada', 'self-represented', 'court forms', 'parenting plan', 'child support', 'filing guide', 'Saskatchewan', 'Alberta', 'Ontario', 'BC'],
+  keywords: ['custody', 'family law', 'Canada', 'self-represented', 'court forms', 'parenting plan', 'child support', 'filing guide', 'Saskatchewan', 'Alberta', 'Ontario', 'BC', 'parenting arrangements', 'parenting time', 'decision-making responsibility'],
   authors: [{ name: 'Foresight' }],
   creator: 'Foresight',
   openGraph: {

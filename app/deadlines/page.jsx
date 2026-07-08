@@ -119,7 +119,7 @@ export default function DeadlinesPage() {
   return (
     <div className="min-h-screen bg-gray-50 pb-20">
       <Header />
-      <PageTitle title="Calendar & Deadlines" subtitle="Court dates, custody schedule, and reminders" icon="📅" />
+      <PageTitle title="Calendar & Deadlines" subtitle="Court dates, parenting schedule, and reminders" icon="📅" />
 
       <main className="max-w-4xl mx-auto px-4 py-4">
         {/* Month Nav */}

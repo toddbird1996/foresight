@@ -658,7 +658,7 @@ function PostsView({ channel, user, userProfile, weeklyPrompt }) {
 /* MENTORS VIEW */
 /* ============================================ */
 const SPECIALTIES = [
-  { id: 'custody', label: 'Custody', icon: '👶' }, { id: 'divorce', label: 'Divorce', icon: '💔' },
+  { id: 'custody', label: 'Parenting', icon: '👶' }, { id: 'divorce', label: 'Divorce', icon: '💔' },
   { id: 'support', label: 'Child Support', icon: '💰' }, { id: 'cps', label: 'CPS', icon: '🛡️' },
   { id: 'mediation', label: 'Mediation', icon: '🤝' }, { id: 'self_rep', label: 'Self-Rep', icon: '⚖️' },
   { id: 'high_conflict', label: 'High Conflict', icon: '🔥' }, { id: 'relocation', label: 'Relocation', icon: '✈️' },

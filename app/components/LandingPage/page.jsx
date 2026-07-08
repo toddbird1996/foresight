@@ -167,7 +167,7 @@ function HeroSection() {
             </div>
             <div className="flex items-center gap-2">
               <span className="text-green-600">✓</span>
-              All 13 Canadian provinces
+              All 13 Canadian jurisdictions
             </div>
           </div>
         </div>
@@ -182,7 +182,7 @@ function HeroSection() {
                 <div className="w-3 h-3 rounded-full bg-yellow-500" />
                 <div className="w-3 h-3 rounded-full bg-green-500" />
               </div>
-              <div className="flex-1 text-center text-xs text-gray-500">foresight-eta-three.vercel.app</div>
+              <div className="flex-1 text-center text-xs text-gray-500">foresightcustody.ca</div>
             </div>
             <div className="grid grid-cols-3 gap-3 p-6">
               <div className="bg-red-50 border border-red-100 rounded-xl p-4 text-center">
@@ -229,7 +229,7 @@ function HeroSection() {
 
 function SocialProofBar() {
   const stats = [
-    { value: '13', label: 'Provinces Covered' },
+    { value: '13', label: 'Jurisdictions Covered' },
     { value: '310+', label: 'Filing Steps' },
     { value: '236', label: 'Support Programs' },
     { value: '40+', label: 'Court Forms' }
@@ -339,7 +339,7 @@ function SolutionSection() {
                 <div className="flex gap-3">
                   <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center">👤</div>
                   <div className="flex-1 p-3 rounded-xl bg-gray-100 text-sm text-gray-700">
-                    How do I file for custody in Saskatchewan?
+                    How do I file for parenting arrangements in Saskatchewan?
                   </div>
                 </div>
                 <div className="flex gap-3">
@@ -375,7 +375,7 @@ function FeaturesSection() {
     { icon: '📅', title: 'Parenting Schedule Builder', description: 'Design your proposed schedule on an interactive grid. Presets include 7/7, 5/2/2/5, and 2/2/3. See time split percentages and export as a document.' },
     { icon: '📄', title: 'Document Analysis', description: 'Upload your court documents. The AI reads the actual content and tells you what it means, what deadlines it creates, and what you should watch for.' },
     { icon: '🗺️', title: 'What Happens Next', description: 'After every major filing step, Foresight tells you exactly what to expect next — timelines, triggers, and how to prepare for the next phase.' },
-    { icon: '🧮', title: 'Child Support Calculator', description: 'Real federal guideline tables. Calculate sole, shared, and split custody scenarios for Saskatchewan and save results to your case file.' },
+    { icon: '🧮', title: 'Child Support Calculator', description: 'Real federal guideline tables. Calculate sole, shared, and split parenting time scenarios for Saskatchewan and save results to your case file.' },
   ];
 
   return (
@@ -681,7 +681,7 @@ function FAQSection() {
     },
     {
       question: 'What if I have a complicated case?',
-      answer: 'For complex cases involving domestic violence, parental alienation, or international custody, we recommend consulting a lawyer. Foresight can still help you understand the process and prepare, but some situations require professional legal help.'
+      answer: 'For complex cases involving domestic violence, parental alienation, or international parenting disputes, we recommend consulting a lawyer. Foresight can still help you understand the process and prepare, but some situations require professional legal help.'
     },
     {
       question: 'Is my information secure?',

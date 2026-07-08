@@ -250,7 +250,7 @@ export function AIChat({ onClose }) {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder="Ask about custody, forms, court processes..."
+              placeholder="Ask about parenting arrangements, forms, court processes..."
               className="flex-1 bg-transparent text-white placeholder-slate-500 resize-none focus:outline-none text-sm"
               rows={1}
               disabled={loading || aiRemaining <= 0}
@@ -301,7 +301,7 @@ function EmptyState({ jurisdiction, suggestedQuestions, onQuestionClick }) {
         How can I help you today?
       </h3>
       <p className="text-slate-400 mb-6 max-w-md">
-        Ask me about {jurisdictionNames[jurisdiction] || 'Canadian'} custody procedures, 
+        Ask me about {jurisdictionNames[jurisdiction] || 'Canadian'} parenting arrangement procedures, 
         required forms, court processes, and more.
       </p>
       

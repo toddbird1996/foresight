@@ -177,12 +177,13 @@ export default function MediationModule() {
             <div>
               <h2 className="font-bold text-blue-900 mb-1">Mediation comes first in Saskatchewan</h2>
               <p className="text-blue-800 text-sm leading-relaxed">
-                Before a Saskatchewan court will accept most family law applications, you must first attempt mediation. This is not optional — the court requires proof of mediation before your application can proceed.
+                Before a Saskatchewan court will accept most family law applications, you must first attempt family dispute resolution (FDR) — most commonly mediation. This is not optional — the court requires proof of mediation before your application can proceed.
               </p>
               <p className="text-blue-700 text-sm mt-2">
-                Mediation is free, government-run, and designed to help both parties reach an agreement without
-                going to court. Many families resolve their matters entirely through mediation.
+                You can complete this requirement through Saskatchewan's free government Family Dispute Resolution program, or through a qualified private mediator of your choice. Many families resolve their matters entirely through mediation.
               </p>
+              {/* TODO: Add private mediator directory/referral section here so private mediators
+                  appear alongside government FDR as an equally visible pathway. */}
             </div>
           </div>
         </div>

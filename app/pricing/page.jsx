@@ -17,7 +17,7 @@ const PLANS = [
     period: '',
     description: 'Get started with essential tools',
     features: [
-      'Custody guides & filing resources',
+      'Parenting guides & filing resources',
       'Community forum & chat rooms',
       'Co-parent messenger',
       'Calendar & deadlines',
@@ -37,7 +37,7 @@ const PLANS = [
     price: '$19.99',
     priceNum: 19.99,
     period: '/month CAD',
-    description: 'Full AI-powered custody guidance',
+    description: 'Full AI-powered parenting arrangement guidance',
     features: [
       'Everything in Bronze',
       '500 AI questions per month',
@@ -249,7 +249,7 @@ export default function PricingPage() {
           <div className="space-y-4">
             {[
               { q: 'Can I cancel anytime?', a: "Yes. Cancel or downgrade at any time. You'll keep access until the end of your billing period." },
-              { q: 'Is the AI assistant a lawyer?', a: 'No. The AI provides general information about custody procedures, not legal advice. Always consult a lawyer for your specific situation.' },
+              { q: 'Is the AI assistant a lawyer?', a: 'No. The AI provides general information about parenting arrangement procedures, not legal advice. Always consult a lawyer for your specific situation.' },
               { q: 'What payment methods do you accept?', a: 'All major credit cards through Stripe. Your payment information is securely processed and never stored on our servers.' },
               { q: 'Do you offer refunds?', a: 'We offer a 7-day money-back guarantee. Contact us within 7 days for a full refund.' },
               { q: 'What happens to my data if I downgrade?', a: 'Your data is always safe. If you downgrade to Bronze, you keep all your documents and case data — only the AI and PDF scan features become limited.' },

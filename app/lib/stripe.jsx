@@ -15,7 +15,7 @@ export const PRICING = {
     icon: '🥉',
     color: '#CD7F32',
     features: [
-      'Custody guides & filing resources',
+      'Parenting guides & filing resources',
       'Community forum / chat rooms',
       '2 GB document storage',
       '5 AI questions total (trial)',

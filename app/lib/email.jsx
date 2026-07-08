@@ -41,7 +41,7 @@ export const EMAIL_TEMPLATES = {
               </h1>
               
               <p style="color: #94a3b8; font-size: 16px; line-height: 1.6; margin: 0 0 20px 0;">
-                You've taken an important step. Navigating custody can feel overwhelming, but you're not alone anymore.
+                You've taken an important step. Navigating parenting arrangements can feel overwhelming, but you're not alone anymore.
               </p>
               
               <p style="color: #94a3b8; font-size: 16px; line-height: 1.6; margin: 0 0 30px 0;">
