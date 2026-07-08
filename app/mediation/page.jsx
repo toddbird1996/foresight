@@ -24,9 +24,9 @@ const RESOLUTION_PATHWAYS = [
     icon: '🤝',
     title: 'Private Mediator',
     org: 'Recognized Family Mediators — Province of Saskatchewan',
-    desc: 'Private mediators set their own fees and processes. Some offer reduced or pro bono rates. A recognized private mediator can also satisfy the court's mediation requirement and issue your certificate.',
+    desc: 'Private mediators set their own fees and processes. Some offer reduced or pro bono rates. A recognized private mediator can also satisfy the court\'s mediation requirement and issue your certificate.',
     cost: 'Varies — some reduced/pro bono options available',
-    how: 'Search the government's service provider registry to find a recognized mediator near you.',
+    how: 'Search the government\'s service provider registry to find a recognized mediator near you.',
     contacts: [
       { label: 'Service Provider Registry', value: 'Find a mediator', type: 'link', href: 'https://www.saskatchewan.ca/residents/births-deaths-marriages-and-divorces/separation-or-divorce/early-family-dispute-resolution' },
       { label: 'Low-income options', value: '1-866-257-0927', type: 'phone' },
@@ -51,7 +51,7 @@ const RESOLUTION_PATHWAYS = [
     org: 'Recognized Family Arbitrators — Province of Saskatchewan',
     desc: 'A family arbitrator acts like a private judge — they hear both sides and make a binding decision. Faster and more private than court. Must be a recognized arbitrator under Saskatchewan law.',
     cost: 'Varies by arbitrator',
-    how: 'Search the government's service provider registry for a recognized family arbitrator.',
+    how: 'Search the government\'s service provider registry for a recognized family arbitrator.',
     contacts: [
       { label: 'Service Provider Registry', value: 'Find an arbitrator', type: 'link', href: 'https://www.saskatchewan.ca/residents/births-deaths-marriages-and-divorces/separation-or-divorce/early-family-dispute-resolution' },
       { label: 'Info line', value: '1-866-257-0927', type: 'phone' },
