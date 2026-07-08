@@ -84,6 +84,21 @@ const RESOLUTION_PATHWAYS = [
   },
 ];
 
+// Curated private mediator listings. Populate as you vet and confirm providers.
+// Every entry should be a mediator listed on the government's Service Provider
+// Registry so families can trust they'll receive a valid Certificate of Participation.
+const PRIVATE_MEDIATOR_DIRECTORY = [
+  // {
+  //   name: 'Jane Doe Mediation',
+  //   location: 'Regina',
+  //   credential: 'Recognized Family Mediator — Law Society of Saskatchewan',
+  //   notes: 'Offers flat-fee mediation. Reduced rate available on request.',
+  //   phone: '306-555-0100',
+  //   email: 'jane@example.com',
+  //   website: 'https://example.com',
+  // },
+];
+
 const STAGES = [
   {
     id: 'not_started',
@@ -184,6 +199,72 @@ export default function MediationModule() {
               </p>
               {/* TODO: Add private mediator directory/referral section here so private mediators
                   appear alongside government FDR as an equally visible pathway. */}
+            </div>
+          </div>
+        </div>
+
+        {/* Find a Private Mediator — equally visible alongside government FDR */}
+        <div className="bg-white border border-gray-200 rounded-2xl p-5 mb-8">
+          <div className="flex items-start gap-3">
+            <span className="text-2xl">🤝</span>
+            <div className="flex-1">
+              <h3 className="font-bold text-gray-900 mb-1">Find a Private Mediator</h3>
+              <p className="text-gray-600 text-sm leading-relaxed mb-3">
+                Private mediators set their own fees and schedules — some offer flat rates, evening
+                appointments, or reduced-rate options. A recognized private mediator can satisfy your
+                FDR requirement and issue the same Certificate of Participation as government mediation.
+              </p>
+
+              {PRIVATE_MEDIATOR_DIRECTORY.length > 0 ? (
+                <div className="space-y-3 mb-4">
+                  {PRIVATE_MEDIATOR_DIRECTORY.map((m) => (
+                    <div key={m.name} className="border border-gray-200 rounded-xl p-4">
+                      <div className="flex items-center justify-between gap-2">
+                        <div className="font-semibold text-gray-900 text-sm">{m.name}</div>
+                        {m.location && <span className="text-xs text-gray-400 flex-shrink-0">{m.location}</span>}
+                      </div>
+                      {m.credential && <div className="text-gray-400 text-xs mb-2">{m.credential}</div>}
+                      {m.notes && <p className="text-gray-600 text-xs leading-relaxed mb-2">{m.notes}</p>}
+                      <div className="flex flex-wrap gap-x-4 gap-y-1">
+                        {m.phone && <a href={`tel:${m.phone}`} className="text-red-600 text-xs font-medium">{m.phone}</a>}
+                        {m.email && <a href={`mailto:${m.email}`} className="text-red-600 text-xs font-medium">{m.email}</a>}
+                        {m.website && <a href={m.website} target="_blank" rel="noopener noreferrer" className="text-red-600 text-xs font-medium">Website →</a>}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="bg-blue-50 rounded-xl p-3 mb-4">
+                  <p className="text-blue-800 text-xs">
+                    We're building out a curated list of recognized private mediators. In the meantime, use the
+                    government's searchable registry below — it's the same list private mediators must be on to
+                    issue a valid certificate.
+                  </p>
+                </div>
+              )}
+
+              <div className="bg-gray-50 rounded-xl p-3 mb-3">
+                <p className="text-gray-700 text-xs font-medium mb-1">What to look for:</p>
+                <p className="text-gray-600 text-xs leading-relaxed">
+                  Confirm your mediator is a member in good standing of the Law Society of Saskatchewan, the
+                  ADR Institute of Saskatchewan, or Family Mediation Canada — and ask directly whether they
+                  offer reduced or pro bono rates.
+                </p>
+              </div>
+
+              <div className="flex flex-wrap gap-3">
+                <a
+                  href="https://www.saskatchewan.ca/residents/births-deaths-marriages-and-divorces/separation-or-divorce/early-family-dispute-resolution/dispute-resolution-service-provider-registry"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-red-600 text-xs font-medium"
+                >
+                  Search the Service Provider Registry →
+                </a>
+                <a href="tel:1-866-257-0927" className="text-red-600 text-xs font-medium">
+                  Low-income options: 1-866-257-0927
+                </a>
+              </div>
             </div>
           </div>
         </div>
