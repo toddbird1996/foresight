@@ -10,7 +10,7 @@ const RESOLUTION_PATHWAYS = [
     icon: '🏛️',
     title: 'Government Mediation (Free)',
     org: 'Dispute Resolution Office — Ministry of Justice',
-    desc: 'Free, government-run mediation. Required before most family court applications. A trained officer helps both parties reach an agreement. You receive a Certificate of Participation whether or not you reach a deal.',
+    desc: 'Free, government-run mediation. Required in most family court cases before your matter can proceed past pleadings. A trained officer helps both parties reach an agreement. You receive a Certificate of Participation whether or not you reach a deal.',
     cost: 'Free',
     how: 'Call or email to book your intake appointment.',
     contacts: [
@@ -192,7 +192,7 @@ export default function MediationModule() {
             <div>
               <h2 className="font-bold text-blue-900 mb-1">Mediation comes first in Saskatchewan</h2>
               <p className="text-blue-800 text-sm leading-relaxed">
-                Before a Saskatchewan court will accept most family law applications, you must first attempt family dispute resolution (FDR) — most commonly mediation. This is not optional — the court requires proof of mediation before your application can proceed.
+                In most Saskatchewan family law cases, you must attempt family dispute resolution (FDR) — most commonly mediation — before your case can move forward. You can still file your application first, but once pleadings close, the court requires a Certificate of Participation before any further steps can be taken (unless the other party doesn't respond or agrees with your application, or you're granted an exemption).
               </p>
               <p className="text-blue-700 text-sm mt-2">
                 You can complete this requirement through Saskatchewan's free government Family Dispute Resolution program, or through a qualified private mediator of your choice. Many families resolve their matters entirely through mediation.
