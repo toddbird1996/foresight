@@ -10,7 +10,7 @@ const RESOLUTION_PATHWAYS = [
     icon: '🏛️',
     title: 'Government Mediation (Free)',
     org: 'Dispute Resolution Office — Ministry of Justice',
-    desc: 'Free, government-run mediation. Required before most family court applications. A trained officer helps both parties reach an agreement. You receive a Certificate of Compliance whether or not you reach a deal.',
+    desc: 'Free, government-run mediation. Required before most family court applications. A trained officer helps both parties reach an agreement. You receive a Certificate of Participation whether or not you reach a deal.',
     cost: 'Free',
     how: 'Call or email to book your intake appointment.',
     contacts: [
@@ -197,13 +197,12 @@ export default function MediationModule() {
               <p className="text-blue-700 text-sm mt-2">
                 You can complete this requirement through Saskatchewan's free government Family Dispute Resolution program, or through a qualified private mediator of your choice. Many families resolve their matters entirely through mediation.
               </p>
-              {/* TODO: Add private mediator directory/referral section here so private mediators
-                  appear alongside government FDR as an equally visible pathway. */}
             </div>
           </div>
         </div>
 
         {/* Find a Private Mediator — equally visible alongside government FDR */}
+        {(stage === null) && (
         <div className="bg-white border border-gray-200 rounded-2xl p-5 mb-8">
           <div className="flex items-start gap-3">
             <span className="text-2xl">🤝</span>
@@ -268,6 +267,7 @@ export default function MediationModule() {
             </div>
           </div>
         </div>
+        )}
 
         {/* Stage Selection */}
         <h1 className="text-2xl font-bold text-gray-900 mb-2">Where are you with mediation?</h1>
@@ -301,13 +301,13 @@ export default function MediationModule() {
             <div className="bg-white border border-gray-200 rounded-2xl p-6">
               <h3 className="font-bold text-gray-900 mb-3">What is Mediation?</h3>
               <p className="text-gray-600 text-sm leading-relaxed mb-4">
-                Mediation is a free, confidential service offered by the Government of
-                Saskatchewan. A trained mediator meets with both parties — together or separately — to help
-                reach an agreement on parenting time, decision-making, and support.
+                Mediation is a structured process — offered free through the Government of Saskatchewan or through
+                a qualified private mediator — where a trained mediator meets with both parties, together or
+                separately, to help reach an agreement on parenting time, decision-making, and support.
               </p>
               <p className="text-gray-600 text-sm leading-relaxed">
-                If you reach an agreement, the mediator can help you formalize it. If you don't, you'll receive a
-                Certificate of Compliance that allows you to proceed to court.
+                If you reach an agreement, the mediator can help you formalize it. Either way, you'll receive a
+                Certificate of Participation that allows you to proceed to court.
               </p>
             </div>
 
@@ -319,7 +319,7 @@ export default function MediationModule() {
                   { step: '1', title: 'Book your intake appointment', desc: 'Call your local mediation office. The intake is usually by phone or in person.' },
                   { step: '2', title: 'Complete the "Parenting After Separation" course', desc: 'Required for most applicants. Available online and takes about 3 hours.' },
                   { step: '3', title: 'Attend mediation sessions', desc: 'Meet with your mediator. Sessions may be joint or separate depending on your situation.' },
-                  { step: '4', title: 'Receive your Certificate of Compliance', desc: "Whether or not you reach an agreement, you'll receive a certificate to file with the court." },
+                  { step: '4', title: 'Receive your Certificate of Participation', desc: "Whether or not you reach an agreement, you'll receive a certificate to file with the court." },
                 ].map((item) => (
                   <div key={item.step} className="flex gap-3">
                     <div className="w-7 h-7 rounded-full bg-red-100 text-red-600 flex items-center justify-center text-xs font-bold flex-shrink-0">{item.step}</div>
