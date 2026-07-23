@@ -19,6 +19,7 @@ export default function Dashboard() {
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [showGettingStarted, setShowGettingStarted] = useState(false);
   const [actionPlan, setActionPlan] = useState(null);
+  const [planProgress, setPlanProgress] = useState([]);
   const [userProfile, setUserProfile] = useState(null);
   const [upcomingDeadlines, setUpcomingDeadlines] = useState([]);
   const [activeCard, setActiveCard] = useState('hearing');
@@ -33,7 +34,7 @@ export default function Dashboard() {
 
         const { data: profile } = await supabase
           .from("users")
-          .select("onboarding_completed, action_plan, full_name, case_status, case_type, jurisdiction, case_guide_step, guide_dismissed, ai_trial_used, tier")
+          .select("onboarding_completed, action_plan, action_plan_progress, full_name, case_status, case_type, jurisdiction, case_guide_step, guide_dismissed, ai_trial_used, tier")
           .eq("id", user.id)
           .single();
 
@@ -41,6 +42,7 @@ export default function Dashboard() {
           setShowOnboarding(true);
         }
         if (profile?.action_plan) setActionPlan(profile.action_plan);
+        if (Array.isArray(profile?.action_plan_progress)) setPlanProgress(profile.action_plan_progress);
         if (profile) {
           setUserProfile(profile);
           track(EVENTS.PAGE_DASHBOARD, { tier: profile.tier });
@@ -68,6 +70,16 @@ export default function Dashboard() {
       }
     });
   }, []);
+
+  // Records that a user opened an Action Plan step — drives the progress bar and
+  // gives us the first real usage signal on the plan itself.
+  const markPlanStep = async (index, item) => {
+    if (!user || planProgress.includes(index)) return;
+    const next = [...planProgress, index];
+    setPlanProgress(next);
+    track(EVENTS.PLAN_STEP_OPENED, { step: index + 1, title: item?.title });
+    await supabase.from("users").update({ action_plan_progress: next }).eq("id", user.id);
+  };
 
   const handleLogout = async () => {
     const { error } = await supabase.auth.signOut();
@@ -139,13 +151,6 @@ export default function Dashboard() {
           </div>
         )}
 
-        {/* Priority Support — Silver/Gold users */}
-        {userProfile?.tier !== 'bronze' && (
-          <div className="px-4 mb-3">
-            <SupportButton user={user} tier={userProfile?.tier} />
-          </div>
-        )}
-
         {/* ── Smart Panel: Hearing / Action Plan / Case Guide ── */}
         {user && (() => {
           const hasHearing = upcomingDeadlines.some(d =>
@@ -184,22 +189,48 @@ export default function Dashboard() {
 
               {activeCard === 'plan' && hasPlan && (
                 <div className="bg-white border border-gray-200 rounded-xl p-4">
-                  <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center justify-between mb-1.5">
                     <h3 className="font-semibold text-gray-900">🎯 Your Action Plan</h3>
-                    <span className="text-xs text-gray-400">Based on your case questionnaire</span>
+                    <span className="text-xs text-gray-400">
+                      {planProgress.length >= actionPlan.length
+                        ? 'All steps done'
+                        : `Step ${Math.min(planProgress.length + 1, actionPlan.length)} of ${actionPlan.length}`}
+                    </span>
+                  </div>
+                  <div className="h-1.5 w-full bg-gray-100 rounded-full mb-3 overflow-hidden">
+                    <div
+                      className="h-full bg-red-600 rounded-full transition-all duration-500"
+                      style={{ width: `${Math.round((Math.min(planProgress.length, actionPlan.length) / actionPlan.length) * 100)}%` }}
+                    />
                   </div>
                   <div className="space-y-2">
-                    {actionPlan.slice(0, 5).map((item, i) => (
-                      <Link key={i} href={item.link || '/cases'}
-                        className="flex items-center gap-3 p-2.5 rounded-lg bg-gray-50 hover:bg-red-50 hover:border-red-200 border border-gray-100 transition-colors">
-                        <div className="w-7 h-7 bg-red-600 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0">{item.step}</div>
-                        <div className="flex-1 min-w-0">
-                          <div className="font-medium text-gray-900 text-sm">{item.title}</div>
-                          <div className="text-xs text-gray-500 truncate">{item.desc}</div>
-                        </div>
-                        <span className="text-gray-400 text-sm">→</span>
+                    {actionPlan.slice(0, 5).map((item, i) => {
+                      const done = planProgress.includes(i);
+                      return (
+                        <Link key={i} href={item.link || '/cases'}
+                          onClick={() => markPlanStep(i, item)}
+                          className={`flex items-center gap-3 p-2.5 rounded-lg border transition-colors ${
+                            done
+                              ? 'bg-white border-gray-100 opacity-60'
+                              : 'bg-gray-50 border-gray-100 hover:bg-red-50 hover:border-red-200'
+                          }`}>
+                          <div className={`w-7 h-7 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0 ${done ? 'bg-green-600' : 'bg-red-600'}`}>
+                            {done ? '✓' : item.step}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <div className={`font-medium text-sm ${done ? 'text-gray-500 line-through' : 'text-gray-900'}`}>{item.title}</div>
+                            <div className="text-xs text-gray-500 truncate">{item.desc}</div>
+                          </div>
+                          <span className="text-gray-400 text-sm">→</span>
+                        </Link>
+                      );
+                    })}
+                    {/* Escape hatch — step 1 assumes paperwork the user may not have yet */}
+                    {!planProgress.includes(0) && (
+                      <Link href="/ai" className="block text-[11px] text-gray-400 hover:text-red-600 text-center pt-1 transition-colors">
+                        Nothing to upload yet? Start here instead →
                       </Link>
-                    ))}
+                    )}
                     {actionPlan.length > 5 && (
                       <p className="text-xs text-gray-400 text-center pt-1">+ {actionPlan.length - 5} more steps</p>
                     )}
@@ -217,7 +248,13 @@ export default function Dashboard() {
           );
         })()}
 
-
+        {/* Priority Support — Silver/Gold users. Sits BELOW the plan on purpose:
+            the first thing a user sees should be their next step, not a support offer. */}
+        {userProfile?.tier !== 'bronze' && (
+          <div className="px-4 mb-3">
+            <SupportButton user={user} tier={userProfile?.tier} />
+          </div>
+        )}
 
         {/* Getting Started Prompt — dismissible */}
         {showGettingStarted && (
@@ -750,6 +787,7 @@ function QuestionBar() {
   };
 
   const SUGGESTIONS = [
+    'What do I do next?',
     'What should I bring to my JCC?',
     'How is child support calculated in Saskatchewan?',
     'What does parenting time mean?',
