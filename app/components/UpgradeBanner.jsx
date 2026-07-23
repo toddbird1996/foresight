@@ -62,7 +62,9 @@ export function UpgradeBanner({ type = 'soft', remaining = null, feature = 'AI' 
           <p className="text-amber-700 text-[11px] mt-0.5 leading-relaxed">
             Your case needs more than {remaining} answer{remaining !== 1 ? 's' : ''}. Upgrade to Silver for 500/month.
           </p>
-          <Link href="/pricing" className="inline-block mt-1.5 text-[11px] font-bold text-red-600 hover:underline">
+          <Link href="/pricing"
+            onClick={() => track(EVENTS.UPGRADE_CLICKED, { source: 'running_low_banner', type })}
+            className="inline-block mt-1.5 text-[11px] font-bold text-red-600 hover:underline">
             Upgrade before you run out →
           </Link>
         </div>
@@ -112,7 +114,9 @@ export function UpgradeBanner({ type = 'soft', remaining = null, feature = 'AI' 
 // Inline lock badge for locked features
 export function LockedFeatureBadge({ feature, plan = 'Silver' }) {
   return (
-    <Link href="/pricing" className="inline-flex items-center gap-1 bg-gray-100 hover:bg-red-50 border border-gray-200 hover:border-red-200 rounded-full px-2 py-0.5 transition-colors group">
+    <Link href="/pricing"
+      onClick={() => track(EVENTS.UPGRADE_CLICKED, { source: 'locked_feature_badge', feature, plan })}
+      className="inline-flex items-center gap-1 bg-gray-100 hover:bg-red-50 border border-gray-200 hover:border-red-200 rounded-full px-2 py-0.5 transition-colors group">
       <span className="text-[10px]">🔒</span>
       <span className="text-[10px] text-gray-500 group-hover:text-red-600 font-medium">{plan}+</span>
     </Link>
