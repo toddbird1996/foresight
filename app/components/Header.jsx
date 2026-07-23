@@ -45,9 +45,7 @@ export default function Header() {
       <div className="max-w-6xl mx-auto px-4 h-14 flex items-center justify-between">
         {/* Logo */}
         <Link href="/dashboard" className="flex items-center gap-2.5">
-          <div className="w-8 h-8 bg-red-600 rounded-lg flex items-center justify-center">
-            <span className="text-white font-bold text-sm">F</span>
-          </div>
+          <img src="/icons/emblem.png" alt="Foresight" className="w-9 h-9 rounded-full" />
           <span className="font-bold text-lg text-gray-900 hidden sm:inline">Foresight</span>
         </Link>
 
