@@ -105,12 +105,59 @@ export default function Dashboard() {
             <h2 className="text-2xl font-bold text-gray-900 mb-1">
               {userProfile?.full_name ? `Welcome back, ${userProfile.full_name.split(' ')[0]}!` : 'Welcome back!'}
             </h2>
-            <p className="text-gray-600">Manage your family law case from one place.</p>
+            <p className="text-gray-600">You don&apos;t have to figure this out alone.</p>
           </div>
           <Link href="/progress" className="hidden sm:flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-xl hover:border-red-300 transition-colors">
             <span className="text-sm">📊</span>
             <span className="text-sm text-gray-600 font-medium">My Progress</span>
           </Link>
+        </div>
+
+        {/* ── Hope + Direction ─────────────────────────────────────────── */}
+        <div className="mb-4 bg-white border-2 border-red-200 rounded-2xl p-5 shadow-sm">
+          <div className="flex items-center gap-4">
+            <img src="/icons/emblem.png" alt="Foresight" className="w-14 h-14 sm:w-16 sm:h-16 rounded-full flex-shrink-0" />
+            <div className="flex-1 min-w-0">
+              <p className="text-gray-900 text-[15px] leading-relaxed font-medium">
+                I went through this myself, no lawyer, and came out the other side. You can too.
+              </p>
+              <p className="text-red-600 font-bold text-[15px] mt-1.5">All it takes is the first step.</p>
+              <p className="text-gray-500 text-xs mt-2">&mdash; Todd, who built Foresight because nobody built it for him</p>
+              <Link
+                href="/filing"
+                onClick={() => track(EVENTS.FIRST_STEP_CLICKED, { source: 'dashboard_hero' })}
+                className="mt-4 inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-red-600 hover:bg-red-700 text-white font-bold text-[15px] rounded-xl transition-colors shadow-sm"
+              >
+                Take the first step <span aria-hidden="true">&rarr;</span>
+              </Link>
+              <p className="text-gray-400 text-[11px] mt-2">
+                Opens your filing guide &mdash; every step, in order, at your pace.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* ── Clarity: upload a court document ─────────────────────────── */}
+        <div className="mb-4 bg-white border border-gray-200 rounded-2xl p-5 shadow-sm hover:border-red-300 transition-colors">
+          <div className="flex items-start gap-4">
+            <div className="w-11 h-11 bg-red-50 border border-red-200 rounded-xl flex items-center justify-center flex-shrink-0">
+              <span className="text-xl">📸</span>
+            </div>
+            <div className="flex-1 min-w-0">
+              <h3 className="font-bold text-gray-900 text-[15px]">Got a court document you don&apos;t understand?</h3>
+              <p className="text-gray-600 text-[13px] mt-1 leading-relaxed">
+                Take a photo of it. In about a minute you&apos;ll have it back in plain English &mdash;
+                what it means, what it&apos;s asking of you, and the date you can&apos;t miss.
+              </p>
+              <Link
+                href="/cases"
+                onClick={() => track(EVENTS.UPLOAD_PROMPT_CLICKED, { source: 'dashboard_hero' })}
+                className="mt-3 inline-flex items-center gap-2 px-5 py-2.5 bg-white border-2 border-red-600 text-red-600 hover:bg-red-50 font-bold text-sm rounded-xl transition-colors"
+              >
+                Upload your document <span aria-hidden="true">&rarr;</span>
+              </Link>
+            </div>
+          </div>
         </div>
 
         {/* First Step Card — shown for new users with no case yet */}
