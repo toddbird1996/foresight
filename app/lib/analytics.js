@@ -56,6 +56,10 @@ export const EVENTS = {
   // Action plan
   PLAN_STEP_OPENED: 'plan_step_opened',
 
+  // Dashboard hero (hope -> direction -> clarity)
+  FIRST_STEP_CLICKED: 'first_step_clicked',
+  UPLOAD_PROMPT_CLICKED: 'upload_prompt_clicked',
+
   // Upgrade
   UPGRADE_BANNER_SEEN: 'upgrade_banner_seen',
   UPGRADE_CLICKED: 'upgrade_clicked',
