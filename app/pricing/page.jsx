@@ -7,6 +7,7 @@ import Header from '../components/Header';
 import Footer from '../components/Footer';
 import PageTitle from '../components/PageTitle';
 import SponsorshipCodeInput from '../components/SponsorshipCode';
+import { track, EVENTS } from '../lib/analytics';
 
 const PLANS = [
   {
@@ -93,10 +94,15 @@ export default function PricingPage() {
     init();
   }, []);
 
+  // Track that the pricing page was actually reached — previously we only knew
+  // someone clicked the upgrade banner, not whether they ever landed here.
+  useEffect(() => { track(EVENTS.PAGE_PRICING); }, []);
+
   // Check for successful upgrade redirect
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     if (params.get('upgraded') === 'true') {
+      track(EVENTS.UPGRADE_COMPLETED, { source: 'stripe_return' });
       router.replace('/dashboard?upgraded=true');
     }
   }, []);
@@ -112,12 +118,14 @@ export default function PricingPage() {
     }
 
     if (!plan.priceId || plan.priceId === 'undefined') {
+      track(EVENTS.CHECKOUT_FAILED, { tier: plan.id, reason: 'price_id_missing' });
       setError('Payment is not yet configured. Please contact support.');
       return;
     }
 
     setCheckingOut(plan.id);
     setError('');
+    track(EVENTS.CHECKOUT_STARTED, { tier: plan.id });
 
     try {
       const { data: { session } } = await supabase.auth.getSession();
@@ -132,8 +140,10 @@ export default function PricingPage() {
 
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Checkout failed');
+      track(EVENTS.CHECKOUT_REDIRECTED, { tier: plan.id });
       window.location.href = data.url;
     } catch (err) {
+      track(EVENTS.CHECKOUT_FAILED, { tier: plan.id, reason: err.message, status: 'api_error' });
       setError(err.message);
       setCheckingOut(null);
     }
