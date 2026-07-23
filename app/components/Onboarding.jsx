@@ -203,7 +203,23 @@ function generateActionPlan(data) {
   const steps = [];
   const { situation, goal, legalSupport, jurisdiction } = data;
 
-  // For Saskatchewan users starting fresh or preparing to file, mediation is step 1
+  // Step 1 is always something the user DOES, with a payoff in about a minute.
+  // Reading assignments never go first — an exhausted parent will not start with
+  // homework. Anyone who already has paperwork scans it; anyone starting from
+  // nothing sets up the case file instead.
+  const HAS_PAPERWORK = [
+    'responding', 'filed_waiting', 'in_mediation', 'high_conflict',
+    'have_order_want_change', 'have_order_not_followed', 'cps_involved',
+    'have_informal_arrangement', 'have_support_no_custody', 'have_custody_no_support',
+  ];
+
+  if (HAS_PAPERWORK.includes(situation)) {
+    steps.push({ step: 1, title: 'Scan your court document', desc: 'Upload any order, application or letter — get it explained in plain English in about a minute.', link: '/cases', icon: '📸' });
+  } else {
+    steps.push({ step: 1, title: 'Set up your case file', desc: 'Two minutes. Everything you do from here lives in one place.', link: '/cases', icon: '🗂️' });
+  }
+
+  // For Saskatchewan users starting fresh or preparing to file, mediation comes early
   if ((situation === 'starting_fresh' || situation === 'preparing_to_file') && jurisdiction === 'saskatchewan') {
     steps.push({ step: 1, title: 'Complete Family Dispute Resolution (FDR)', desc: 'Required before the court will accept your application in Saskatchewan. Start here.', link: '/mediation', icon: '🕊️' });
   }
