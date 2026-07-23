@@ -51,9 +51,7 @@ function Navbar() {
         <div className="flex items-center justify-between h-16 sm:h-20">
           {/* Logo */}
           <a href="/" className="flex items-center gap-2">
-            <div className="w-10 h-10 rounded-xl bg-red-600 flex items-center justify-center">
-              <span className="text-white font-bold text-xl">F</span>
-            </div>
+            <img src="/icons/emblem.png" alt="Foresight" className="w-11 h-11 rounded-full" />
             <span className="text-xl font-bold text-gray-900">
               Foresight
             </span>
@@ -343,7 +341,7 @@ function SolutionSection() {
                   </div>
                 </div>
                 <div className="flex gap-3">
-                  <div className="w-8 h-8 rounded-xl bg-red-600 flex items-center justify-center text-white text-sm">F</div>
+                  <img src="/icons/emblem.png" alt="Foresight" className="w-8 h-8 rounded-full flex-shrink-0" />
                   <div className="flex-1 p-3 rounded-xl bg-red-50 border border-red-200 text-sm">
                     <p className="mb-2 text-gray-900">Here's your step-by-step guide for Saskatchewan:</p>
                     <p className="text-gray-600">1. Complete Family Dispute Resolution (FDR)</p>
@@ -768,9 +766,7 @@ function Footer() {
         <div className="grid sm:grid-cols-2 lg:grid-cols-5 gap-8 mb-12">
           <div>
             <div className="flex items-center gap-2 mb-4">
-              <div className="w-10 h-10 rounded-xl bg-red-600 flex items-center justify-center">
-                <span className="text-white font-bold text-xl">F</span>
-              </div>
+              <img src="/icons/emblem.png" alt="Foresight" className="w-11 h-11 rounded-full" />
               <span className="text-xl font-bold text-gray-900">Foresight</span>
             </div>
             <p className="text-gray-500 text-sm">
