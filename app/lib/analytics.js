@@ -53,9 +53,15 @@ export const EVENTS = {
   // Deadlines
   DEADLINE_CREATED: 'deadline_created',
 
+  // Action plan
+  PLAN_STEP_OPENED: 'plan_step_opened',
+
   // Upgrade
   UPGRADE_BANNER_SEEN: 'upgrade_banner_seen',
   UPGRADE_CLICKED: 'upgrade_clicked',
+  CHECKOUT_STARTED: 'checkout_started',
+  CHECKOUT_REDIRECTED: 'checkout_redirected',
+  CHECKOUT_FAILED: 'checkout_failed',
   UPGRADE_COMPLETED: 'upgrade_completed',
 
   // Support
